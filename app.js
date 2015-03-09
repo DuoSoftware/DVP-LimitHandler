@@ -3,9 +3,11 @@
  */
 
 var restify = require('restify');
-var sre = require('swagger-restify-express');
+//var sre = require('swagger-restify-express');
 var schedule=require('./SheduleApi.js');
 var group=require('./SipUserGroupManagement.js');
+
+
 
 var RestServer = restify.createServer({
     name: "myapp",
@@ -15,13 +17,62 @@ var RestServer = restify.createServer({
 
 });
 //Server listen
-RestServer.listen(8080, function () {
+RestServer.listen(8081, function () {
     console.log('%s listening at %s', RestServer.name, RestServer.url);
+/*
+    for(i=1; i <=20000; i++)
+    {
+        var body1 = {
+            SipUsername: 'usr'+i,
+            Password: 'pwd'+i,
+            Enabled: true,
+            ExtraData: 'extra'+i,
+            EmailAddress: 'a@'+i,
+            GuRefId: 'ref'+i,
+            CompanyId: 1,
+            TenantId: 3,
+            ObjClass: 'clz'+i,
+            ObjType: 'typ'+i,
+            ObjCategory: 'cat'+i,
+            AddUser: 'usr'+i,
+            UpdateUser: 'updusr'+i
+        }
+
+        var tt = {
+            body : body1
+        }
+
+        var dd = {
+            end : function()
+            {}
+        }
+
+
+       usr.SaveSip(tt,dd,err);
+        //group.AddSipUserGroup(i,resz);
+
+        var grpId = 1;
+        if(i%2 == 1)
+        {
+            grpId = 2;
+        }
+
+        var r = {
+            ExtensionId : i,
+            GroupId : grpId
+        }
+        gruop.MapExtensionID(r, rese);
+    }
+    */
 });
 //Enable request body parsing(access)
 RestServer.use(restify.bodyParser());
 RestServer.use(restify.acceptParser(RestServer.acceptable));
 RestServer.use(restify.queryParser());
+
+
+
+
 
 
 //.......................................post............................................................................
@@ -184,7 +235,16 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/AllRecWithCompany/:Com
 
 RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_all_users_in_group/:companyid',function(req,res,err)
 {
-    group.GetAllUsersInGroup(req.params.companyid,res,err);
+
+        group.GetAllUsersInGroup(req.params.companyid, res, err);
+
+
+
+});
+
+RestServer.get('/dvp/:version/limit_handler/testme/:id',function(req,res,err)
+{
+group.Testme(req.params.id,res,err);
 
 
 
@@ -193,15 +253,16 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_all_users_in_group
 
 
 
-
+/*
 sre.init(RestServer, {
         resourceName : 'LimitHandler',
         server : 'restify', // or express
         httpMethods : ['GET', 'POST', 'PUT', 'DELETE'],
-        basePath : 'http://localhost:8080',
+        basePath : 'http://localhost:8081',
         ignorePaths : {
             GET : ['path1', 'path2'],
             POST : ['path1']
         }
     }
 )
+    */
