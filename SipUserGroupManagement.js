@@ -6,6 +6,7 @@ var DbConn = require('./DVP-DBModels');
 var restify = require('restify');
 var stringify=require('stringify');
 var Sequelize=require('sequelize');
+var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 
 /*
 var RestServer = restify.createServer({

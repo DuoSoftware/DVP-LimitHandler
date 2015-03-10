@@ -15,6 +15,7 @@ var UACUpdate=require('./UpdateSipUserData.js');
 var stringify=require('stringify');
 var moment=require('moment');
 var dateutil=require('date-utils');
+var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 
 
 
