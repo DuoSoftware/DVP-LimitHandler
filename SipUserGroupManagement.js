@@ -43,62 +43,69 @@ RestServer.post('/add_usergroup',function(req,res,err)
 //post :-done
 function AddSipUserGroup(objNum,res)
 {
-    var obj=null;
-    obj.GroupName="Gname"+objNum;
+    try {
+        var obj = null;
+        obj.GroupName = "Gname" + objNum;
 
-    obj.Domain ="GDomain"+objNum;
-    obj.ExtraData ="Gextra"+objNum;
-    obj.ObjClass= "Gclz"+objNum;
-    obj.ObjType ="Gtyp"+objNum;
-    obj.ObjCategory= "Gcat"+objNum;
-    obj.CompanyId= objNum;
-    obj.TenantId= objNum+1;
+        obj.Domain = "GDomain" + objNum;
+        obj.ExtraData = "Gextra" + objNum;
+        obj.ObjClass = "Gclz" + objNum;
+        obj.ObjType = "Gtyp" + objNum;
+        obj.ObjCategory = "Gcat" + objNum;
+        obj.CompanyId = objNum;
+        obj.TenantId = objNum + 1;
 
-    var UserGroupobj = DbConn.UserGroup
-        .build(
-        {
+        var UserGroupobj = DbConn.UserGroup
+            .build(
+            {
 
-            GroupName:obj.GroupName ,
-            Domain :obj.Domain,
-            ExtraData :obj.ExtraData,
-            ObjClass: obj.ObjClass,
-            ObjType :obj.ObjType,
-            ObjCategory: obj.ObjCategory,
-            CompanyId: obj.CompanyId,
-            TenantId: obj.TenantId
-
-
-        }
-    )
-
-    UserGroupobj.save().complete(function (err) {
-        if (!err) {
-            //  ScheduleObject.addAppointment(AppObject).complete(function (errx, AppInstancex) {
-
-            var status = 1;
+                GroupName: obj.GroupName,
+                Domain: obj.Domain,
+                ExtraData: obj.ExtraData,
+                ObjClass: obj.ObjClass,
+                ObjType: obj.ObjType,
+                ObjCategory: obj.ObjCategory,
+                CompanyId: obj.CompanyId,
+                TenantId: obj.TenantId
 
 
-            // res.write(status.toString());
-            // res.end();
-            //});
+            }
+        )
 
-            console.log("..................... Saved Successfully ....................................");
-            return obj;
+        UserGroupobj.save().complete(function (err) {
+            if (!err) {
+                //  ScheduleObject.addAppointment(AppObject).complete(function (errx, AppInstancex) {
 
-            res.end();
+                var status = 1;
 
 
-        }
-        else
-        {
-            console.log("..................... Error found in saving.................................... : "+err);
-            res.end();
+                // res.write(status.toString());
+                // res.end();
+                //});
 
-        }
+                console.log("..................... Saved Successfully ....................................");
+                return obj;
 
-return next();
-    });
+                var jsonString = messageFormatter.FormatMessage(err, "Saved Successfully", true, obj);
+                res.end(jsonString);
 
+
+            }
+            else {
+                console.log("..................... Error found in saving.................................... : " + err);
+                var jsonString = messageFormatter.FormatMessage(err, "Error found in saving", false, result);
+                res.end(jsonString);
+
+            }
+
+            return next();
+        });
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception occures", false, result);
+        res.end(jsonString);
+    }
 }
 //post :-done
 function MapExtensionID(obj,res)
