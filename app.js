@@ -6,6 +6,7 @@ var restify = require('restify');
 //var sre = require('swagger-restify-express');
 var schedule=require('./SheduleApi.js');
 var group=require('./SipUserGroupManagement.js');
+var limit=require('./LimitApiNew.js');
 
 
 
@@ -139,6 +140,67 @@ RestServer.post('/dvp/:version/limit_handler/sipuser_group/update_sipuser_group'
     group.UpdateSipUserGroup(req.body,res);
 
 });
+//.......................................................................................................................
+
+RestServer.post('/dvp/:version/limit_handler/limitapi/limit_increment',function(req,res,err)
+{
+    limit.LimitIncrementt(req.body,function(err,res)
+    {
+
+    });
+
+});
+//.......................................................................................................................
+
+RestServer.post('/dvp/:version/limit_handler/limitapi/limit_decrement',function(req,res,err)
+{
+    limit.LimitDecrement(req.body,function(err,res)
+    {
+
+    });
+
+});
+//.......................................................................................................................
+
+RestServer.post('/dvp/:version/limit_handler/limitapi/add_new_limit_record',function(req,res,err)
+{
+    limit.AddNewLimitRecord(req.body,function(err,res)
+    {
+
+    });
+
+});
+//.......................................................................................................................
+
+RestServer.post('/dvp/:version/limit_handler/limitapi/update_maxlimit',function(req,res,err)
+{
+    limit.UpdateMaxLimit(req.body,function(err,res)
+    {
+
+    });
+
+});
+//.......................................................................................................................
+
+RestServer.post('/dvp/:version/limit_handler/limitapi/update_maxlimit',function(req,res,err)
+{
+    limit.UpdateMaxLimit(req.body,function(err,res)
+    {
+
+    });
+
+});
+//.......................................................................................................................
+
+RestServer.post('/dvp/:version/limit_handler/limitapi/update_enability',function(req,res,err)
+{
+    limit.UpdateEnability(req.body,function(err,res)
+    {
+
+    });
+
+});
+
 
 //.......................................get.............................................................................
 
@@ -241,12 +303,32 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_all_users_in_group
 
 
 });
-
+//.......................................................................................................................
 RestServer.get('/dvp/:version/limit_handler/testme/:id',function(req,res,err)
 {
 group.Testme(req.params.id,res,err);
 
 
+
+});
+//.......................................................................................................................
+
+RestServer.get('/dvp/:version/limit_handler/limitapi/get_current_limit',function(req,res,err)
+{
+    limit.GetCurrentLimit(req.body,function(err,res)
+    {
+
+    });
+
+});
+//.......................................................................................................................
+
+RestServer.get('/dvp/:version/limit_handler/limitapi/get_max_limit',function(req,res,err)
+{
+    limit.GetMaxLimit(req.body,function(err,res)
+    {
+
+    });
 
 });
 
