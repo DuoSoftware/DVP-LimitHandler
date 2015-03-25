@@ -35,8 +35,10 @@ RestServer.post('/dvp/:version/limit_handler/schedule/add_appointment',function(
 {
 
     try {
-        schedule.AddAppointment(req,res);
-
+        schedule.AddAppointment(req,function(err,resz)
+        {
+            res.end(resz);
+        });
 
     }
     catch(ex)
@@ -52,7 +54,10 @@ RestServer.post('/dvp/:version/limit_handler/schedule/add_schedule',function(req
 {
 
     try {
-        schedule.AddSchedule(req,res);
+        schedule.AddSchedule(req,function(err,resz)
+        {
+            res.end(resz);
+        });
 
 
     }
@@ -69,7 +74,10 @@ RestServer.post('/dvp/:version/limit_handler/schedule/Update_Schedule',function(
 {
 
     try {
-        schedule.UpdateScheduleData(req.body,res);
+        schedule.UpdateScheduleData(req.body,function(err,resz)
+        {
+            res.end(resz);
+        });
 
 
     }
@@ -86,7 +94,10 @@ RestServer.post('/dvp/:version/limit_handler/schedule/update_scheduleID',functio
 {
 
     try {
-        schedule.UpdateScheduleID(req.body,res);
+        schedule.UpdateScheduleID(req.body,function(err,resz)
+        {
+            res.end(resz);
+        });
 
 
     }
@@ -417,7 +428,10 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_app_through_schedule/:
 {
 
     try {
-        schedule.PickAppThroughSchedule(req.params.cmp,req.params.tent,req.params.dt,req.params.dy,req.params.tm,res);
+        schedule.PickAppThroughSchedule(req.params.cmp,req.params.tent,req.params.dt,req.params.dy,req.params.tm,function(err,resz)
+        {
+            res.end(resz);
+        });
 
 
 
@@ -435,7 +449,10 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule',function(req
 {
 
     try {
-        schedule.PickSchedule(req.body,res);
+        schedule.PickSchedule(req.body,function(err,resz)
+        {
+            res.end(resz);
+        });
 
 
 
@@ -453,7 +470,10 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule_action',funct
 {
 
     try {
-        schedule.PickScheduleAction(req.body,res);
+        schedule.PickScheduleAction(req.body,function(err,res)
+        {
+            res.end(resz);
+        });
 
 
 
@@ -471,7 +491,10 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment',function(r
 {
 
     try {
-        schedule.PickApointment(req.body,res);
+        schedule.PickApointment(req.body,function(err,res)
+        {
+            res.end(resz);
+        });
 
 
 
@@ -491,7 +514,10 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action',fun
 {
 
     try {
-        schedule.PickApointmentAction(req.body,res);
+        schedule.PickApointmentAction(req.body,function(err,resz)
+        {
+            res.end(resz);
+        });
 
 
 
@@ -510,7 +536,10 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action',fun
 
 
     try {
-        schedule.PickApointmentAction(req.body,res);
+        schedule.PickApointmentAction(req.body,function(err,res)
+        {
+            res.end(resz);
+        });
 
 
 
@@ -528,8 +557,11 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_group_data/:name',
 {
 
     try {
-        group.GetGroupData(req.params.name,res);
-        return next();
+        group.GetGroupData(req.params.name,function(err,resz)
+        {
+            res.end(resz);
+        });
+
 
 
     }
@@ -550,7 +582,10 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_group_endpoints',f
 {
 
     try {
-        group.GetGroupEndpoints(req.params.name,res);
+        group.GetGroupEndpoints(req.params.name,function(err,resz)
+        {
+            res.end(resz);
+        });
 
 
 
@@ -572,8 +607,11 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/endpoint_groupid',func
 
 
     try {
-        group.EndpointGroupID(req.body,res);
-        return next();
+        group.EndpointGroupID(req.body,function(err,resz)
+        {
+            res.end(resz);
+        });
+
 
 
 
@@ -594,7 +632,10 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/AllRecWithCompany/:Com
 
 
     try {
-        group.AllRecWithCompany(req.params.CompanyId,res);
+        group.AllRecWithCompany(req.params.CompanyId,function(err,resz)
+        {
+            res.end(resz);
+        });
 
 
 
@@ -616,7 +657,10 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_all_users_in_group
 
 
     try {
-        group.GetAllUsersInGroup(req.params.companyid, res);
+        group.GetAllUsersInGroup(req.params.companyid, function(err,resz)
+        {
+            res.end(resz);
+        });
 
 
 
@@ -636,7 +680,10 @@ RestServer.get('/dvp/:version/limit_handler/testme/:id',function(req,res,next)
 {
 
     try {
-        group.Testme(req.params.id,res);
+        group.Testme(req.params.id,function(err,res)
+        {
+            res.end(resz);
+        });
 
 
 
@@ -656,10 +703,10 @@ RestServer.get('/dvp/:version/limit_handler/testme/:id',function(req,res,next)
 RestServer.get('/dvp/:version/limit_handler/limitapi/get_current_limit',function(req,res,next)
 {
     try {
-        limit.GetCurrentLimit(req.body,function(err,res)
+        limit.GetCurrentLimit(req.body,function(err,resz)
+
         {
-            var jsonString = messageFormatter.FormatMessage(err, "GetCurrentLimit succeeded", true, res);
-            res.end(jsonString);
+           res.end(resz);
         });
 
 
@@ -679,10 +726,10 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/get_current_limit',function
 RestServer.get('/dvp/:version/limit_handler/limitapi/get_max_limit',function(req,res,next)
 {
     try {
-        limit.GetMaxLimit(req.body,function(err,res)
+        limit.GetMaxLimit(req.body,function(err,resz)
         {
-            var jsonString = messageFormatter.FormatMessage(err, "GetMaxLimit succeeded", true, res);
-            res.end(jsonString);
+
+            res.end(resz);
         });
 
 
