@@ -379,6 +379,9 @@ RestServer.post('/dvp/:version/limit_handler/filehandler/upload_file_remote',fun
     }
     return next();
 });
+
+//.......................................................................................................................
+
 RestServer.post('/dvp/:version/limit_handler/filehandler/Download_file_remote',function(req,res,next)
 {
 
@@ -397,6 +400,32 @@ RestServer.post('/dvp/:version/limit_handler/filehandler/Download_file_remote',f
     }
     return next();
 });
+
+//.......................................................................................................................
+
+
+RestServer.post('/dvp/:version/limit_handler/filehandler/download_file/:id',function(req,res,next)
+{
+    try {
+        fl.DownloadFileByID(req.params.id,function(err,resz)
+        {
+
+            res.end(resz);
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "GetMaxLimit failed", false, res);
+        res.end(jsonString);
+    }
+
+    return next();
+
+});
+
 
 
 //.......................................get.............................................................................
@@ -764,6 +793,29 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/get_max_limit',function(req
     return next();
 
 });
+
+RestServer.get('/dvp/:version/limit_handler/filehandler/get_file_meta/:id',function(req,res,next)
+{
+    try {
+        fl.GetAttachmentMetaDataByID(req.params.id,function(err,resz)
+        {
+
+            res.end(resz);
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "GetMaxLimit failed", false, res);
+        res.end(jsonString);
+    }
+
+    return next();
+
+});
+
 
 
 

@@ -355,6 +355,132 @@ function downF()
     source.on('error', function(err) { /* error */ });
 }
 
+function GetAttachmentMetaDataByID(req,callback)
+{
+    try {
+        //DbConn.FileUpload.find({where: [{UniqueId: rand2}]}).complete(function (err, ScheduleObject) {
+        DbConn.FileUpload.findAll({where: [{UniqueId: req}]}).complete(function (err, ScheduleObject) {
+            if (!err && ScheduleObject.length == 0) {
+                // console.log(cloudEndObject);
+                var jsonString = messageFormatter.FormatMessage(null, "Record not Found", false, null);
+                callback(null, jsonString);
+
+            }
+            else if (ScheduleObject) {
+                console.log("................................... Record Found ................................ ");
+                var jsonString = messageFormatter.FormatMessage(null, "Record Found", true, ScheduleObject);
+                callback(null, jsonString);
+                //res.end();
+            }
+            else {
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
+                callback(null, jsonString);
+                // res.end();
+            }
+
+
+        });
+    }
+    catch (ex) {
+        console.log("Exce "+ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception", false, null);
+        callback(null, jsonString);
+    }
+}
+
+function DownloadFileByID(req,callback)
+{
+    try {
+        //DbConn.FileUpload.find({where: [{UniqueId: rand2}]}).complete(function (err, ScheduleObject) {
+        DbConn.FileUpload.find({where: [{UniqueId: req}]}).complete(function (err, ScheduleObject) {
+            if (!err && ScheduleObject.length == 0) {
+                // console.log(cloudEndObject);
+                var jsonString = messageFormatter.FormatMessage(null, "Record not Found", false, null);
+                callback(null, jsonString);
+
+            }
+            else if (ScheduleObject) {
+                console.log("................................... Record Found ................................ ");
+               // var jsonString = messageFormatter.FormatMessage(null, "Record Found", true, ScheduleObject);
+               // callback(null, jsonString);
+
+                var s= (ScheduleObject.URL.toString()).replace('\','/'');
+
+
+               var source = fs.createReadStream(s);
+                var dest = fs.createWriteStream('C:/Users/pawan/Desktop/jsons/'+ScheduleObject.DisplayName.toString());
+
+                source.pipe(dest);
+                source.on('end', function() { /* copied */ });
+                source.on('error', function(err) { /* error */ });
+
+                var AppObject = DbConn.FileDownload
+                    .build(
+                    {
+                        UniqueId: ScheduleObject.UniqueId,
+                        FileStructure: ScheduleObject.FileStructure,
+                        ObjClass: ScheduleObject.ObjClass,
+                        ObjType: ScheduleObject.ObjType,
+                        ObjCategory: ScheduleObject.ObjCategory,
+                        URL:ScheduleObject.URL,
+                        DownloadTimestamp: Date.now(),
+                        Filename: ScheduleObject.Filename,
+                        DisplayName: ScheduleObject.DisplayName,
+                        CompanyId:ScheduleObject.CompanyId,
+                        TenantId:ScheduleObject.TenantId
+
+
+                    }
+                )
+
+                AppObject.save().complete(function (err, result) {
+                    if (!err) {
+                        var status = 1;
+
+
+                        console.log("..................... Saved Successfully ....................................");
+                        var jsonString = messageFormatter.FormatMessage(err, "Saved to pg", true, result);
+                        callback(null, jsonString);
+                        // res.end();
+
+
+                    }
+                    else {
+                        console.log("..................... Error found in saving.................................... : " + err);
+                        var jsonString = messageFormatter.FormatMessage(err, "ERROR found in saving to PG", false, null);
+                        callback(err, jsonString);
+                        //res.end();
+                    }
+
+
+                });
+
+
+                //res.end();
+            }
+            else {
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
+                callback(null, jsonString);
+                // res.end();
+            }
+
+
+        });
+    }
+    catch (ex) {
+        console.log("Exce "+ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception", false, null);
+        callback(null, jsonString);
+    }
+}
+
+
 module.exports.SaveUploadFileDetails = SaveUploadFileDetails;
 module.exports.downF = downF;
+module.exports.GetAttachmentMetaDataByID = GetAttachmentMetaDataByID;
+module.exports.DownloadFileByID = DownloadFileByID;
+
+
+
+
 
