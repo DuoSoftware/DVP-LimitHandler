@@ -11,6 +11,7 @@ var express    =       require("express");
 var multer     =       require('multer');
 var app        =       express();
 var done       =       false;
+var fs=require('fs');
 
 /*
  var bucket = new couchbase.Connection({
@@ -344,5 +345,16 @@ function SaveUploadFileDetails(req,callback)
 
 }
 
+function downF()
+{
+    var source = fs.createReadStream('C:/Users/pawan/AppData/Local/Temp/upload_2ac9da85f25059f246bc075205f9bd58');
+    var dest = fs.createWriteStream('C:/Users/pawan/Desktop/jsons/apss');
+
+    source.pipe(dest);
+    source.on('end', function() { /* copied */ });
+    source.on('error', function(err) { /* error */ });
+}
+
 module.exports.SaveUploadFileDetails = SaveUploadFileDetails;
+module.exports.downF = downF;
 

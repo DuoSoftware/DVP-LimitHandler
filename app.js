@@ -12,6 +12,7 @@ var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessag
 
 
 
+
 var RestServer = restify.createServer({
     name: "myapp",
     version: '1.0.0'
@@ -360,6 +361,7 @@ RestServer.post('/dvp/:version/limit_handler/filehandler/upload_file_remote',fun
 
         var fileKey = Object.keys(req.files)[0];
         var file = req.files[fileKey];
+        console.log(file.path);
 
         fl.SaveUploadFileDetails(file,function(err,resz)
         {
@@ -372,6 +374,24 @@ RestServer.post('/dvp/:version/limit_handler/filehandler/upload_file_remote',fun
     {
         //var jsonString = messageFormatter.FormatMessage(ex, "Upload failed", false, res);
        // res.end(jsonString);
+        var jsonString = messageFormatter.FormatMessage(ex, "Upload not succeeded:exception found", false, null);
+        res.end(jsonString);
+    }
+    return next();
+});
+RestServer.post('/dvp/:version/limit_handler/filehandler/Download_file_remote',function(req,res,next)
+{
+
+
+    try {
+
+        fl.downF();
+        res.end();
+
+    }
+    catch(ex)
+    {
+
         var jsonString = messageFormatter.FormatMessage(ex, "Upload not succeeded:exception found", false, null);
         res.end(jsonString);
     }
