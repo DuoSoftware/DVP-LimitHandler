@@ -7,6 +7,8 @@ var restify = require('restify');
 var schedule=require('./SheduleApi.js');
 var group=require('./SipUserGroupManagement.js');
 var limit=require('./LimitApiNew.js');
+var fl=require('./FileHandlerApi.js');
+var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 
 
 
@@ -20,69 +22,37 @@ var RestServer = restify.createServer({
 //Server listen
 RestServer.listen(8081, function () {
     console.log('%s listening at %s', RestServer.name, RestServer.url);
-/*
-    for(i=1; i <=20000; i++)
-    {
-        var body1 = {
-            SipUsername: 'usr'+i,
-            Password: 'pwd'+i,
-            Enabled: true,
-            ExtraData: 'extra'+i,
-            EmailAddress: 'a@'+i,
-            GuRefId: 'ref'+i,
-            CompanyId: 1,
-            TenantId: 3,
-            ObjClass: 'clz'+i,
-            ObjType: 'typ'+i,
-            ObjCategory: 'cat'+i,
-            AddUser: 'usr'+i,
-            UpdateUser: 'updusr'+i
-        }
 
-        var tt = {
-            body : body1
-        }
-
-        var dd = {
-            end : function()
-            {}
-        }
-
-
-       usr.SaveSip(tt,dd,err);
-        //group.AddSipUserGroup(i,resz);
-
-        var grpId = 1;
-        if(i%2 == 1)
-        {
-            grpId = 2;
-        }
-
-        var r = {
-            ExtensionId : i,
-            GroupId : grpId
-        }
-        gruop.MapExtensionID(r, rese);
-    }
-    */
 });
 //Enable request body parsing(access)
 RestServer.use(restify.bodyParser());
 RestServer.use(restify.acceptParser(RestServer.acceptable));
 RestServer.use(restify.queryParser());
 
-
-
-
-
-
 //.......................................post............................................................................
 
-RestServer.post('/dvp/:version/limit_handler/schedule/add_schedule',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/schedule/add_appointment',function(req,res,next)
 {
 
     try {
-        schedule.AddSchedule(req,res,err);
+        schedule.AddAppointment(req,res);
+
+
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "AddAppointment failed", false, res);
+        res.end(jsonString);
+    }
+    return next();
+});
+
+
+RestServer.post('/dvp/:version/limit_handler/schedule/add_schedule',function(req,res,next)
+{
+
+    try {
+        schedule.AddSchedule(req,res);
 
 
     }
@@ -91,11 +61,11 @@ RestServer.post('/dvp/:version/limit_handler/schedule/add_schedule',function(req
         var jsonString = messageFormatter.FormatMessage(ex, "AddSchedule failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/schedule/Update_Schedule',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/schedule/Update_Schedule',function(req,res,next)
 {
 
     try {
@@ -108,11 +78,11 @@ RestServer.post('/dvp/:version/limit_handler/schedule/Update_Schedule',function(
         var jsonString = messageFormatter.FormatMessage(ex, "UpdateScheduleData failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/schedule/update_scheduleID',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/schedule/update_scheduleID',function(req,res,next)
 {
 
     try {
@@ -125,11 +95,11 @@ RestServer.post('/dvp/:version/limit_handler/schedule/update_scheduleID',functio
         var jsonString = messageFormatter.FormatMessage(ex, "UpdateScheduleID failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/schedule/update_scheduleid_Appointment',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/schedule/update_scheduleid_Appointment',function(req,res,next)
 {
 
     try {
@@ -142,11 +112,11 @@ RestServer.post('/dvp/:version/limit_handler/schedule/update_scheduleid_Appointm
         var jsonString = messageFormatter.FormatMessage(ex, "UpdateScheduleIDAppointment failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/schedule/update_appoinment_data',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/schedule/update_appoinment_data',function(req,res,next)
 {
 
     try {
@@ -159,12 +129,12 @@ RestServer.post('/dvp/:version/limit_handler/schedule/update_appoinment_data',fu
         var jsonString = messageFormatter.FormatMessage(ex, "UpdateAppoinmentData failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/sipuser_group/add_sipuser_group',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/sipuser_group/add_sipuser_group',function(req,res,next)
 {
 
     try {
@@ -177,11 +147,11 @@ RestServer.post('/dvp/:version/limit_handler/sipuser_group/add_sipuser_group',fu
         var jsonString = messageFormatter.FormatMessage(ex, "AddSipUserGroup failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/sipuser_group/map_extensionid',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/sipuser_group/map_extensionid',function(req,res,next)
 {
 
     try {
@@ -194,11 +164,11 @@ RestServer.post('/dvp/:version/limit_handler/sipuser_group/map_extensionid',func
         var jsonString = messageFormatter.FormatMessage(ex, "MapExtensionID failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/sipuser_group/fill_usrgrp',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/sipuser_group/fill_usrgrp',function(req,res,next)
 {
 
     try {
@@ -211,11 +181,11 @@ RestServer.post('/dvp/:version/limit_handler/sipuser_group/fill_usrgrp',function
         var jsonString = messageFormatter.FormatMessage(ex, "FillUsrGrp failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/sipuser_group/update_sipuser_group',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/sipuser_group/update_sipuser_group',function(req,res,next)
 {
 
     try {
@@ -228,11 +198,11 @@ RestServer.post('/dvp/:version/limit_handler/sipuser_group/update_sipuser_group'
         var jsonString = messageFormatter.FormatMessage(ex, "UpdateSipUserGroup failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/limitapi/limit_increment',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/limitapi/limit_increment',function(req,res,next)
 {
 
     try {
@@ -250,11 +220,11 @@ RestServer.post('/dvp/:version/limit_handler/limitapi/limit_increment',function(
         var jsonString = messageFormatter.FormatMessage(ex, "LimitIncrement failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/limitapi/limit_decrement',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/limitapi/limit_decrement',function(req,res,next)
 {
 
 
@@ -273,11 +243,11 @@ RestServer.post('/dvp/:version/limit_handler/limitapi/limit_decrement',function(
         var jsonString = messageFormatter.FormatMessage(ex, "LimitDecrement failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/limitapi/add_new_limit_record',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/limitapi/add_new_limit_record',function(req,res,next)
 {
 
 
@@ -297,11 +267,11 @@ RestServer.post('/dvp/:version/limit_handler/limitapi/add_new_limit_record',func
         var jsonString = messageFormatter.FormatMessage(ex, "AddNewLimitRecord failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/limitapi/update_maxlimit',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/limitapi/update_maxlimit',function(req,res,next)
 {
     try {
         limit.UpdateMaxLimit(req.body,function(err,res)
@@ -318,13 +288,13 @@ RestServer.post('/dvp/:version/limit_handler/limitapi/update_maxlimit',function(
         var jsonString = messageFormatter.FormatMessage(ex, "UpdateMaxLimit failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/limitapi/update_enability',function(req,res,err)
+RestServer.post('/dvp/:version/limit_handler/limitapi/update_enability',function(req,res,next)
 {
 
 
@@ -343,13 +313,64 @@ RestServer.post('/dvp/:version/limit_handler/limitapi/update_enability',function
         var jsonString = messageFormatter.FormatMessage(ex, "UpdateEnability failed", false, res);
         res.end(jsonString);
     }
+    return next();
+});
+//.......................................................................................................................
 
+RestServer.post('/dvp/:version/limit_handler/filehandler/upload_file',function(req,res,next)
+{
+
+
+    try {
+        fl.AddToCouchBase(req.body,function(err,res)
+        {
+            var jsonString = messageFormatter.FormatMessage(ex, "Upload succeeded", true, res);
+            res.end(jsonString);
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "Upload failed", false, res);
+        res.end(jsonString);
+    }
+    return next();
+});
+
+//.......................................................................................................................
+
+RestServer.post('/dvp/:version/limit_handler/filehandler/upload_file_remote',function(req,res,next)
+{
+
+
+    try {
+
+        var fileKey = Object.keys(req.files)[0];
+        var file = req.files[fileKey];
+
+        fl.SaveUploadFileDetails(file,function(err,resz)
+        {
+            var jsonString = messageFormatter.FormatMessage(err, "Upload succeeded", true, null);
+            res.end(jsonString);
+        });
+
+    }
+    catch(ex)
+    {
+        //var jsonString = messageFormatter.FormatMessage(ex, "Upload failed", false, res);
+       // res.end(jsonString);
+        var jsonString = messageFormatter.FormatMessage(ex, "Upload not succeeded:exception found", false, null);
+        res.end(jsonString);
+    }
+    return next();
 });
 
 
 //.......................................get.............................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/find_valid_appoinment/:app',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/schedule/find_valid_appoinment/:app',function(req,res,next)
 {
 
     try {
@@ -363,16 +384,22 @@ RestServer.get('/dvp/:version/limit_handler/schedule/find_valid_appoinment/:app'
         var jsonString = messageFormatter.FormatMessage(ex, "FindValidAppoinment failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/check_availables',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/schedule/check_availables/:dt/:dy/:tm',function(req,res,next)
 {
 
     try {
-        schedule.CheckAvailables(req.body,res);
+        var obj="";
+         var Dt=req.params.dt;
+        var Dy=req.params.dy;
+        var Tm=req.params.tm;
+
+
+        schedule.CheckAvailables(Dt,Dy,Tm,res);
 
 
 
@@ -382,15 +409,15 @@ RestServer.get('/dvp/:version/limit_handler/schedule/check_availables',function(
         var jsonString = messageFormatter.FormatMessage(ex, "CheckAvailables failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_app_through_schedule',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/schedule/pick_app_through_schedule/:cmp/:tent/:dt/:dy/:tm',function(req,res,next)
 {
 
     try {
-        schedule.PickAppThroughSchedule(req.body,res);
+        schedule.PickAppThroughSchedule(req.params.cmp,req.params.tent,req.params.dt,req.params.dy,req.params.tm,res);
 
 
 
@@ -400,11 +427,11 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_app_through_schedule',
         var jsonString = messageFormatter.FormatMessage(ex, "PickAppThroughSchedule failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule',function(req,res,next)
 {
 
     try {
@@ -418,11 +445,11 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule',function(req
         var jsonString = messageFormatter.FormatMessage(ex, "PickSchedule failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule_action',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule_action',function(req,res,next)
 {
 
     try {
@@ -436,11 +463,11 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule_action',funct
         var jsonString = messageFormatter.FormatMessage(ex, "PickScheduleAction failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment',function(req,res,next)
 {
 
     try {
@@ -454,13 +481,13 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment',function(r
         var jsonString = messageFormatter.FormatMessage(ex, "PickApointment failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 
 });
 
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action',function(req,res,next)
 {
 
     try {
@@ -474,11 +501,11 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action',fun
         var jsonString = messageFormatter.FormatMessage(ex, "PickApointmentAction failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action',function(req,res,next)
 {
 
 
@@ -493,11 +520,11 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action',fun
         var jsonString = messageFormatter.FormatMessage(ex, "PickApointmentAction failed", false, res);
         res.end(jsonString);
     }
-
+    return next();
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_group_data/:name',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_group_data/:name',function(req,res,next)
 {
 
     try {
@@ -513,13 +540,13 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_group_data/:name',
         return next();
     }
 
-
+    return next();
 
 
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_group_endpoints',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_group_endpoints',function(req,res,next)
 {
 
     try {
@@ -534,12 +561,12 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_group_endpoints',f
         res.end(jsonString);
 
     }
-
+    return next();
 });
 
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/sipuser_group/endpoint_groupid',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/sipuser_group/endpoint_groupid',function(req,res,next)
 {
 
 
@@ -557,16 +584,17 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/endpoint_groupid',func
         res.end(jsonString);
 
     }
+    return next();
 });
 
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/sipuser_group/AllRecWithCompany/:CompanyId',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/sipuser_group/AllRecWithCompany/:CompanyId',function(req,res,next)
 {
 
 
     try {
-        group.AllRecWithCompany(req.params.CompanyId,res,err);
+        group.AllRecWithCompany(req.params.CompanyId,res);
 
 
 
@@ -578,17 +606,17 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/AllRecWithCompany/:Com
 
     }
 
-
+    return next();
 
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_all_users_in_group/:companyid',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_all_users_in_group/:companyid',function(req,res,next)
 {
 
 
     try {
-        group.GetAllUsersInGroup(req.params.companyid, res, err);
+        group.GetAllUsersInGroup(req.params.companyid, res);
 
 
 
@@ -600,15 +628,15 @@ RestServer.get('/dvp/:version/limit_handler/sipuser_group/get_all_users_in_group
 
     }
 
-
+    return next();
 
 });
 //.......................................................................................................................
-RestServer.get('/dvp/:version/limit_handler/testme/:id',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/testme/:id',function(req,res,next)
 {
 
     try {
-        group.Testme(req.params.id,res,err);
+        group.Testme(req.params.id,res);
 
 
 
@@ -620,17 +648,17 @@ RestServer.get('/dvp/:version/limit_handler/testme/:id',function(req,res,err)
 
     }
 
-
+    return next();
 
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/limitapi/get_current_limit',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/limitapi/get_current_limit',function(req,res,next)
 {
     try {
         limit.GetCurrentLimit(req.body,function(err,res)
         {
-            var jsonString = messageFormatter.FormatMessage(ex, "GetCurrentLimit succeeded", true, res);
+            var jsonString = messageFormatter.FormatMessage(err, "GetCurrentLimit succeeded", true, res);
             res.end(jsonString);
         });
 
@@ -643,17 +671,17 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/get_current_limit',function
         res.end(jsonString);
     }
 
-
+    return next();
 
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/limitapi/get_max_limit',function(req,res,err)
+RestServer.get('/dvp/:version/limit_handler/limitapi/get_max_limit',function(req,res,next)
 {
     try {
         limit.GetMaxLimit(req.body,function(err,res)
         {
-            var jsonString = messageFormatter.FormatMessage(ex, "GetMaxLimit succeeded", true, res);
+            var jsonString = messageFormatter.FormatMessage(err, "GetMaxLimit succeeded", true, res);
             res.end(jsonString);
         });
 
@@ -666,9 +694,18 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/get_max_limit',function(req
         res.end(jsonString);
     }
 
-
+    return next();
 
 });
+
+
+
+
+
+
+
+
+
 
 
 

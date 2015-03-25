@@ -93,7 +93,7 @@ function AddSipUserGroup(objNum,res)
             }
             else {
                 console.log("..................... Error found in saving.................................... : " + err);
-                var jsonString = messageFormatter.FormatMessage(err, "Error found in saving", false, result);
+                var jsonString = messageFormatter.FormatMessage(err, "Error found in saving", false, null);
                 res.end(jsonString);
 
             }
@@ -103,7 +103,7 @@ function AddSipUserGroup(objNum,res)
     }
     catch(ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception occures", false, result);
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception occures", false, null);
         res.end(jsonString);
     }
 }
@@ -158,177 +158,195 @@ function MapExtensionID(obj,res)
 
     */
 
-    DbConn.SipUACEndpoint.find({where: [{id: obj.ExtensionId}]}).complete(function (err, sipObject) {
-        if (!err && sipObject) {
-            console.log(sipObject);
+    try {
+        DbConn.SipUACEndpoint.find({where: [{id: obj.ExtensionId}]}).complete(function (err, sipObject) {
+            if (!err && sipObject) {
+                console.log(sipObject);
 
-            DbConn.UserGroup.find({where: [{id: obj.GroupId}]}).complete(function (err, groupObject) {
-                if (!err && sipObject) {
-                    console.log(groupObject);
+                try{
+                DbConn.UserGroup.find({where: [{id: obj.GroupId}]}).complete(function (err, groupObject) {
+                    if (!err && groupObject) {
+                        console.log(groupObject);
 
+try {
+    groupObject.addCSDB_SipUACEndpoint(sipObject).complete(function (errx, groupInstancex) {
 
-                    groupObject.addCSDB_SipUACEndpoint(sipObject).complete(function (errx, groupInstancex) {
-
-                        console.log('mapping group and sip done.................');
-                        // res.write(status.toString());
-                        res.end();
-
-
-                    });
-
-
-                }
-                else {
-
-                    res.end();
-
-                }
-
-            })
+        console.log('mapping group and sip done.................');
+        // res.write(status.toString());
+        var jsonString = messageFormatter.FormatMessage(errx, "mapping group and sip done", false, groupInstancex);
+        res.end(jsonString);
 
 
-        }
-        else {
+    });
+}
+                        catch(ex)
+                        {
+                            var jsonString = messageFormatter.FormatMessage(err, "Exception in Mapping", false, null);
+                            res.end(jsonString);
+                        }
 
-            res.end();
+                    }
+                    else {
 
-        }
+                        var jsonString = messageFormatter.FormatMessage(err, "Error in mapping", false, null);
+                        res.end(jsonString);
 
-        //return next();
-    })
+                    }
+
+                })
+
+            }
+            catch(ex)
+            {
+                var jsonString = messageFormatter.FormatMessage(err, "Exception in find group", false, null);
+                res.end(jsonString);
+            }
 
 
+            }
+            else {
+
+                var jsonString = messageFormatter.FormatMessage(ex, "Error in mapping", false, null);
+                res.end(jsonString);
+
+            }
+
+            //return next();
+        })
 
 
-return next();
+        return next();
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception occures", false, null);
+        res.end(jsonString);
+    }
 }
 //post :-post
 function FillUsrGrp(obj,res)
 {
-    DbConn.SipUACEndpoint
-        .findAll({where:[{id:obj.CSDBSipUACEndpointId}]
-        }
-    )
-        .complete(function(err, result) {
-            if (!!err) {
-                console.log('An error occurred while searching for Extension:', err);
-                //logger.info( 'Error found in searching : '+err );
-                res.end();
-
-            } else if (!result) {
-                console.log('No user with the Extension has been found.');
-                ///logger.info( 'No user found for the requirement. ' );
-                res.end();
-            } else {
-
-                DbConn.UserGroup
-                    .findAll({where:[{id:obj.CSDBUserGroupId}]
-                    }
-                )
-                    .complete(function(err, result) {
-                        if (!!err) {
-                            console.log('An error occurred while searching for Extension:', err);
-                            //logger.info( 'Error found in searching : '+err );
-                            res.end();
-
-                        } else if (!result) {
-                            console.log('No user with the Extension has been found.');
-                            ///logger.info( 'No user found for the requirement. ' );
-                            res.end();
-                        } else {
-
-                            console.log("New Record found...... Inserting.............");
-
-
-
-
-                                    // console.log(cloudEndObject);
-
-                                    var GrpObject = DbConn.UsrGrp
-                                        .build(
-                                        {
-                                            CSDBSipUACEndpointId:obj.CSDBSipUACEndpointId,
-                                            CSDBUserGroupId:obj.CSDBUserGroupId
-
-
-                                        }
-                                    )
-
-                                    AppObject.save().complete(function (err) {
-                                        if (!err) {
-                                            //  ScheduleObject.addAppointment(AppObject).complete(function (errx, AppInstancex) {
-
-                                            var status = 1;
-
-
-                                            // res.write(status.toString());
-                                            // res.end();
-                                            //});
-
-                                            console.log("..................... Saved Successfully ....................................");
-                                            res.end();
-
-                                        }
-                                        else
-                                        {
-                                            console.log("..................... Error found in saving.................................... : "+err);
-                                            res.end();
-
-                                        }
-
-
-                                    });
-
-                                    /*
-                                     ContextObject.addExtension(ExtensionObject).complete(function (errx, ContextInstancex)
-                                     {
-                                     status = status++;
-                                     });
-                                     }
-                                     else {
-
-                                     res.send(status.toString());
-                                     res.end();
-
-                                     console.log("Error on loadbalancer save --> ", err);
-
-                                     }
-
-
-                                     });*/
-
-
-
-
-
-
-
-
-
-
-
-                        }
-
-                    });
-
-
+    try {
+        DbConn.SipUACEndpoint
+            .findAll({
+                where: [{id: obj.CSDBSipUACEndpointId}]
             }
+        )
+            .complete(function (err, result) {
+                if (!!err) {
+                    console.log('An error occurred while searching for Extension:', err);
+                    //logger.info( 'Error found in searching : '+err );
+                    res.end();
 
-        });
-return next();
+                } else if (!result) {
+                    console.log('No user with the Extension has been found.');
+                    ///logger.info( 'No user found for the requirement. ' );
+                    res.end();
+                } else {
+
+                    DbConn.UserGroup
+                        .findAll({
+                            where: [{id: obj.CSDBUserGroupId}]
+                        }
+                    )
+                        .complete(function (err, result) {
+                            if (!!err) {
+                                console.log('An error occurred while searching for Extension:', err);
+                                //logger.info( 'Error found in searching : '+err );
+                                res.end();
+
+                            } else if (!result) {
+                                console.log('No user with the Extension has been found.');
+                                ///logger.info( 'No user found for the requirement. ' );
+                                res.end();
+                            } else {
+
+                                console.log("New Record found...... Inserting.............");
+
+
+                                // console.log(cloudEndObject);
+
+                                var GrpObject = DbConn.UsrGrp
+                                    .build(
+                                    {
+                                        CSDBSipUACEndpointId: obj.CSDBSipUACEndpointId,
+                                        CSDBUserGroupId: obj.CSDBUserGroupId
+
+
+                                    }
+                                )
+
+                                AppObject.save().complete(function (err) {
+                                    if (!err) {
+                                        //  ScheduleObject.addAppointment(AppObject).complete(function (errx, AppInstancex) {
+
+                                        var status = 1;
+
+
+                                        // res.write(status.toString());
+                                        // res.end();
+                                        //});
+
+                                        var jsonString = messageFormatter.FormatMessage(null, "Success", true, null);
+                                        res.end(jsonString);
+
+                                    }
+                                    else {
+                                        var jsonString = messageFormatter.FormatMessage(null, "ERROR", false, null);
+                                        res.end(jsonString);
+
+                                    }
+
+
+                                });
+
+                                /*
+                                 ContextObject.addExtension(ExtensionObject).complete(function (errx, ContextInstancex)
+                                 {
+                                 status = status++;
+                                 });
+                                 }
+                                 else {
+
+                                 res.send(status.toString());
+                                 res.end();
+
+                                 console.log("Error on loadbalancer save --> ", err);
+
+                                 }
+
+
+                                 });*/
+
+
+                            }
+
+                        });
+
+
+                }
+
+            });
+        return next();
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(err, "Exception in find group", false, null);
+        res.end(jsonString);
+    }
 }
 //post :-done
 function UpdateSipUserGroup(obj,res)
 {
-
+try {
     DbConn.UserGroup
         .update(
         {
-            GroupName:obj.GroupName ,
-            Domain :obj.Domain,
-            ExtraData :obj.ExtraData,
+            GroupName: obj.GroupName,
+            Domain: obj.Domain,
+            ExtraData: obj.ExtraData,
             ObjClass: obj.ObjClass,
-            ObjType :obj.ObjType,
+            ObjType: obj.ObjType,
             ObjCategory: obj.ObjCategory,
             CompanyId: obj.CompanyId,
             TenantId: obj.TenantId
@@ -336,21 +354,27 @@ function UpdateSipUserGroup(obj,res)
 
         },
         {
-            where: [{ id: obj.AID }]
+            where: [{id: obj.AID}]
         }
-    ).then(function() {
-            logger.info( 'Successfully Mapped. ');
-            console.log(".......................mapping is succeeded ....................");
-            res.end();
+    ).then(function () {
+            logger.info('Successfully Mapped. ');
 
-        }).error(function(err) {
-            logger.info( 'mapping error found in saving. : '+err);
-            console.log("Update failed ! "+ err);
-            //handle error here
-            res.end();
+            var jsonString = messageFormatter.FormatMessage(null, "mapping is succeeded", true, null);
+            res.end(jsonString);
+
+        }).error(function (err) {
+            logger.info('mapping error found in saving. : ' + err);
+            var jsonString = messageFormatter.FormatMessage(err, "Updation failed", false, null);
+            res.end(jsonString);
 
         });
     return next();
+}
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception in Updation", false, null);
+        res.end(jsonString);
+    }
 }
 
 
@@ -367,34 +391,45 @@ function UpdateSipUserGroup(obj,res)
 
 function GetGroupData(obj,res)
 {
-    DbConn.UserGroup
-        .findAll({where : [{GroupName:obj}]
-        }
-    )
-        .complete(function(err, result) {
-            if (!!err) {
-                console.log('An error occurred while searching for Extension:', err);
-                //logger.info( 'Error found in searching : '+err );
-                res.end();
-
-            } else if (!result) {
-                console.log('No user with the Extension has been found.');
-                ///logger.info( 'No user found for the requirement. ' );
-                res.end();
-
-            } else {
-
-                var Jresults = result.map(function (result) {
-                    console.log(result.toJSON());
-                    return result.toJSON()
-                });
-
-                //console.log(result.Action)
-
+    try {
+        DbConn.UserGroup
+            .findAll({
+                where: [{GroupName: obj}]
             }
+        )
+            .complete(function (err, result) {
+                if (!!err) {
+                    console.log('An error occurred while searching for Extension:', err);
+                    //logger.info( 'Error found in searching : '+err );
+                    var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Group:", false, null);
+                    res.end(jsonString);
 
-        });
-    res.end();
+                } else if (!result) {
+                    console.log('No user with the Extension has been found.');
+                    ///logger.info( 'No user found for the requirement. ' );
+                    var jsonString = messageFormatter.FormatMessage(null, "Null object returns", false, null);
+                    res.end(jsonString);
+
+                } else {
+
+                    var Jresults = result.map(function (result) {
+                        console.log(result.toJSON());
+                        return result.toJSON()
+                    });
+                    var jsonString = messageFormatter.FormatMessage(result, "Succeeded...", true, result);
+                    res.end(jsonString);
+                    //console.log(result.Action)
+
+                }
+
+            });
+
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception in get data group", false, null);
+        res.end(jsonString);
+    }
 }
 
 //get:-done
@@ -466,7 +501,7 @@ function EndpointGroupID(obj,res)
 
 //get :-done
 
-function AllRecWithCompany(req,res,err)
+function AllRecWithCompany(req,res)
 {
     DbConn.UserGroup
         .findAll({where : {CompanyId:req}
@@ -500,7 +535,7 @@ function AllRecWithCompany(req,res,err)
 }
 
 //get :-done
-function GetAllUsersInGroup(req,res,err)
+function GetAllUsersInGroup(req,res)
 {
    // DbConn.SipUACEndpoint.findAll({ where: {ExtensionId:req}, include: [DbConn.UserGroup]})
   //DbConn.UserGroup.findAll({ where: {id:req},attributes: ['"CSDB_UserGroup"."GroupName"'], include: [{ model: DbConn.SipUACEndpoint, attributes: ["SipUsername"]}]})
@@ -531,7 +566,7 @@ function GetAllUsersInGroup(req,res,err)
     res.end();
 }
 
-function Testme(req,res,err)
+function Testme(req,res)
 {
     DbConn.Schedule.findAll({ where: Sequelize.and({id:req}), include: [
 

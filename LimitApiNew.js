@@ -14,7 +14,7 @@ client.on("error", function (err) {
 });
 var lock = require("redis-lock")(client);
 
-
+/*
 var obj={
 
     "LimitId" :"number:093ca5a9-9347-4203-a82d-cd02fc75f8c7",
@@ -26,6 +26,7 @@ UpdateEnability(obj,function(err,res)
 {
     console.log(res);
 });
+*/
 /*
 GetObj('number:82939c80-df2f-4058-9281-d3ccfd43b091',function(err,res)
 {

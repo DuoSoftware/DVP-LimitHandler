@@ -259,7 +259,7 @@ var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessag
 
 
 //post :- done
-function AddSchedule(req,res,err)
+function AddSchedule(req,res)
 {
     try{
         var obj=req.body;
@@ -271,22 +271,16 @@ function AddSchedule(req,res,err)
     }
 
     try {
-        DbConn.Schedule.find({where: [{id: obj.CSDBScheduleId}]}).complete(function (err, ScheduleObject) {
-            if (!err && ScheduleObject) {
+        DbConn.Schedule.find({where: [{id: obj.id}]}).complete(function (err, ScheduleObject) {
+            if (!err && ScheduleObject==null) {
                 // console.log(cloudEndObject);
                 try {
-                    var AppObject = DbConn.Appointment
+                    var AppObject = DbConn.Schedule
                         .build(
                         {
-                            AppointmentName: obj.AppointmentName,
+                            ScheduleName: obj.ScheduleName,
                             Action: obj.Action,
                             ExtraData: obj.ExtraData,
-
-                            StartDate: obj.StartDate,
-                            EndDate: obj.EndDate,
-                            StartTime: obj.StartTime,
-                            EndTime: obj.EndTime,
-                            DaysOfWeek: obj.DaysOfWeek,
                             ObjClass: obj.ObjClass,
                             ObjType: obj.ObjType,
                             ObjCategory: obj.ObjCategory,
@@ -338,15 +332,15 @@ function AddSchedule(req,res,err)
             }
             else if (!ScheduleObject) {
                 console.log("................................... Given Cloud End User is invalid ................................ ");
-                var jsonString = messageFormatter.FormatMessage(null, "null object returned as shedule search result for : "+obj.CSDBScheduleId, false, result);
+                var jsonString = messageFormatter.FormatMessage(null, "null object returned as shedule search result for : "+obj.CSDBScheduleId, false, ScheduleObject);
                 res.end(jsonString);
             }
             else {
-                var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, result);
+                var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
                 res.end(jsonString);
             }
 
-            return next();
+            //  return next();
         });
     }
     catch(ex)
@@ -358,6 +352,111 @@ function AddSchedule(req,res,err)
 
 
 }
+//post :- done
+function AddAppointment(req,res
+)
+{
+    try{
+        var obj=req.body;
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception found in object creating from req body", false, req);
+        res.end(jsonString);
+    }
+
+    try {
+        DbConn.Schedule.find({where: [{id: obj.CSDBScheduleId}]}).complete(function (err, ScheduleObject) {
+            if (!err && ScheduleObject) {
+                // console.log(cloudEndObject);
+                try {
+                    var AppObject = DbConn.Appointment
+                        .build(
+                        {
+                            AppointmentName: obj.AppointmentName,
+                            Action:obj.Action,
+                            ExtraData: obj.ExtraData,
+                            StartDate: obj.StartDate,
+                            EndDate: obj.EndDate,
+                            StartTime: obj.StartTime,
+                            EndTime: obj.EndTime,
+                            DaysOfWeek:obj.DaysOfWeek,
+                            ObjClass:obj.ObjClass,
+                            ObjType:obj.ObjType,
+                            ObjCategory:obj.ObjCategory,
+                            CompanyId:obj.CompanyId,
+                            TenantId:obj.TenantId
+
+
+                        }
+                    )
+                }
+                catch(ex)
+                {
+                    var jsonString = messageFormatter.FormatMessage(ex, "Exception found in building appointment objecty", false, req);
+                    res.end(jsonString);
+                }
+
+                AppObject.save().complete(function (err,result) {
+                    if (!err) {
+
+                        console.log("Saving succeeded ");
+                        ScheduleObject.addAppointment(AppObject).complete(function (errx, AppObjIntex) {
+
+                            if(AppObjIntex)
+                            {
+                                var jsonString = messageFormatter.FormatMessage(null, "Mapping is succeeded ", true, AppObjIntex);
+                                res.end(jsonString);
+                            }
+                            else
+                            {
+                                var jsonString = messageFormatter.FormatMessage(errx, "Mapping is failed ", false, null);
+                                res.end(jsonString);
+                            }
+
+
+
+
+                            // res.write(status.toString());
+                            // res.end();
+                        });
+
+
+                    }
+                    else {
+
+                        var jsonString = messageFormatter.FormatMessage(err, "saving is failed ", false, null);
+                        res.end(jsonString);
+                    }
+
+
+                });
+
+
+
+
+            }
+            else if (!ScheduleObject) {
+                console.log("................................... Given Cloud End User is invalid ................................ ");
+                var jsonString = messageFormatter.FormatMessage(null, "null object returned as shedule search result for : "+obj.CSDBScheduleId, false, ScheduleObject);
+                res.end(jsonString);
+            }
+            else {
+                var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
+                res.end(jsonString);
+            }
+
+            //  return next();
+        });
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching Schedule ", false, null);
+        res.end(jsonString);
+    }
+
+}
+
 
 //get :-done
 function FindValidAppoinment(req,res,err) {
@@ -366,7 +465,7 @@ function FindValidAppoinment(req,res,err) {
     {
         DbConn.Appointment
             .findAll({
-                where: {AppointmentName: req}
+               // where: {id: req}
             }
         )
             .complete(function (err, result) {
@@ -388,6 +487,8 @@ function FindValidAppoinment(req,res,err) {
 
                 } else {
                     try{
+
+                       // var index=
                         for (var index in result) {
                             if (result[index].StartDate == null || result[index].EndDate == null) {
 
@@ -401,8 +502,11 @@ function FindValidAppoinment(req,res,err) {
                                             if (TimeCheck(result[index])) {
                                                 try{
                                                     if (DayCheck(result[index])) {
-                                                        console.log('Record Found : ' + result[index].CSDB_Appointments);
-                                                        res.end(result[index].toJSON());
+                                                        console.log('Record Found : ' + result[index]);
+
+                                                        var jsonString = messageFormatter.FormatMessage(null, "Successfully Found ", true, jsonString);
+                                                        res.end(jsonString);
+                                                        // res.end(result[index]);
                                                     }
                                                     else {
                                                         continue;
@@ -434,6 +538,9 @@ function FindValidAppoinment(req,res,err) {
 
                             }
                         }
+                        var jsonString = messageFormatter.FormatMessage(null, "Record finished : No recode found ", false, null);
+                        res.end(jsonString);
+
                     }
                     catch(ex)
                     {
@@ -464,21 +571,27 @@ function DateCheck(reslt)
             // console.log('Null found');
 
         }
-        else if (reslt.StartDate == null || reslt.EndDate == null) {
-            return false;
-            console.log('Date error : null ');
-        }
+
+
         else {
 
-            var x = moment(moment()).isBetween(reslt.StartDate, reslt.EndDate);
-
-            if (x) {
-                return true;
+            try {
+                var x = moment(moment()).isBetween(reslt.StartDate, reslt.EndDate);
+                if (x) {
+                    return true;
+                }
+                else {
+                    console.log('Date error 2');
+                    return false;
+                }
             }
-            else {
-                console.log('Date error 2');
+            catch(ex)
+            {
+                console.log("Exception in date :"+ex);
                 return false;
             }
+
+
         }
     }
     catch(ex)
@@ -502,7 +615,7 @@ function TimeCheck(reslt)
     }
     else if(reslt.StartTime == null || reslt.EndTime==null)
     {
-        return false;
+        return true;
         console.log('time null');
     }
     else {
@@ -525,10 +638,17 @@ function DayCheck(reslt)
         if (reslt.DaysOfWeek == null) {
             return true;
         }
+
         else {
 
-
-            var DaysArray = reslt.DaysOfWeek.split(",");
+            try {
+                var DaysArray = reslt.DaysOfWeek.split(",");
+            }
+            catch(ex)
+            {
+                consloe.log("Invalid days");
+                return false;
+            }
             //  var str = "123, 124, 234,252";
             //var arr = str.split(",").map(function (val) { return +val + 1; });
 
@@ -552,13 +672,13 @@ function DayCheck(reslt)
 
 
 //get :- done
-function CheckAvailables(dataz,res)
+function CheckAvailables(Dt,Dy,Tm,res)
 {
     try {
-        var obj = dataz;
-        var ReqDate = obj.Dt;
-        var ReqDay = obj.Dy;
-        var ReqTime = obj.Tm;
+        //var obj = dataz;
+        var ReqDate = Dt;
+        var ReqDay = Dy;
+        var ReqTime = Tm;
         var DaySt = false;
         var DbDays = null;
 
@@ -659,47 +779,76 @@ function CheckAvailables(dataz,res)
 function UpdateScheduleID(obj,res)
 {
     try {
-        DbConn.Appointment
-            .update(
-            {
-                CSDBScheduleId: obj.SID
+        DbConn.Schedule.find({where: [{id: obj.SID}]}).complete(function (err, ScheduleObject) {
+            if (!err && ScheduleObject==null) {
+                // console.log(cloudEndObject);
+
+                var jsonString = messageFormatter.FormatMessage(err, "No Schedule found : "+obj.SID, false, null);
+                res.end(jsonString);
 
 
-            },
-            {
-                where: [{id: obj.AID}]
             }
-        ).then(function (result) {
-                logger.info('Successfully Mapped. ');
-                console.log(".......................mapping is succeeded ....................");
-                var jsonString = messageFormatter.FormatMessage(err, "mapping is succeeded", true, result);
+            else if (ScheduleObject!=null && !err) {
+                try {
+                    DbConn.Appointment
+                        .update(
+                        {
+                            CSDBScheduleId: obj.SID
+
+
+                        },
+                        {
+                            where: [{id: obj.AID}]
+                        }
+                    ).then(function (result) {
+                           // logger.info('Successfully Mapped. ');
+                            console.log(".......................mapping is succeeded ....................");
+                            var jsonString = messageFormatter.FormatMessage(err, "mapping is succeeded", true, result);
+                            res.end(jsonString);
+
+                        }).error(function (err) {
+                            //logger.info('mapping error found in saving. : ' + err);
+                            console.log("mapping failed ! " + err);
+                            //handle error here
+                            var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
+                            res.end(jsonString);
+
+                        });
+
+                }
+                catch (ex)
+                {
+                    var jsonString = messageFormatter.FormatMessage(err, "Exception in Mapping", false, obj);
+                    res.end(jsonString);
+                }
+
+            }
+            else {
+                var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
                 res.end(jsonString);
+            }
 
-            }).error(function (err) {
-                logger.info('mapping error found in saving. : ' + err);
-                console.log("mapping failed ! " + err);
-                //handle error here
-                var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
-                res.end(jsonString);
-
-            });
-
+            //  return next();
+        });
     }
-    catch (ex)
+    catch(ex)
     {
-        var jsonString = messageFormatter.FormatMessage(err, "Exception in Mapping", false, obj);
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching Schedule ", false, null);
         res.end(jsonString);
     }
+
+
+
 
 }
 
 //get :-done
-function PickAppThroughSchedule(obj,res) {
+function PickAppThroughSchedule(cmp,tent,dt,dy,tm,res) {
 
     try{
         DbConn.Schedule
             .findAll({
-                where: [{CompanyId: obj.CompanyId} && {TenantId: obj.TenantId}], attributes: ['id']
+                where: [{CompanyId: cmp} ,{TenantId: tent}], attributes: ['id']
             }
         )
             .complete(function (err, result) {
@@ -740,13 +889,13 @@ function PickAppThroughSchedule(obj,res) {
 
 
                                         for (var index in resultapp) {
-                                            if (moment(obj.ReqDate).isBetween(resultapp[index].StartDate, resultapp[index].EndDate)) {
-                                                if (obj.ReqTime >= resultapp[index].StartTime && obj.ReqTime < resultapp[index].EndTime) {
+                                            if (moment(dt).isBetween(resultapp[index].StartDate, resultapp[index].EndDate)) {
+                                                if (tm >= resultapp[index].StartTime && tm < resultapp[index].EndTime) {
                                                     DbDays = resultapp[index].DaysOfWeek.split(',');
 
 
                                                     //var dt = moment(DaysArray[dindex]).format('dddd');
-                                                    if (DbDays.indexOf(obj.ReqDay) > -1) {
+                                                    if (DbDays.indexOf(dy) > -1) {
                                                         DaySt = true;
                                                     }
                                                     else {
@@ -757,10 +906,14 @@ function PickAppThroughSchedule(obj,res) {
 
 
                                                     if (DaySt) {
-                                                        var Jresults = result[index].map(function (result) {
+
+                                                        var jsonString = messageFormatter.FormatMessage(null, "Success , Record found : ", true, result[index]);
+                                                        res.end(jsonString);
+
+                                                        /*var Jresults = result[index].map(function (result) {
                                                             console.log(result.toJSON());
                                                             return result.toJSON()
-                                                        });
+                                                        });*/
                                                         break;
                                                     }
                                                     else {
@@ -973,103 +1126,8 @@ function UpdateScheduleData(obj,res)
 {
     try {
         DbConn.Schedule
-            .update(
-            {
-                ScheduleName: obj.ScheduleName,
-                Action: obj.Action,
-                ExtraData: obj.ExtraData,
-                ObjClass: obj.ObjClass,
-                ObjType: obj.ObjType,
-                ObjCategory: obj.ObjCategory,
-                CompanyId: obj.CompanyId,
-                TenantId: obj.TenantId
-
-
-            },
-            {
-                where: [{id: obj.id}]
-
-            }
-        ).then(function (result) {
-                logger.info('Successfully Mapped. ');
-                console.log(".......................mapping is succeeded ....................");
-                var jsonString = messageFormatter.FormatMessage(err, "mapping is succeeded", true, result);
-                res.end(jsonString);
-
-            }).error(function (err) {
-                logger.info('mapping error found in saving. : ' + err);
-                console.log("mapping failed ! " + err);
-
-                var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, result);
-                res.end(jsonString);
-                //handle error here
-
-            });
-    }
-    catch (ex)
-    {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception occures", false, obj);
-        res.end(jsonString);
-    }
-    return next();
-}
-
-//post :-done
-function UpdateAppoinmentData(obj,res)
-{
-    try {
-        DbConn.Appointment
-            .update(
-            {
-                AppointmentName: obj.AppointmentName,
-                Action: obj.Action,
-                ExtraData: obj.ExtraData,
-                StartDate: obj.StartDate,
-                EndDate: obj.StartDate,
-                StartTime: obj.StartTime,
-                EndTime: obj.EndTime,
-                DaysOfWeek: obj.DaysOfWeek,
-                ObjClass: obj.ObjClass,
-                ObjType: obj.ObjType,
-                ObjCategory: obj.ObjCategory,
-                CompanyId: obj.CompanyId,
-                TenantId: obj.TenantId
-
-
-            },
-            {
-                where: [{id: obj.id}]
-            }
-        ).then(function (result) {
-                logger.info('Successfully Mapped. ');
-                console.log(".......................Mapping is succeeded ....................");
-                var jsonString = messageFormatter.FormatMessage(err, "Mapping is succeeded", true, result);
-                res.end(jsonString);
-
-            }).error(function (err) {
-                logger.info('mapping error found in saving. : ' + err);
-                console.log("mapping failed ! " + err);
-                var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, result);
-                res.end(jsonString);
-                //handle error here
-
-            });
-    }
-    catch(ex)
-    {
-        var jsonString = messageFormatter.FormatMessage(err, "Exception returns", false, obj);
-        res.end(jsonString);
-    }
-    return next();
-}
-
-//post:-done
-function UpdateScheduleIDAppointment(obj,res)
-{
-    try {
-        DbConn.Schedule
-            .findAll({
-                where: {id: obj.id}, attributes: ['id']
+            .find({
+                where: {id: obj.id}
             }
         )
             .complete(function (err, result) {
@@ -1082,12 +1140,175 @@ function UpdateScheduleIDAppointment(obj,res)
                 } else if (!result) {
                     console.log('No user with the Extension has been found.');
                     ///logger.info( 'No user found for the requirement. ' );
+                    var jsonString = messageFormatter.FormatMessage(err, "Null returns :no records : no errors", false, result);
+                    res.end(jsonString);
+
+                } else if(result){
+
+                    try {
+                        DbConn.Schedule
+                            .update(
+                            {
+                                ScheduleName: obj.ScheduleName,
+                                Action: obj.Action,
+                                ExtraData: obj.ExtraData,
+                                ObjClass: obj.ObjClass,
+                                ObjType: obj.ObjType,
+                                ObjCategory: obj.ObjCategory,
+                                CompanyId: obj.CompanyId,
+                                TenantId: obj.TenantId
+
+
+                            },
+                            {
+                                where: [{id: obj.id}]
+
+                            }
+                        ).then(function (result) {
+                                //logger.info('Successfully Mapped. ');
+                                console.log(".......................Updation is succeeded ....................");
+                                var jsonString = messageFormatter.FormatMessage(null, "Updation is succeeded", true, result);
+                                res.end(jsonString);
+
+                            }).error(function (err) {
+                                //logger.info('mapping error found in saving. : ' + err);
+                                console.log("mapping failed ! " + err);
+
+                                var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
+                                res.end(jsonString);
+                                //handle error here
+
+                            });
+                    }
+                    catch (ex)
+                    {
+                        var jsonString = messageFormatter.FormatMessage(ex, "Exception occures", false, obj);
+                        res.end(jsonString);
+                    }
+
+
+                }
+
+            });
+    }
+    catch (ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception found", false, obj);
+        res.end(jsonString);
+    }
+
+
+
+    // return next();
+}
+
+//post :-done
+function UpdateAppoinmentData(obj,res)
+{
+
+
+    try {
+        DbConn.Appointment
+            .find({
+                where: {id: obj.id}
+            }
+        )
+            .complete(function (err, result) {
+                if (!!err) {
+                    console.log('An error occurred while searching for Appointment:', err);
+                    //logger.info( 'Error found in searching : '+err );
+                    var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Appointment:", false, result);
+                    res.end(jsonString);
+
+                } else if (!result) {
+                    console.log('No user with the Extension has been found.');
+                    ///logger.info( 'No user found for the requirement. ' );
+                    var jsonString = messageFormatter.FormatMessage(err, "Null returns :no records : no errors", false, result);
+                    res.end(jsonString);
+
+                } else if(result){
+
+                    try {
+                        DbConn.Appointment
+                            .update(
+                            {
+                                AppointmentName: obj.AppointmentName,
+                                Action: obj.Action,
+                                ExtraData: obj.ExtraData,
+                                StartDate: obj.StartDate,
+                                EndDate: obj.StartDate,
+                                StartTime: obj.StartTime,
+                                EndTime: obj.EndTime,
+                                DaysOfWeek: obj.DaysOfWeek,
+                                ObjClass: obj.ObjClass,
+                                ObjType: obj.ObjType,
+                                ObjCategory: obj.ObjCategory,
+                                CompanyId: obj.CompanyId,
+                                TenantId: obj.TenantId
+
+
+                            },
+                            {
+                                where: [{id: obj.id}]
+                            }
+                        ).then(function (result) {
+                                //logger.info('Successfully Updated. ');
+                                console.log(".......................Updation is succeeded ....................");
+                                var jsonString = messageFormatter.FormatMessage(err, "Updation is succeeded", true, result);
+                                res.end(jsonString);
+
+                            }).error(function (err) {
+                                //logger.info('mapping error found in saving. : ' + err);
+                                console.log("mapping failed ! " + err);
+                                var jsonString = messageFormatter.FormatMessage(err, "Updation error found in saving. : " + err, false, result);
+                                res.end(jsonString);
+                                //handle error here
+
+                            });
+                    }
+                    catch(ex)
+                    {
+                        var jsonString = messageFormatter.FormatMessage(err, "Exception returns", false, obj);
+                        res.end(jsonString);
+                    }
+
+
+                }
+
+            });
+    }
+    catch (ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "Exception found", false, obj);
+        res.end(jsonString);
+    }
+}
+
+//post:-done
+function UpdateScheduleIDAppointment(obj,res)
+{
+    try {
+        DbConn.Schedule
+            .find({
+                where: {id: obj.id}
+            }
+        )
+            .complete(function (err, result) {
+                if (!!err) {
+                    console.log('An error occurred while searching for Extension:', err);
+                    //logger.info( 'Error found in searching : '+err );
+                    var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Schedule:", false, result);
+                    res.end(jsonString);
+
+                } else if (!result) {
+                    console.log("No user with the Schedule id : "+obj.id+" has been found.");
+                    ///logger.info( 'No user found for the requirement. ' );
                     var jsonString = messageFormatter.FormatMessage(err, "Null returns for "+obj.id, false, result);
                     res.end(jsonString);
 
 
-                } else {
-
+                } else if(result) {
+                    console.log("Submitted Schedule id is valid : "+obj.id);
                     try{
                         DbConn.Appointment
                             .update(
@@ -1100,15 +1321,15 @@ function UpdateScheduleIDAppointment(obj,res)
                                 where: [{id: obj.AppID}]
                             }
                         ).then(function (result) {
-                                logger.info('Successfully Mapped. ');
-                                console.log(".......................Mapping is succeeded ....................");
-                                var jsonString = messageFormatter.FormatMessage(err, "Mapping is succeeded", true, result);
+                                //logger.info('Successfully Mapped. ');
+                                console.log(".......................Updation is succeeded ....................");
+                                var jsonString = messageFormatter.FormatMessage(err, "Updation is succeeded", true, result);
                                 res.end(jsonString);
 
                             }).error(function (err) {
-                                logger.info('mapping error found in saving. : ' + err);
-                                console.log("mapping failed ! " + err);
-                                var jsonString = messageFormatter.FormatMessage(err, "Mapping is Failed", false, result);
+                                //logger.info('mapping error found in saving. : ' + err);
+                                console.log("Updation failed ! " + err);
+                                var jsonString = messageFormatter.FormatMessage(err, "Updation is Failed", false, result);
                                 res.end(jsonString);
                                 //handle error here
 
@@ -1120,6 +1341,11 @@ function UpdateScheduleIDAppointment(obj,res)
                         res.end(jsonString);
                     }
 
+                }
+                else
+                {
+                    var jsonString = messageFormatter.FormatMessage(err, "Error In updation", false, null);
+                    res.end(jsonString);
                 }
 
             });
@@ -1133,6 +1359,7 @@ function UpdateScheduleIDAppointment(obj,res)
 }
 
 module.exports.AddSchedule = AddSchedule;
+module.exports.AddAppointment = AddAppointment;
 module.exports.UpdateScheduleData = UpdateScheduleData;
 module.exports.UpdateAppoinmentData = UpdateAppoinmentData;
 module.exports.UpdateScheduleIDAppointment = UpdateScheduleIDAppointment;
@@ -1144,5 +1371,6 @@ module.exports.PickSchedule = PickSchedule;
 module.exports.PickScheduleAction = PickScheduleAction;
 module.exports.PickApointmentAction = PickApointmentAction;
 module.exports.PickApointment = PickApointment;
+
 
 
