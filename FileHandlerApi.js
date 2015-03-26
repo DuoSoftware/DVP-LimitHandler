@@ -392,15 +392,15 @@ function GetAttachmentMetaDataByID(req,callback)
     }
 }
 
-function DownloadFileByID(req,callback)
+function DownloadFileByID(res,req,callback)
 {
     try {
         //DbConn.FileUpload.find({where: [{UniqueId: rand2}]}).complete(function (err, ScheduleObject) {
         DbConn.FileUpload.find({where: [{UniqueId: req}]}).complete(function (err, ScheduleObject) {
             if (!err && ScheduleObject.length == 0) {
                 // console.log(cloudEndObject);
-                var jsonString = messageFormatter.FormatMessage(null, "Record not Found", false, null);
-                callback(null, jsonString);
+               // var jsonString = messageFormatter.FormatMessage(null, "Record not Found", false, null);
+                callback(null, -1);
 
             }
             else if (ScheduleObject) {
@@ -410,13 +410,16 @@ function DownloadFileByID(req,callback)
 
                 var s= (ScheduleObject.URL.toString()).replace('\','/'');
 
+                res.setHeader('Content-Type',ScheduleObject.FileStructure);
+
 
                var source = fs.createReadStream(s);
-                var dest = fs.createWriteStream('C:/Users/pawan/Desktop/jsons/'+ScheduleObject.DisplayName.toString());
+                //var dest = fs.createWriteStream('C:/Users/pawan/Desktop/jsons/'+ScheduleObject.DisplayName.toString());
 
-                source.pipe(dest);
-                source.on('end', function() { /* copied */ });
-                source.on('error', function(err) { /* error */ });
+
+                source.pipe(res);
+                source.on('end', function() { res.end(); });
+                source.on('error', function(err) { res.end(); });
 
                 var AppObject = DbConn.FileDownload
                     .build(
@@ -443,8 +446,8 @@ function DownloadFileByID(req,callback)
 
 
                         console.log("..................... Saved Successfully ....................................");
-                        var jsonString = messageFormatter.FormatMessage(err, "Saved to pg", true, result);
-                        callback(null, jsonString);
+                       // var jsonString = messageFormatter.FormatMessage(err, "Saved to pg", true, result);
+                        callback(null, ScheduleObject.FileStructure);
                         // res.end();
 
 
@@ -452,7 +455,7 @@ function DownloadFileByID(req,callback)
                     else {
                         console.log("..................... Error found in saving.................................... : " + err);
                         var jsonString = messageFormatter.FormatMessage(err, "ERROR found in saving to PG", false, null);
-                        callback(err, jsonString);
+                        callback(err, 0);
                         //res.end();
                     }
 

@@ -443,13 +443,13 @@ RestServer.post('/dvp/:version/limit_handler/filehandler/Download_file_remote',f
 //.......................................................................................................................
 
 
-RestServer.post('/dvp/:version/limit_handler/filehandler/download_file/:id',function(req,res,next)
+RestServer.get('/dvp/:version/limit_handler/filehandler/download_file/:id',function(req,res,next)
 {
     try {
-        fl.DownloadFileByID(req.params.id,function(err,resz)
+
+        fl.DownloadFileByID(res,req.params.id,function(err,resz)
         {
 
-            res.end(resz);
         });
 
 
