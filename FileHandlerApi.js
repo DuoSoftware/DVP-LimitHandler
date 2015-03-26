@@ -123,6 +123,8 @@ function AddToCouchBase(req,callback) {
 }
 
 
+
+/*
 function AddNewUploadDetails(req, callback) {
     try {
         var obj = req.body;
@@ -140,12 +142,12 @@ function AddNewUploadDetails(req, callback) {
     }
 
     try {
-        DbConn.CSDB_FileUploads.findAll({where: [{UniqueId: rand}]}).complete(function (err, ScheduleObject) {
+        DbConn.FileUpload.findAll({where: [{UniqueId: rand}]}).complete(function (err, ScheduleObject) {
             if (!err && ScheduleObject.length == 0) {
                 // console.log(cloudEndObject);
 
 
-                var AppObject = DbConn.CSDB_FileUploads
+                var AppObject = DbConn.FileUpload
                     .build(
                     {
                         UniqueId: rand,
@@ -205,6 +207,8 @@ function AddNewUploadDetails(req, callback) {
 
     }
 }
+*/
+
 
 function RecordDownloadFileDetails(req, callback) {
     var outputPath = path.resolve(__dirname, 'b2');
@@ -263,7 +267,7 @@ function UploadFile(req,res)
 }
 
 
-function SaveUploadFileDetails(req,callback)
+function SaveUploadFileDetails(cmp,ten,req,callback)
 {
     var rand2 = uuid.v4().toString();
 
@@ -283,15 +287,15 @@ function SaveUploadFileDetails(req,callback)
                     {
                         UniqueId: rand2,
                         FileStructure: req.type,
-                        ObjClass: 'clz001',
-                        ObjType: 'typ001',
-                        ObjCategory: 'cat001',
+                        ObjClass: 'body.ObjClass',
+                        ObjType: 'body.ObjType',
+                        ObjCategory: 'body.ObjCategory',
                         URL: req.path,
                         UploadTimestamp: Date.now(),
                         Filename: req.name,
                         DisplayName: DisplayName,
-                        CompanyId: 1,
-                        TenantId: 1
+                        CompanyId:cmp,
+                        TenantId: ten
 
 
                     }
@@ -303,16 +307,16 @@ function SaveUploadFileDetails(req,callback)
 
 
                         console.log("..................... Saved Successfully ....................................");
-                        var jsonString = messageFormatter.FormatMessage(err, "Saved to pg", true, result);
-                        callback(null, jsonString);
+                       // var jsonString = messageFormatter.FormatMessage(err, "Saved to pg", true, result);
+                        callback(null, AppObject.UniqueId);
                         // res.end();
 
 
                     }
                     else {
                         console.log("..................... Error found in saving.................................... : " + err);
-                        var jsonString = messageFormatter.FormatMessage(err, "ERROR found in saving to PG", false, null);
-                        callback(err, jsonString);
+                        //var jsonString = messageFormatter.FormatMessage(err, "ERROR found in saving to PG", false, null);
+                        callback(err, null);
                         //res.end();
                     }
 
@@ -323,13 +327,13 @@ function SaveUploadFileDetails(req,callback)
             }
             else if (ScheduleObject) {
                 console.log("................................... Given Cloud End User is invalid ................................ ");
-                var jsonString = messageFormatter.FormatMessage(err, "Record already in DB", false, null);
-                callback(null, jsonString);
+               // var jsonString = messageFormatter.FormatMessage(err, "Record already in DB", false, null);
+                callback(null, null);
                 //res.end();
             }
             else {
-                var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
-                callback(null, jsonString);
+               // var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
+                callback(null,null);
                // res.end();
             }
 

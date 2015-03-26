@@ -9,6 +9,8 @@ var group=require('./SipUserGroupManagement.js');
 var limit=require('./LimitApiNew.js');
 var fl=require('./FileHandlerApi.js');
 var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
+var CS=require('./CallServerChooser.js');
+var RP=require('./RedisPublisher.js');
 
 
 
@@ -353,7 +355,7 @@ RestServer.post('/dvp/:version/limit_handler/filehandler/upload_file',function(r
 
 //.......................................................................................................................
 
-RestServer.post('/dvp/:version/limit_handler/filehandler/upload_file_remote',function(req,res,next)
+RestServer.post('/dvp/:version/limit_handler/filehandler/upload_file_remote/:cmp/:ten',function(req,res,next)
 {
 
 
@@ -363,11 +365,48 @@ RestServer.post('/dvp/:version/limit_handler/filehandler/upload_file_remote',fun
         var file = req.files[fileKey];
         console.log(file.path);
 
-        fl.SaveUploadFileDetails(file,function(err,resz)
+
+        try {
+            CS.ProfileTypeCallserverChooser(req.params.cmp,req.params.ten,function(err,resz)
+            {
+                if(err==null && resz>0)
+                {
+                    fl.SaveUploadFileDetails(req.params.cmp,req.params.ten,file,function(err,respg)
+                    {
+                        if(err==null && respg!=null) {
+
+
+                            RP.RedisPublish(resz,respg);
+                            res.end("Success");
+
+                        }
+                        else
+                        {
+                            res.end(-1);
+                        }
+                    });
+
+                }
+                else
+                {
+                    res.end(-1);
+                }
+
+
+            });
+
+
+
+        }
+        catch(ex)
         {
-            var jsonString = messageFormatter.FormatMessage(err, "Upload succeeded", true, null);
+            var jsonString = messageFormatter.FormatMessage(ex, "GetMaxLimit failed", false, res);
             res.end(jsonString);
-        });
+        }
+
+
+
+
 
     }
     catch(ex)
@@ -426,7 +465,35 @@ RestServer.post('/dvp/:version/limit_handler/filehandler/download_file/:id',func
 
 });
 
+//.......................................................................................................................
 
+
+RestServer.post('/dvp/:version/limit_handler/filehandler/Profile_TypeCallserver_Chooser',function(req,res,next)
+{
+    try {
+        CS.ProfileTypeCallserverChooser(req,function(err,resz)
+        {
+            if(err==null)
+            {
+
+                res.end(resz);
+            }
+
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "GetMaxLimit failed", false, res);
+        res.end(jsonString);
+    }
+
+    return next();
+
+});
 
 //.......................................get.............................................................................
 
