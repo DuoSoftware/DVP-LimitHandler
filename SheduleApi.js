@@ -266,13 +266,19 @@ function AddSchedule(req,callback)
     }
     catch(ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception found in object creating from req body", false, req);
-        callback(null,jsonString);
+        //var jsonString = messageFormatter.FormatMessage(ex, "Exception found in object creating from req body", false, req);
+        callback(ex,undefined);
     }
 
     try {
         DbConn.Schedule.find({where: [{id: obj.id}]}).complete(function (err, ScheduleObject) {
-            if (!err && ScheduleObject==null) {
+
+            if(err)
+            {
+                callback(err,undefined);
+            }
+
+            else if (!err && !ScheduleObject) {
                 // console.log(cloudEndObject);
                 try {
                     var AppObject = DbConn.Schedule
@@ -296,30 +302,22 @@ function AddSchedule(req,callback)
                 }
                 catch(ex)
                 {
-                    var jsonString = messageFormatter.FormatMessage(ex, "Exception found in building appointment objecty", false, req);
-                    callback(null,jsonString);
+                    //var jsonString = messageFormatter.FormatMessage(ex, "Exception found in building appointment objecty", false, req);
+                    callback(ex,undefined);
                 }
 
                 AppObject.save().complete(function (err,result) {
                     if (!err) {
-                        //  ScheduleObject.addAppointment(AppObject).complete(function (errx, AppInstancex) {
-
                         var status = 1;
-
-
-                        // res.write(status.toString());
-                        // res.end();
-                        //});
-
                         console.log("..................... Saved Successfully ....................................");
-                        var jsonString = messageFormatter.FormatMessage(err, "AppObject saved successfully ", true, result);
-                        callback(nul,jsonString);
+                      //  var jsonString = messageFormatter.FormatMessage(err, "AppObject saved successfully ", true, result);
+                        callback(undefined,result);
 
                     }
                     else {
                         console.log("..................... Error found in saving.................................... : " + err);
-                        var jsonString = messageFormatter.FormatMessage(err, "AppObject saving error", false, result);
-                        callback(nul,jsonString);
+                        //var jsonString = messageFormatter.FormatMessage(err, "AppObject saving error", false, result);
+                        callback(err,undefined);
 
                     }
 
@@ -330,14 +328,14 @@ function AddSchedule(req,callback)
 
 
             }
-            else if (!ScheduleObject) {
+            else if (ScheduleObject) {
                 console.log("................................... Given Cloud End User is invalid ................................ ");
-                var jsonString = messageFormatter.FormatMessage(null, "null object returned as shedule search result for : "+obj.CSDBScheduleId, false, ScheduleObject);
-                callback(nul,jsonString);
+                //var jsonString = messageFormatter.FormatMessage(null, "null object returned as shedule search result for : "+obj.CSDBScheduleId, false, ScheduleObject);
+                callback(new Error('Already in DB'),undefined);
             }
             else {
-                var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
-                callback(nul,jsonString);
+               // var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
+                callback(err,ScheduleObject);
             }
 
             //  return next();
@@ -345,8 +343,8 @@ function AddSchedule(req,callback)
     }
     catch(ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching Schedule ", false, null);
-        callback(nul,jsonString);
+        //var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching Schedule ", false, null);
+        callback(ex,undefined);
     }
 
 
@@ -360,13 +358,19 @@ function AddAppointment(req,callback)
     }
     catch(ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception found in object creating from req body", false, req);
-        callback(null,jsonString);
+        //var jsonString = messageFormatter.FormatMessage(ex, "Exception found in object creating from req body", false, req);
+        callback(ex,undefined);
     }
 
     try {
         DbConn.Schedule.find({where: [{id: obj.CSDBScheduleId}]}).complete(function (err, ScheduleObject) {
-            if (!err && ScheduleObject) {
+
+            if(err)
+            {
+                callback(err,undefined);
+            }
+
+            else if (ScheduleObject) {
                 // console.log(cloudEndObject);
                 try {
                     var AppObject = DbConn.Appointment
@@ -392,8 +396,8 @@ function AddAppointment(req,callback)
                 }
                 catch(ex)
                 {
-                    var jsonString = messageFormatter.FormatMessage(ex, "Exception found in building appointment objecty", false, req);
-                    callback(null,jsonString);
+                   // var jsonString = messageFormatter.FormatMessage(ex, "Exception found in building appointment objecty", false, req);
+                    callback(ex,undefined);
                 }
 
                 AppObject.save().complete(function (err,result) {
@@ -404,28 +408,24 @@ function AddAppointment(req,callback)
 
                             if(AppObjIntex)
                             {
-                                var jsonString = messageFormatter.FormatMessage(null, "Mapping is succeeded ", true, AppObjIntex);
-                                callback(null,jsonString);
+                                //var jsonString = messageFormatter.FormatMessage(null, "Mapping is succeeded ", true, AppObjIntex);
+                                callback(undefined,AppObjIntex);
                             }
                             else
                             {
-                                var jsonString = messageFormatter.FormatMessage(errx, "Mapping is failed ", false, null);
-                                callback(null,jsonString);
+                                //var jsonString = messageFormatter.FormatMessage(errx, "Mapping is failed ", false, null);
+                                callback(errx,undefined);
                             }
 
 
-
-
-                            // res.write(status.toString());
-                            // res.end();
                         });
 
 
                     }
                     else {
 
-                        var jsonString = messageFormatter.FormatMessage(err, "saving is failed ", false, null);
-                        callback(null,jsonString);
+                        //var jsonString = messageFormatter.FormatMessage(err, "saving is failed ", false, null);
+                        callback(err,undefined);
                     }
 
 
@@ -435,23 +435,23 @@ function AddAppointment(req,callback)
 
 
             }
-            else if (!ScheduleObject) {
-                console.log("................................... Given Cloud End User is invalid ................................ ");
-                var jsonString = messageFormatter.FormatMessage(null, "null object returned as shedule search result for : "+obj.CSDBScheduleId, false, ScheduleObject);
-                callback(null,jsonString);
+            else if (!ScheduleObject && !err) {
+                //console.log("................................... Given Cloud End User is invalid ................................ ");
+               // var jsonString = messageFormatter.FormatMessage(null, "null object returned as shedule search result for : "+obj.CSDBScheduleId, false, ScheduleObject);
+                callback(new Error('No record found'),undefined);
             }
             else {
                 var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
-                callback(null,jsonString);
+                callback(err,ScheduleObject);
             }
 
-            //  return next();
+
         });
     }
     catch(ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching Schedule ", false, null);
-        callback(null,jsonString);
+        //var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching Schedule ", false, null);
+        callback(ex,undefined);
     }
 
 }
@@ -779,15 +779,12 @@ function UpdateScheduleID(obj,callback)
 {
     try {
         DbConn.Schedule.find({where: [{id: obj.SID}]}).complete(function (err, ScheduleObject) {
-            if (!err && ScheduleObject==null) {
-                // console.log(cloudEndObject);
 
-                var jsonString = messageFormatter.FormatMessage(err, "No Schedule found : "+obj.SID, false, null);
-                callback(null,jsonString);
-
-
+            if(err)
+            {
+                callback(err,undefined);
             }
-            else if (ScheduleObject!=null && !err) {
+            else if (ScheduleObject) {
                 try {
                     DbConn.Appointment
                         .update(
@@ -800,31 +797,40 @@ function UpdateScheduleID(obj,callback)
                             where: [{id: obj.AID}]
                         }
                     ).then(function (result) {
-                           // logger.info('Successfully Mapped. ');
+                            // logger.info('Successfully Mapped. ');
                             console.log(".......................mapping is succeeded ....................");
-                            var jsonString = messageFormatter.FormatMessage(err, "mapping is succeeded", true, result);
-                            callback(null,jsonString);
+                           // var jsonString = messageFormatter.FormatMessage(err, "mapping is succeeded", true, result);
+                            callback(undefined,result);
 
                         }).error(function (err) {
                             //logger.info('mapping error found in saving. : ' + err);
                             console.log("mapping failed ! " + err);
                             //handle error here
-                            var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
-                            callback(null,jsonString);
+                           // var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
+                            callback(err,undefined);
 
                         });
 
                 }
                 catch (ex)
                 {
-                    var jsonString = messageFormatter.FormatMessage(err, "Exception in Mapping", false, obj);
-                    callback(null,jsonString);
+                    //var jsonString = messageFormatter.FormatMessage(err, "Exception in Mapping", false, obj);
+                    callback(ex,undefined);
                 }
 
             }
+            else if (!err && !ScheduleObject) {
+                // console.log(cloudEndObject);
+
+                //var jsonString = messageFormatter.FormatMessage(err, "No Schedule found : "+obj.SID, false, null);
+                callback(new Error("No Schedule found : "+obj.SID),undefined);
+
+
+            }
+
             else {
-                var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
-                callback(null,jsonString);
+               // var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
+                callback(err,ScheduleObject);
             }
 
             //  return next();
@@ -832,8 +838,8 @@ function UpdateScheduleID(obj,callback)
     }
     catch(ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching Schedule ", false, null);
-        callback(null,jsonString);
+        //var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching Schedule ", false, null);
+        callback(ex,undefined);
     }
 
 
@@ -1127,17 +1133,17 @@ function UpdateScheduleData(obj,callback)
             }
         )
             .complete(function (err, result) {
-                if (!!err) {
+                if (err) {
                     console.log('An error occurred while searching for Extension:', err);
                     //logger.info( 'Error found in searching : '+err );
                     var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Schedule:", false, result);
-                    callback(null,jsonString);
+                    callback(err,undefined);
 
                 } else if (!result) {
                     console.log('No user with the Extension has been found.');
                     ///logger.info( 'No user found for the requirement. ' );
                     var jsonString = messageFormatter.FormatMessage(err, "Null returns :no records : no errors", false, result);
-                    callback(null,jsonString);
+                    callback(new Error('No record found'),undefied);
 
                 } else if(result){
 
@@ -1163,23 +1169,23 @@ function UpdateScheduleData(obj,callback)
                         ).then(function (result) {
                                 //logger.info('Successfully Mapped. ');
                                 console.log(".......................Updation is succeeded ....................");
-                                var jsonString = messageFormatter.FormatMessage(null, "Updation is succeeded", true, result);
-                                callback(null,jsonString);
+                                //var jsonString = messageFormatter.FormatMessage(null, "Updation is succeeded", true, result);
+                                callback(undefined,result);
 
                             }).error(function (err) {
                                 //logger.info('mapping error found in saving. : ' + err);
                                 console.log("mapping failed ! " + err);
 
-                                var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
-                                callback(null,jsonString);
+                               // var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
+                                callback(err,undefined);
                                 //handle error here
 
                             });
                     }
                     catch (ex)
                     {
-                        var jsonString = messageFormatter.FormatMessage(ex, "Exception occures", false, obj);
-                        callback(null,jsonString);
+                        //var jsonString = messageFormatter.FormatMessage(ex, "Exception occures", false, obj);
+                        callback(ex,undefined);
                     }
 
 
@@ -1189,8 +1195,7 @@ function UpdateScheduleData(obj,callback)
     }
     catch (ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception found", false, obj);
-        callback(null,jsonString);
+        callback(ex,undefined);
     }
 
 
@@ -1199,7 +1204,7 @@ function UpdateScheduleData(obj,callback)
 }
 
 //post :-done
-function UpdateAppoinmentData(obj,res)
+function UpdateAppoinmentData(obj,callback)
 {
 
 
@@ -1210,17 +1215,17 @@ function UpdateAppoinmentData(obj,res)
             }
         )
             .complete(function (err, result) {
-                if (!!err) {
+                if (err) {
                     console.log('An error occurred while searching for Appointment:', err);
                     //logger.info( 'Error found in searching : '+err );
-                    var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Appointment:", false, result);
-                    res.end(jsonString);
+                    //var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Appointment:", false, result);
+                    callback(err,undefined);
 
                 } else if (!result) {
-                    console.log('No user with the Extension has been found.');
+                   // console.log('No user with the Extension has been found.');
                     ///logger.info( 'No user found for the requirement. ' );
-                    var jsonString = messageFormatter.FormatMessage(err, "Null returns :no records : no errors", false, result);
-                    res.end(jsonString);
+                   // var jsonString = messageFormatter.FormatMessage(err, "Null returns :no records : no errors", false, result);
+                    callback(new Error('No appointment found : '+obj.id),undefined);
 
                 } else if(result){
 
@@ -1247,25 +1252,22 @@ function UpdateAppoinmentData(obj,res)
                             {
                                 where: [{id: obj.id}]
                             }
-                        ).then(function (result) {
+                        ).then(function (results) {
                                 //logger.info('Successfully Updated. ');
                                 console.log(".......................Updation is succeeded ....................");
-                                var jsonString = messageFormatter.FormatMessage(err, "Updation is succeeded", true, result);
-                                res.end(jsonString);
+                                callback(undefined,results);
 
                             }).error(function (err) {
                                 //logger.info('mapping error found in saving. : ' + err);
                                 console.log("mapping failed ! " + err);
-                                var jsonString = messageFormatter.FormatMessage(err, "Updation error found in saving. : " + err, false, result);
-                                res.end(jsonString);
+                                callback(err,undefined);
                                 //handle error here
 
                             });
                     }
                     catch(ex)
                     {
-                        var jsonString = messageFormatter.FormatMessage(err, "Exception returns", false, obj);
-                        res.end(jsonString);
+                        callback(ex,undefined);
                     }
 
 
@@ -1275,13 +1277,12 @@ function UpdateAppoinmentData(obj,res)
     }
     catch (ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception found", false, obj);
-        res.end(jsonString);
+        callback(ex,undefined);
     }
 }
 
 //post:-done
-function UpdateScheduleIDAppointment(obj,res)
+function UpdateScheduleIDAppointment(obj,callback)
 {
     try {
         DbConn.Schedule
@@ -1290,17 +1291,17 @@ function UpdateScheduleIDAppointment(obj,res)
             }
         )
             .complete(function (err, result) {
-                if (!!err) {
+                if (err) {
                     console.log('An error occurred while searching for Extension:', err);
                     //logger.info( 'Error found in searching : '+err );
-                    var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Schedule:", false, result);
-                    res.end(jsonString);
+                    //var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Schedule:", false, result);
+                    callback(err,undefined);
 
                 } else if (!result) {
                     console.log("No user with the Schedule id : "+obj.id+" has been found.");
                     ///logger.info( 'No user found for the requirement. ' );
-                    var jsonString = messageFormatter.FormatMessage(err, "Null returns for "+obj.id, false, result);
-                    res.end(jsonString);
+                    //var jsonString = messageFormatter.FormatMessage(err, "Null returns for "+obj.id, false, result);
+                    callback(new Error("No user with the Schedule id : "+obj.id+" has been found."),undefined);
 
 
                 } else if(result) {
@@ -1316,40 +1317,37 @@ function UpdateScheduleIDAppointment(obj,res)
                             {
                                 where: [{id: obj.AppID}]
                             }
-                        ).then(function (result) {
+                        ).then(function (results) {
                                 //logger.info('Successfully Mapped. ');
                                 console.log(".......................Updation is succeeded ....................");
-                                var jsonString = messageFormatter.FormatMessage(err, "Updation is succeeded", true, result);
-                                res.end(jsonString);
+                               // var jsonString = messageFormatter.FormatMessage(err, "Updation is succeeded", true, results);
+                                //res.end(jsonString);
+                               callback(undefined,results);
 
                             }).error(function (err) {
                                 //logger.info('mapping error found in saving. : ' + err);
                                 console.log("Updation failed ! " + err);
-                                var jsonString = messageFormatter.FormatMessage(err, "Updation is Failed", false, result);
-                                res.end(jsonString);
+                               callback(err,undefined);
                                 //handle error here
 
                             });
                     }
                     catch(ex)
                     {
-                        var jsonString = messageFormatter.FormatMessage(ex, "Exception returns", false, null);
-                        res.end(jsonString);
+                        callback(ex,undefined);
                     }
 
                 }
                 else
                 {
-                    var jsonString = messageFormatter.FormatMessage(err, "Error In updation", false, null);
-                    res.end(jsonString);
+                    callback(err,result);
                 }
 
             });
     }
     catch(ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception obtained", false, obj);
-        res.end(jsonString);
+        callback(ex,undefined);
     }
     return next();
 }

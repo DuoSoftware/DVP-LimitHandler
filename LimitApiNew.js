@@ -15,23 +15,23 @@ client.on("error", function (err) {
 var lock = require("redis-lock")(client);
 
 /*
-var obj={
+ var obj={
 
-    "LimitId" :"number:093ca5a9-9347-4203-a82d-cd02fc75f8c7",
-    "CompanyId":"1",
-    "Enable":0
+ "LimitId" :"number:093ca5a9-9347-4203-a82d-cd02fc75f8c7",
+ "CompanyId":"1",
+ "Enable":0
 
-}
-UpdateEnability(obj,function(err,res)
-{
-    console.log(res);
-});
-*/
+ }
+ UpdateEnability(obj,function(err,res)
+ {
+ console.log(res);
+ });
+ */
 /*
-GetObj('number:82939c80-df2f-4058-9281-d3ccfd43b091',function(err,res)
-{
-console.log(res);
-});
+ GetObj('number:82939c80-df2f-4058-9281-d3ccfd43b091',function(err,res)
+ {
+ console.log(res);
+ });
  */
 
 
@@ -61,91 +61,38 @@ function LimitIncrement(req,callback)
 
                             });
                         }, 1000);
-                        var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, null);
-                        callback(null,jsonString);
-
-                    } else if (!result) {
-                        console.log('No user with the Extension has been found.');
-                        ///logger.info( 'No user found for the requirement. ' );
-
-                        setTimeout(function () {     // Simulate some task
-                            console.log("Releasing lock now");
-
-                            done(function () {
-                                console.log("Lock has been released, and is available for others to use");
-
-                            });
-                        }, 1000);
-                        var jsonString = messageFormatter.FormatMessage(result, "EMPTY", false, null);
-                        callback(null,jsonString);
-                        //console.log("An error occurred in date searching process ");
-                        //var jsonString = messageFormatter.FormatMessage(err, "EMPTY", ERROR, result);
-                        // res.end(jsonString);
-
+                        //var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, null);
+                        callback(null,false);
 
                     } else {
-                        try {
+                        if (!result) {
+                            console.log('No user with the Extension has been found.');
+                            ///logger.info( 'No user found for the requirement. ' );
 
-                            client.get(req, function (err, reply) {
-                                if (err) {
+                            setTimeout(function () {     // Simulate some task
+                                console.log("Releasing lock now");
 
-                                    console.log("Error found in searching key : " + req + "in REDIS..");
-                                    setTimeout(function () {     // Simulate some task
-                                        console.log("Releasing lock now");
+                                done(function () {
+                                    console.log("Lock has been released, and is available for others to use");
 
-                                        done(function () {
-                                            console.log("Lock has been released, and is available for others to use");
+                                });
+                            }, 1000);
+                            // var jsonString = messageFormatter.FormatMessage(result, "EMPTY", false, null);
+                            callback(null, false);
+                            //console.log("An error occurred in date searching process ");
+                            //var jsonString = messageFormatter.FormatMessage(err, "EMPTY", ERROR, result);
+                            // res.end(jsonString);
 
-                                        });
-                                    }, 1000);
-                                    var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, null);
-                                    callback(null, jsonString);
-                                }
-                                else {
-                                    if (result.MaxCount > parseInt(reply)) {
-                                        console.log('true in checking');
-                                        console.log('max ' + result.MaxCount);
-                                        console.log('now current ' + reply);
 
-                                        try {
-                                            client.incr(req, function (err, res) {
-                                                if (err) {
+                        }
 
-                                                    setTimeout(function () {     // Simulate some task
-                                                        console.log("Releasing lock now");
+                        else {
+                            try {
 
-                                                        done(function () {
-                                                            console.log("Lock has been released, and is available for others to use");
+                                client.get(req, function (err, reply) {
+                                    if (err) {
 
-                                                        });
-                                                    }, 1000);
-                                                    var jsonString = messageFormatter.FormatMessage(err, "ERROR found in incrementing", false, null);
-                                                    callback(null, jsonString);
-                                                }
-                                                else {
-                                                    console.log('new current ' + res);
-                                                    setTimeout(function () {     // Simulate some task
-                                                        console.log("Releasing lock now");
-
-                                                        done(function () {
-                                                            console.log("Lock has been released, and is available for others to use");
-
-                                                        });
-                                                    }, 1000);
-                                                    var jsonString = messageFormatter.FormatMessage(null, "SUCCESS New Current Value : "+res, true, null);
-                                                    callback(null, jsonString);
-                                                }
-                                            });
-                                        }
-                                        catch(ex)
-                                        {
-                                            var jsonString = messageFormatter.FormatMessage(ex, "Catch exception in incrementing", false, null);
-                                            callback(null, jsonString);
-                                        }
-
-                                    }
-                                    else {
-                                        console.log("Maximum limit reached");
+                                        console.log("Error found in searching key : " + req + "in REDIS..");
                                         setTimeout(function () {     // Simulate some task
                                             console.log("Releasing lock now");
 
@@ -154,19 +101,78 @@ function LimitIncrement(req,callback)
 
                                             });
                                         }, 1000);
-                                        var jsonString = messageFormatter.FormatMessage(parseInt(reply), "Maximum limit released", false, null);
-                                        callback(null, jsonString);
-
+                                        //var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, null);
+                                        callback(null, false);
                                     }
-                                }
-                            })
+                                    else {
+                                        if (result.MaxCount > parseInt(reply)) {
+                                            console.log('true in checking');
+                                            console.log('max ' + result.MaxCount);
+                                            console.log('now current ' + reply);
+
+                                            try {
+                                                client.incr(req, function (err, res) {
+                                                    if (err) {
+
+                                                        console.log('Error in incermenting');
+                                                        setTimeout(function () {     // Simulate some task
+                                                            console.log("Releasing lock now");
+
+                                                            done(function () {
+                                                                console.log("Lock has been released, and is available for others to use");
+
+                                                            });
+                                                        }, 1000);
+                                                        // var jsonString = messageFormatter.FormatMessage(err, "ERROR found in incrementing", false, null);
+                                                        callback(null, false);
+                                                    }
+                                                    else {
+                                                        console.log('Successive in incermenting');
+                                                        console.log('new current ' + res);
+                                                        setTimeout(function () {     // Simulate some task
+                                                            console.log("Releasing lock now");
+
+                                                            done(function () {
+                                                                console.log("Lock has been released, and is available for others to use");
+
+                                                            });
+                                                        }, 1000);
+                                                        //var jsonString = messageFormatter.FormatMessage(null, "SUCCESS New Current Value : "+res, true, null);
+                                                        callback(undefined, true);
+                                                    }
+                                                });
+                                            }
+                                            catch (ex) {
+                                                console.log('Exception in incerment');
+                                                //var jsonString = messageFormatter.FormatMessage(ex, "Catch exception in incrementing", false, null);
+                                                callback(ex, false);
+                                            }
+
+                                        }
+                                        else {
+                                            console.log("Maximum limit reached");
+                                            setTimeout(function () {     // Simulate some task
+                                                console.log("Releasing lock now");
+
+                                                done(function () {
+                                                    console.log("Lock has been released, and is available for others to use");
+
+                                                });
+                                            }, 1000);
+                                            //var jsonString = messageFormatter.FormatMessage(parseInt(reply), "Maximum limit released", false, null);
+                                            callback(undefined, false);
+
+                                        }
+                                    }
+                                })
+                            }
+
+                            catch (ex) {
+                                // var jsonString = messageFormatter.FormatMessage(ex, "Exception in getting current value", false, null);
+                                callback(ex, false);
+                            }
                         }
 
-                        catch(ex)
-                        {
-                            var jsonString = messageFormatter.FormatMessage(ex, "Exception in getting current value", false, null);
-                            callback(null, jsonString);
-                        }
                     }
 
                 });
@@ -175,8 +181,8 @@ function LimitIncrement(req,callback)
     }
     catch(ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception in Entering to function Increment", false, null);
-        callback(null,jsonString);
+        //var jsonString = messageFormatter.FormatMessage(ex, "Exception in Entering to function Increment", false, null);
+        callback(ex,false);
     }
 }
 
@@ -193,9 +199,9 @@ function LimitDecrement(req,callback)
                             console.log("Lock has been released, and is available for others to use");
 
                         });
-                    }, 1000);
-                    var jsonString = messageFormatter.FormatMessage(err, "Error found in getting current limit", false, null);
-                    callback(null, jsonString);
+                    }, 0);
+                    //var jsonString = messageFormatter.FormatMessage(err, "Error found in getting current limit", false, null);
+                    callback(null, false);
                 }
                 else {
                     if (parseInt(reply) > 0) {
@@ -203,6 +209,7 @@ function LimitDecrement(req,callback)
                         try{
                             client.decr(req, function (err, result) {
                                 if (err) {
+                                    console.log('Error in decermententing');
                                     setTimeout(function () {     // Simulate some task
                                         console.log("Releasing lock now");
 
@@ -210,11 +217,12 @@ function LimitDecrement(req,callback)
                                             console.log("Lock has been released, and is available for others to use");
 
                                         });
-                                    }, 1000);
+                                    }, 0);
                                     var jsonString = messageFormatter.FormatMessage(err, "ERROR found in decrementing", false, null);
-                                    callback(null, jsonString);
+                                    callback(null, false);
                                 }
                                 else {
+                                    console.log('Succesive in incermenting');
                                     setTimeout(function () {     // Simulate some task
                                         console.log("Releasing lock now");
 
@@ -222,9 +230,9 @@ function LimitDecrement(req,callback)
                                             console.log("Lock has been released, and is available for others to use");
 
                                         });
-                                    }, 1000);
+                                    }, 0);
                                     var jsonString = messageFormatter.FormatMessage(err, "Decrement Success", true, null);
-                                    callback(null, jsonString);
+                                    callback(null, true);
                                 }
 
                             });
@@ -232,8 +240,9 @@ function LimitDecrement(req,callback)
                         }
                         catch(ex)
                         {
+                            console.log('Exception in incermenting');
                             var jsonString = messageFormatter.FormatMessage(ex, "Exception in decrementing", false, null);
-                            callback(null, jsonString);
+                            callback(null, false);
                         }
                     }
                     else {
@@ -245,9 +254,9 @@ function LimitDecrement(req,callback)
                                 console.log("Lock has been released, and is available for others to use");
 
                             });
-                        }, 1000);
+                        }, 0);
                         var jsonString = messageFormatter.FormatMessage(parseInt(reply), "Current limit is 0", false, null);
-                        callback(null, jsonString);
+                        callback(null, false);
                     }
                 }
 
@@ -257,21 +266,21 @@ function LimitDecrement(req,callback)
     catch(ex)
     {
         var jsonString = messageFormatter.FormatMessage(ex, "Exception in entering to decrement function", false, null);
-        callback(null, jsonString);
+        callback(null, false);
     }
 }
 
 function AddNewLimitRecord(req,callback)
 {
     try{
-       // var obj=req.body;
+        // var obj=req.body;
     }
     catch(ex)
     {
 
     }
     try {
-        var rand = "number:" + uuid.v4().toString();
+        var rand = "number" + uuid.v4().toString();
     }
     catch(ex)
     {
@@ -281,83 +290,73 @@ function AddNewLimitRecord(req,callback)
 
     try{
         DbConn.LimitInfo.findAll({where: [{LimitId: rand}]}).complete(function (err, ScheduleObject) {
-            if (!err && ScheduleObject.length==0) {
-                // console.log(cloudEndObject);
 
-                var AppObject = DbConn.LimitInfo
-                    .build(
-                    {
-                        LimitId: rand,
-                        //LimitDescription: obj.Action,
+            if(err)
+            {
 
-                        MaxCount: 3
-                        //Enable: obj.EndTime,
-
-                        ///ObjType: obj.ObjType,
-                       // ObjCategory: obj.ObjCategory,
-                       // CompanyId: obj.CompanyId,
-                       // TenantId: obj.TenantId
-                        // AddTime: new Date(2009, 10, 11),
-                        //  UpdateTime: new Date(2009, 10, 12),
-                        // CSDBCloudEndUserId: jobj.CSDBCloudEndUserId
-
-
-                    }
-                )
-
-                AppObject.save().complete(function (err,result) {
-                    if (!err) {
-                        //  ScheduleObject.addAppointment(AppObject).complete(function (errx, AppInstancex) {
-
-                        var status = 1;
-
-
-                        // res.write(status.toString());
-                        // res.end();
-                        //});
-
-                        console.log("..................... Saved Successfully ....................................");
-
-
-                        client.set(rand,0,function(err,reply)
+            }
+            else
+            {
+                if(!ScheduleObject)
+                {
+                    var AppObject = DbConn.LimitInfo
+                        .build(
                         {
-                            if(err)
+                            LimitId: rand,
+                            //LimitDescription: obj.Action,
+
+                            MaxCount: 3
+                            //Enable: obj.EndTime,
+
+                            ///ObjType: obj.ObjType,
+                            // ObjCategory: obj.ObjCategory,
+                            // CompanyId: obj.CompanyId,
+                            // TenantId: obj.TenantId
+                            // AddTime: new Date(2009, 10, 11),
+                            //  UpdateTime: new Date(2009, 10, 12),
+                            // CSDBCloudEndUserId: jobj.CSDBCloudEndUserId
+
+
+                        }
+                    )
+
+                    AppObject.save().complete(function (err,result) {
+                        if (!err) {
+                            var status = 1;
+                            console.log("..................... Saved Successfully ....................................");
+                            client.set(rand,0,function(err,reply)
                             {
-                                var jsonString = messageFormatter.FormatMessage(err, "Error Found in Saving to redis : "+rand, false, null);
-                                callback(null, jsonString);
-                            }
-                            else
-                            {
-                                var jsonString = messageFormatter.FormatMessage(err, "Successfully saved to redis : "+rand, true, null);
-                                callback(null, jsonString);
-                            }
+                                console.log(rand);
+                                if(err)
+                                {
+                                    //var jsonString = messageFormatter.FormatMessage(err, "Error Found in Saving to redis : "+rand, false, null);
+                                    callback(err, false);
+                                }
+                                else
+                                {
+                                    //var jsonString = messageFormatter.FormatMessage(err, "Successfully saved to redis : "+rand, true, null);
+                                    callback(null, true);
+                                }
 
-                        });
-
-
-
-                    }
-                    else {
-                        console.log("..................... Error found in saving.................................... : " + err);
-                        var jsonString = messageFormatter.FormatMessage(err, "ERROR found in saving to PG", false, null);
-                        callback(null, jsonString);
-                    }
-
-
-                });
+                            });
 
 
 
+                        }
+                        else {
+                            console.log("..................... Error found in saving.................................... : " + err);
+                            var jsonString = messageFormatter.FormatMessage(err, "ERROR found in saving to PG", false, null);
+                            callback(null, jsonString);
+                        }
 
-            }
-            else if (ScheduleObject) {
-                console.log("................................... Given Cloud End User is invalid ................................ ");
-                var jsonString = messageFormatter.FormatMessage(err, "Record already in DB", false, null);
-                callback(null, jsonString);
-            }
-            else {
-                var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
-                callback(null, jsonString);
+
+                    });
+                }
+                else
+                {
+                    var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
+                    callback(null, jsonString);
+                }
             }
 
 
@@ -365,7 +364,8 @@ function AddNewLimitRecord(req,callback)
     }
     catch(ex)
     {
-
+        var jsonString = messageFormatter.FormatMessage(err, "Exception found", false, null);
+        callback(null, jsonString);
     }
 
 }
@@ -377,16 +377,16 @@ function GetCurrentLimit(req,callback)
 
         client.get(req,function(err,result)
         {
-           if(err)
-           {
-               var jsonString = messageFormatter.FormatMessage(err, "Error in searching key :   "+req, false, null);
-               callback(null, jsonString);
-           }
+            if(err)
+            {
+                var jsonString = messageFormatter.FormatMessage(err, "Error in searching key :   "+req, false, null);
+                callback(null, jsonString);
+            }
             else
-           {
-               var jsonString = messageFormatter.FormatMessage(err, "Successfully generates result : "+result, true, null);
-               callback(null, jsonString);
-           }
+            {
+                var jsonString = messageFormatter.FormatMessage(err, "Successfully generates result : "+result, true, null);
+                callback(null, jsonString);
+            }
 
         });
 
@@ -404,23 +404,25 @@ function GetMaxLimit(req,callback)
 
 
         DbConn.LimitInfo.findAll({where: [{LimitId: req}],attributes:['MaxCount']}).complete(function (err, ScheduleObject) {
-            if (!err && ScheduleObject.length>0)
+
+            if(err)
             {
-                var jsonString = messageFormatter.FormatMessage(err, "Record already in DB", true, ScheduleObject);
-
-
-                callback(ScheduleObject.toString(), jsonString);
-            }
-            else if (ScheduleObject.length==0) {
-                console.log("................................... Given Cloud End User is invalid ................................ ");
-                var jsonString = messageFormatter.FormatMessage(err, "No Record in DB", false, null);
-                callback(null, jsonString);
-            }
-            else {
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
                 callback(null, jsonString);
             }
-
+            else
+            {
+                if(ScheduleObject)
+                {
+                    var jsonString = messageFormatter.FormatMessage(err, "Record already in DB", true, ScheduleObject);
+                    callback(ScheduleObject.toString(), jsonString);
+                }
+                else
+                {
+                    var jsonString = messageFormatter.FormatMessage(err, "No Record in DB", false, null);
+                    callback(null, jsonString);
+                }
+            }
 
         });
 
