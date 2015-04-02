@@ -310,7 +310,7 @@ function AddSchedule(req,callback)
                     if (!err) {
                         var status = 1;
                         console.log("..................... Saved Successfully ....................................");
-                      //  var jsonString = messageFormatter.FormatMessage(err, "AppObject saved successfully ", true, result);
+                        //  var jsonString = messageFormatter.FormatMessage(err, "AppObject saved successfully ", true, result);
                         callback(undefined,result);
 
                     }
@@ -334,7 +334,7 @@ function AddSchedule(req,callback)
                 callback(new Error('Already in DB'),undefined);
             }
             else {
-               // var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
+                // var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
                 callback(err,ScheduleObject);
             }
 
@@ -396,7 +396,7 @@ function AddAppointment(req,callback)
                 }
                 catch(ex)
                 {
-                   // var jsonString = messageFormatter.FormatMessage(ex, "Exception found in building appointment objecty", false, req);
+                    // var jsonString = messageFormatter.FormatMessage(ex, "Exception found in building appointment objecty", false, req);
                     callback(ex,undefined);
                 }
 
@@ -437,7 +437,7 @@ function AddAppointment(req,callback)
             }
             else if (!ScheduleObject && !err) {
                 //console.log("................................... Given Cloud End User is invalid ................................ ");
-               // var jsonString = messageFormatter.FormatMessage(null, "null object returned as shedule search result for : "+obj.CSDBScheduleId, false, ScheduleObject);
+                // var jsonString = messageFormatter.FormatMessage(null, "null object returned as shedule search result for : "+obj.CSDBScheduleId, false, ScheduleObject);
                 callback(new Error('No record found'),undefined);
             }
             else {
@@ -458,93 +458,96 @@ function AddAppointment(req,callback)
 
 
 //get :-done
-function FindValidAppoinment(req,res,err) {
+function FindValidAppoinment(req,callback) {
 
     try
     {
         DbConn.Appointment
             .findAll({
-               // where: {id: req}
+                // where: {id: req}
             }
         )
             .complete(function (err, result) {
-                if (!!err) {
+                if (err) {
                     console.log('An error occurred while searching for Extension:', err);
                     //logger.info( 'Error found in searching : '+err );
-                    var jsonString = messageFormatter.FormatMessage(err, "Error in searching : "+req, false, result);
-                    res.end(jsonString);
+                    //var jsonString = messageFormatter.FormatMessage(err, "Error in searching : "+req, false, result);
+                    callback(err, undefined);
 
-                } else if (!result) {
-                    console.log('No user with the Extension has been found.');
-                    ///logger.info( 'No user found for the requirement. ' );
-
-
-                    console.log("An error occurred in date searching process ");
-                    var jsonString = messageFormatter.FormatMessage(err, "Null object returened as result for : "+req, false, result);
-                    res.end(jsonString);
+                } else
+                {
+                    if (!result) {
+                        console.log('No user with the Extension has been found.');
+                        ///logger.info( 'No user found for the requirement. ' );
 
 
-                } else {
-                    try{
+                        //console.log("An error occurred in date searching process ");
+                        //var jsonString = messageFormatter.FormatMessage(err, "Null object returened as result for : " + req, false, result);
+                        callback('No record',undefined);
 
-                       // var index=
-                        for (var index in result) {
-                            if (result[index].StartDate == null || result[index].EndDate == null) {
 
-                                // console.log('Null found');
-                            }
-                            else {
-                                try {
+                    } else {
+                        try {
 
-                                    if (DateCheck(result[index])) {
-                                        try{
-                                            if (TimeCheck(result[index])) {
-                                                try{
-                                                    if (DayCheck(result[index])) {
-                                                        console.log('Record Found : ' + result[index]);
+                            // var index=
+                            for (var index in result) {
+                                if (result[index].StartDate == null || result[index].EndDate == null) {
 
-                                                        var jsonString = messageFormatter.FormatMessage(null, "Successfully Found ", true, jsonString);
-                                                        res.end(jsonString);
-                                                        // res.end(result[index]);
+                                    // console.log('Null found');
+                                }
+                                else {
+                                    try {
+
+                                        if (DateCheck(result[index])) {
+                                            try {
+                                                if (TimeCheck(result[index])) {
+                                                    try {
+                                                        if (DayCheck(result[index])) {
+                                                            console.log('Record Found : ' + result[index]);
+
+                                                            //var jsonString = messageFormatter.FormatMessage(null, "Successfully Found ", true, jsonString);
+                                                            callback(undefined,result[index]);
+                                                            // res.end(result[index]);
+                                                        }
+                                                        else {
+                                                            continue;
+                                                        }
                                                     }
-                                                    else {
-                                                        continue;
+                                                    catch (ex) {
+                                                        //var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching DayCheck ", false, null);
+                                                        //res.end(jsonString);
+                                                        callback('Error in Day check : '+ex,undefined);
                                                     }
                                                 }
-                                                catch(ex)
-                                                {
-                                                    var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching DayCheck ", false, null);
-                                                    res.end(jsonString);
+                                                else {
+                                                    continue;
                                                 }
                                             }
-                                            else {
-                                                continue;
+                                            catch (ex) {
+                                                callback('Error in Time check : '+ex,undefined);
                                             }
                                         }
-                                        catch(ex)
-                                        {
-                                            var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching TimeCheck ", false, null);
-                                            res.end(jsonString);
+                                        else {
+                                            continue;
                                         }
+                                    } catch (ex) {
+                                        callback('Error in Date check : '+ex,undefined);
                                     }
-                                    else {
-                                        continue;
-                                    }
-                                } catch (ex) {
-                                    var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching DateCheck ", false, null);
-                                    res.end(jsonString);
+
                                 }
 
+                                if(result.length==index+1)
+                                {
+                                    callback('No suitable Appointment found',undefined);
+                                }
                             }
-                        }
-                        var jsonString = messageFormatter.FormatMessage(null, "Record finished : No recode found ", false, null);
-                        res.end(jsonString);
+                            //var jsonString = messageFormatter.FormatMessage(null, "Record finished : No recode found ", false, null);
+                            //res.end(jsonString);
 
-                    }
-                    catch(ex)
-                    {
-                        var jsonString = messageFormatter.FormatMessage(ex, "Exception found in Looping of result ", false, null);
-                        res.end(jsonString);
+                        }
+                        catch (ex) {
+                            callback("Exception : "+ex,undefined);
+                        }
                     }
                 }
 
@@ -553,8 +556,7 @@ function FindValidAppoinment(req,res,err) {
     }
     catch(ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception found in Appointment searching", false, null);
-        res.end(jsonString);
+        callback("Exception : "+ex,undefined);
     }
 
 
@@ -671,7 +673,7 @@ function DayCheck(reslt)
 
 
 //get :- done
-function CheckAvailables(Dt,Dy,Tm,res)
+function CheckAvailables(Dt,Dy,Tm,callback)
 {
     try {
         //var obj = dataz;
@@ -685,8 +687,9 @@ function CheckAvailables(Dt,Dy,Tm,res)
     }
     catch (ex)
     {
-        var jsonString = messageFormatter.FormatMessage(err, "Error in object creation from request", false, dataz);
-        res.end(jsonString);
+        //var jsonString = messageFormatter.FormatMessage(err, "Error in object creation from request", false, dataz);
+        //res.end(jsonString);
+        callback(ex,undefined);
     }
 
     try {
@@ -695,81 +698,78 @@ function CheckAvailables(Dt,Dy,Tm,res)
             .findAll({}
         )
             .complete(function (err, result) {
-                if (!!err) {
+                if (err) {
                     console.log('An error occurred while searching for Extension:', err);
                     //logger.info( 'Error found in searching : '+err );
-                    var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Extension", false, result);
-                    res.end(jsonString);
+                    callback(err, undefined);
 
-                } else if (!result) {
-                    console.log('No user with the Extension has been found.');
-                    ///logger.info( 'No user found for the requirement. ' );
-                    var jsonString = messageFormatter.FormatMessage(err, "Null result found", false, result);
-                    res.end(jsonString);
+                } else
+                {
+                    if (!result) {
+                        console.log('No user with the Extension has been found.');
+                        ///logger.info( 'No user found for the requirement. ' );
+                        callback('No record found', undefined);
 
-                } else {
-                    try {
+                    } else {
+                        try {
 
 
-                        for (var index in result) {
+                            for (var index in result) {
 
-                            if (moment(ReqDate).isBetween(result[index].StartDate, result[index].EndDate)) {
-                                if (ReqTime >= result[index].StartTime && ReqTime < result[index].EndTime) {
-                                    DbDays = result[index].DaysOfWeek.split(',');
+                                if (moment(ReqDate).isBetween(result[index].StartDate, result[index].EndDate)) {
+                                    if (ReqTime >= result[index].StartTime && ReqTime < result[index].EndTime) {
+                                        DbDays = result[index].DaysOfWeek.split(',');
 
-                                    for (var dindex in DaysArray) {
-                                        //var dt = moment(DaysArray[dindex]).format('dddd');
-                                        if (DbDays.indexOf(DaysArray[dindex]) > -1) {
-                                            DaySt = true;
+                                        for (var dindex in DaysArray) {
+                                            //var dt = moment(DaysArray[dindex]).format('dddd');
+                                            if (DbDays.indexOf(DaysArray[dindex]) > -1) {
+                                                DaySt = true;
+                                            }
+                                            else {
+                                                DaySt = false;
+                                            }
+
+                                        }
+
+                                        if (DaySt) {
+                                            console.log('Record Found' + result[index].id);
+
+                                            // var jsonString = messageFormatter.FormatMessage(err, "SUCCESS", true, result[index]);
+                                            // res.end(jsonString);
+                                            callback(undefined,result[index].id);
+                                            break;
                                         }
                                         else {
-                                            DaySt = false;
+                                            //callback('Record not matched',undefined);
+                                            continue;
                                         }
 
-                                        //console.log('Today is :' + dt);
-
-
-                                    }
-
-                                    if (DaySt) {
-                                        console.log('Record Found' + result[index].id);
-
-                                        var jsonString = messageFormatter.FormatMessage(err, "SUCCESS", true, result[index]);
-                                        res.end(jsonString);
-                                        break;
                                     }
                                     else {
-                                        console.log('No records Found');
-                                        res.end();
                                         continue;
                                     }
-
                                 }
                                 else {
                                     continue;
                                 }
                             }
-                            else {
-                                continue;
+
+                            if(result.length==index+1)
+                            {
+                                callback("No maching record found",undefined);
                             }
                         }
-
-                        res.end();
-                    }
-                    catch(ex)
-                    {
-                        var jsonString = messageFormatter.FormatMessage(ex, "Exception in checking", false, index);
-                        res.end(jsonString);
+                        catch (ex) {
+                            callback(ex,undefined);
+                        }
                     }
                 }
-
             });
 
     }
     catch(ex)
     {
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception in searching ", false, null);
-        res.end(jsonString);
+        callback(ex,undefined);
     }
 
 }
@@ -799,14 +799,14 @@ function UpdateScheduleID(obj,callback)
                     ).then(function (result) {
                             // logger.info('Successfully Mapped. ');
                             console.log(".......................mapping is succeeded ....................");
-                           // var jsonString = messageFormatter.FormatMessage(err, "mapping is succeeded", true, result);
+                            // var jsonString = messageFormatter.FormatMessage(err, "mapping is succeeded", true, result);
                             callback(undefined,result);
 
                         }).error(function (err) {
                             //logger.info('mapping error found in saving. : ' + err);
                             console.log("mapping failed ! " + err);
                             //handle error here
-                           // var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
+                            // var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
                             callback(err,undefined);
 
                         });
@@ -829,7 +829,7 @@ function UpdateScheduleID(obj,callback)
             }
 
             else {
-               // var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
+                // var jsonString = messageFormatter.FormatMessage(err, "Some error occured", false, null);
                 callback(err,ScheduleObject);
             }
 
@@ -880,63 +880,70 @@ function PickAppThroughSchedule(cmp,tent,dt,dy,tm,callback) {
                                 }
                             )
                                 .complete(function (err, resultapp) {
-                                    if (!!err) {
+                                    if (err) {
                                         console.log('An error occurred while searching for Extension:', err);
                                         //logger.info( 'Error found in searching : '+err );
 
-                                    } else if (!resultapp) {
-                                        console.log('No user with the Extension has been found.');
-                                        ///logger.info( 'No user found for the requirement. ' );
-                                        var jsonString = messageFormatter.FormatMessage(err, "EMPTY", false, resultapp);
-                                        callback(null,jsonString);
+                                    } else
+                                    {
+                                        if (!resultapp) {
+                                            console.log('No user with the Extension has been found.');
+                                            ///logger.info( 'No user found for the requirement. ' );
+                                            var jsonString = messageFormatter.FormatMessage(err, "EMPTY", false, resultapp);
+                                            callback("Empty found", undefined);
 
-                                    } else {
-
-
-                                        for (var index in resultapp) {
-                                            if (moment(dt).isBetween(resultapp[index].StartDate, resultapp[index].EndDate)) {
-                                                if (tm >= resultapp[index].StartTime && tm < resultapp[index].EndTime) {
-                                                    DbDays = resultapp[index].DaysOfWeek.split(',');
+                                        } else {
 
 
-                                                    //var dt = moment(DaysArray[dindex]).format('dddd');
-                                                    if (DbDays.indexOf(dy) > -1) {
-                                                        DaySt = true;
+                                            for (var index in resultapp) {
+                                                if (moment(dt).isBetween(resultapp[index].StartDate, resultapp[index].EndDate)) {
+                                                    if (tm >= resultapp[index].StartTime && tm < resultapp[index].EndTime) {
+                                                        DbDays = resultapp[index].DaysOfWeek.split(',');
+
+
+                                                        //var dt = moment(DaysArray[dindex]).format('dddd');
+                                                        if (DbDays.indexOf(dy) > -1) {
+                                                            DaySt = true;
+                                                        }
+                                                        else {
+                                                            DaySt = false;
+                                                        }
+
+                                                        //console.log('Today is :' + dt);
+
+
+                                                        if (DaySt) {
+
+                                                            // var jsonString = messageFormatter.FormatMessage(null, "Success , Record found : ", true, result[index]);
+                                                            callback(undefined, result[index]);
+
+                                                            /*var Jresults = result[index].map(function (result) {
+                                                             console.log(result.toJSON());
+                                                             return result.toJSON()
+                                                             });*/
+                                                            break;
+                                                        }
+                                                        else {
+
+                                                            continue;
+                                                        }
                                                     }
                                                     else {
-                                                        DaySt = false;
-                                                    }
-
-                                                    //console.log('Today is :' + dt);
-
-
-                                                    if (DaySt) {
-
-                                                        var jsonString = messageFormatter.FormatMessage(null, "Success , Record found : ", true, result[index]);
-                                                        callback(null,jsonString);
-
-                                                        /*var Jresults = result[index].map(function (result) {
-                                                            console.log(result.toJSON());
-                                                            return result.toJSON()
-                                                        });*/
-                                                        break;
-                                                    }
-                                                    else {
-                                                        console.log('No records Found');
                                                         continue;
                                                     }
                                                 }
                                                 else {
                                                     continue;
                                                 }
+
                                             }
-                                            else {
-                                                continue;
+
+                                            if(resultapp.length==index+1)
+                                            {
+                                                callback('No record',undefined);
                                             }
 
                                         }
-
-                                        res.end();
                                     }
 
                                 });
@@ -945,7 +952,7 @@ function PickAppThroughSchedule(cmp,tent,dt,dy,tm,callback) {
                         catch(ex)
                         {
                             var jsonString = messageFormatter.FormatMessage(ex, "Exception in searching appintment", false, result[index]);
-                            callback(null,jsonString);
+                            callback(ex,undefined);
                         }
                     }
 
@@ -956,7 +963,7 @@ function PickAppThroughSchedule(cmp,tent,dt,dy,tm,callback) {
     catch(ex)
     {
         var jsonString = messageFormatter.FormatMessage(ex, "Exception in searching Schedule", false, result[index]);
-        callback(null,jsonString);
+        callback(ex,undefined);
     }
 
 }
@@ -971,25 +978,28 @@ function PickSchedule(obj,callback)
             }
         )
             .complete(function (err, result) {
-                if (!!err) {
+                if (err) {
                     console.log('An error occurred while searching for Extension:', err);
                     //logger.info( 'Error found in searching : '+err );
-                    var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Schedule : "+id, false, result);
-                    callback(null,jsonString);
+                    //var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Schedule : "+id, false, result);
+                    callback(err, undefined);
 
-                } else if (!result) {
-                    console.log('No user with the Extension has been found.');
-                    ///logger.info( 'No user found for the requirement. ' );
+                } else
+                {
+                    if (!result) {
+                        console.log('No user with the Extension has been found.');
+                        ///logger.info( 'No user found for the requirement. ' );
 
-                    console.log('Empty found....................');
-                    var jsonString = messageFormatter.FormatMessage(null, "Null object returns", false, result);
-                    callback(null,jsonString);
+                        console.log('Empty found....................');
+                        var jsonString = messageFormatter.FormatMessage(null, "Null object returns", false, result);
+                        callback('No record', undefined);
 
-                } else {
+                    } else {
 
-                    var jsonString = messageFormatter.FormatMessage(null, "Sucess", false, result);
-                    callback(null,jsonString);
+                        var jsonString = messageFormatter.FormatMessage(null, "Sucess", false, result);
+                        callback(undefined, result);
                     }
+                }
 
             });
 
@@ -1012,25 +1022,28 @@ function PickScheduleAction(obj,callback)
             }
         )
             .complete(function (err, result) {
-                if (!!err) {
+                if (err) {
                     console.log('An error occurred while searching for Extension:', err);
                     var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Extension", false, result);
 
-                    callback(null,jsonString);
+                    callback(err, undefined);
                     //logger.info( 'Error found in searching : '+err );
 
-                } else if (!result) {
-                    console.log('No user with the Extension has been found.');
-                    ///logger.info( 'No user found for the requirement. ' );
-                    var jsonString = messageFormatter.FormatMessage(err, "Null object returns", false, result);
-                    callback(null,jsonString);
+                } else
+                {
+                    if (!result) {
+                        console.log('No user with the Extension has been found.');
+                        ///logger.info( 'No user found for the requirement. ' );
+                        var jsonString = messageFormatter.FormatMessage(err, "Null object returns", false, result);
+                        callback('No record', undefined);
 
-                } else {
+                    } else {
 
 
-                    var jsonString = messageFormatter.FormatMessage(err, "Successfully object returend with records: "+result.length, true, result);
-                    callback(null,jsonString);
+                        var jsonString = messageFormatter.FormatMessage(err, "Successfully object returend with records: " + result.length, true, result);
+                        callback(undefined, JSON.stringify(result));
 
+                    }
                 }
 
             });
@@ -1038,7 +1051,7 @@ function PickScheduleAction(obj,callback)
     catch(ex)
     {
         var jsonString = messageFormatter.FormatMessage(ex, "Exception in searching ", false, obj);
-        callback(null,jsonString);
+        callback(ex,undefined);
     }
 }
 
@@ -1046,40 +1059,43 @@ function PickScheduleAction(obj,callback)
 function PickApointment(obj,callback)
 {
     try {
-        DbConn.Schedule
+        DbConn.Appointment
             .findAll({
                 where: {id: obj.id}
             }
         )
             .complete(function (err, result) {
-                if (!!err) {
-                    console.log('An error occurred while searching for Extension:', err);
+                if (err) {
+                    console.log('An error occurred while searching for Appointment:', err);
                     //logger.info( 'Error found in searching : '+err );
                     var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Schedule:", false, result);
-                    callback(null,jsonString);
+                    callback(err, undefined);
 
-                } else if (!result) {
+                } else
+                {
+                    if (!result) {
                     console.log('No user with the Extension has been found.');
                     ///logger.info( 'No user found for the requirement. ' );
                     var jsonString = messageFormatter.FormatMessage(ex, "Null found: no records: no errors", false, result);
-                    callback(null,jsonString);
+                    callback('No record', undefined);
 
 
                 } else {
 
                     var jsonString = messageFormatter.FormatMessage(ex, "Success", false, result);
-                    callback(null,jsonString);
+                    callback(undefined, Json.stringify(result));
 
                     //console.log(result.Action)
 
                 }
+            }
 
             });
     }
     catch (ex)
     {
         var jsonString = messageFormatter.FormatMessage(ex, "Exception returns", false, obj);
-        callback(null,jsonString);
+        callback(ex,undefined);
     }
 
 }
@@ -1088,38 +1104,41 @@ function PickApointment(obj,callback)
 function PickApointmentAction(obj,callback)
 {
     try {
-        DbConn.Schedule
+        DbConn.Appointment
             .findAll({
                 where: {id: obj.id}
             }
         )
             .complete(function (err, result) {
-                if (!!err) {
+                if (err) {
                     console.log('An error occurred while searching for Extension:', err);
                     //logger.info( 'Error found in searching : '+err );
                     var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Schedule:", false, result);
-                    callback(null,jsonString);
+                    callback(err, undefined);
 
-                } else if (!result) {
+                } else
+                {
+                    if (!result) {
                     console.log('No user with the Extension has been found.');
                     ///logger.info( 'No user found for the requirement. ' );
                     var jsonString = messageFormatter.FormatMessage(err, "Null returns :no records : no errors", false, result);
-                    callback(null,jsonString);
+                    callback('No record', undefined);
 
                 } else {
 
 
-                    var jsonString = messageFormatter.FormatMessage(err, "Successfully object returns with records: "+result.length, true, result);
-                    callback(null,jsonString);
+                    var jsonString = messageFormatter.FormatMessage(err, "Successfully object returns with records: " + result.length, true, result);
+                    callback(undefined, JSON.stringify(result));
 
                 }
+            }
 
             });
     }
     catch (ex)
     {
         var jsonString = messageFormatter.FormatMessage(ex, "Exception found", false, obj);
-        callback(null,jsonString);
+        callback(ex,undefined);
     }
 }
 
@@ -1176,7 +1195,7 @@ function UpdateScheduleData(obj,callback)
                                 //logger.info('mapping error found in saving. : ' + err);
                                 console.log("mapping failed ! " + err);
 
-                               // var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
+                                // var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
                                 callback(err,undefined);
                                 //handle error here
 
@@ -1222,9 +1241,9 @@ function UpdateAppoinmentData(obj,callback)
                     callback(err,undefined);
 
                 } else if (!result) {
-                   // console.log('No user with the Extension has been found.');
+                    // console.log('No user with the Extension has been found.');
                     ///logger.info( 'No user found for the requirement. ' );
-                   // var jsonString = messageFormatter.FormatMessage(err, "Null returns :no records : no errors", false, result);
+                    // var jsonString = messageFormatter.FormatMessage(err, "Null returns :no records : no errors", false, result);
                     callback(new Error('No appointment found : '+obj.id),undefined);
 
                 } else if(result){
@@ -1320,14 +1339,14 @@ function UpdateScheduleIDAppointment(obj,callback)
                         ).then(function (results) {
                                 //logger.info('Successfully Mapped. ');
                                 console.log(".......................Updation is succeeded ....................");
-                               // var jsonString = messageFormatter.FormatMessage(err, "Updation is succeeded", true, results);
+                                // var jsonString = messageFormatter.FormatMessage(err, "Updation is succeeded", true, results);
                                 //res.end(jsonString);
-                               callback(undefined,results);
+                                callback(undefined,results);
 
                             }).error(function (err) {
                                 //logger.info('mapping error found in saving. : ' + err);
                                 console.log("Updation failed ! " + err);
-                               callback(err,undefined);
+                                callback(err,undefined);
                                 //handle error here
 
                             });

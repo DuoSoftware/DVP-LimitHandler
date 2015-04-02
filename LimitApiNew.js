@@ -380,12 +380,12 @@ function GetCurrentLimit(req,callback)
             if(err)
             {
                 var jsonString = messageFormatter.FormatMessage(err, "Error in searching key :   "+req, false, null);
-                callback(null, jsonString);
+                callback(err, undefined);
             }
             else
             {
                 var jsonString = messageFormatter.FormatMessage(err, "Successfully generates result : "+result, true, null);
-                callback(null, jsonString);
+                callback(undefined, result);
             }
 
         });
@@ -394,7 +394,7 @@ function GetCurrentLimit(req,callback)
     catch(ex)
     {
         var jsonString = messageFormatter.FormatMessage(ex, "Exception in Entering to search current limit of :   "+req, false, null);
-        callback(null, jsonString);
+        callback(ex, undefined);
     }
 }
 
@@ -408,19 +408,19 @@ function GetMaxLimit(req,callback)
             if(err)
             {
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
-                callback(null, jsonString);
+                callback(err, undefined);
             }
             else
             {
                 if(ScheduleObject)
                 {
                     var jsonString = messageFormatter.FormatMessage(err, "Record already in DB", true, ScheduleObject);
-                    callback(ScheduleObject.toString(), jsonString);
+                    callback(undefined,JSON.stringify(ScheduleObject));
                 }
                 else
                 {
                     var jsonString = messageFormatter.FormatMessage(err, "No Record in DB", false, null);
-                    callback(null, jsonString);
+                    callback('Error', undefined);
                 }
             }
 
@@ -430,7 +430,7 @@ function GetMaxLimit(req,callback)
     catch(ex)
     {
         var jsonString = messageFormatter.FormatMessage(ex, "Exception in Entering to search current limit of :   "+req, false, null);
-        callback(null, jsonString);
+        callback(ex, undefined);
     }
 }
 
