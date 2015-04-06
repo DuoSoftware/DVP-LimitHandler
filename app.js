@@ -13,6 +13,7 @@ var log4js=require('log4js');
 
 log4js.configure('./config/log4js_config.json', { cwd: './logs' });
 var log = log4js.getLogger("app");
+fs = require('fs');
 
 
 
@@ -246,6 +247,7 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/limit_increment/:key',funct
 {
     log.info("\n.............................................Limit Increment Starts.................................\n");
     try {
+        console.log("HIT");
         limit.LimitIncrement(req.params.key,function(err,resz)
         {
             log.info("Inputs:- key :"+req.params.key);
@@ -253,7 +255,7 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/limit_increment/:key',funct
             if(err)
             {
                 log.error("Error in Limit Incrementing  : "+err);
-                res.send(err);
+                res.send(resz.toString());
                 res.end();
             }else
             {
@@ -765,7 +767,57 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/get_max_limit',function(req
 });
 
 
+RestServer.post('/dvp/t',function(req,res,next)
+{
+    log.info("\n.............................................Get Max limit Starts.................................\n");
+    try {
+        limit.GetObj(0,0);
+        res.end();
 
+
+    }
+    catch(ex)
+    {
+        log.fatal("Exception found in Getting max limit  : "+ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "GetMaxLimit failed", false, res);
+        res.end(jsonString);
+    }
+
+    return next();
+
+});
+
+
+
+RestServer.get('/dvp/uuid',function(req,res,next)
+{
+   // log.info("\n.............................................Get Max limit Starts.................................\n");
+    try {
+fs.setheader()
+        fs.readFile('/dt/uu', 'utf8', function (err,data) {
+            if (err) {
+                res.write(err);
+                res.end();
+            }
+            else {
+                console.log(data);
+                res.write(data);
+                res.end();
+            }
+        });
+
+
+    }
+    catch(ex)
+    {
+        log.fatal("Exception found in Getting max limit  : "+ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "GetMaxLimit failed", false, res);
+        res.end(jsonString);
+    }
+
+    return next();
+
+});
 
 
 

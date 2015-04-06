@@ -13,9 +13,10 @@ var log4js=require('log4js');
 log4js.configure('./config/log4js_config.json', { cwd: './logs' });
 var log = log4js.getLogger("limapi");
 
-var client = redis.createClient(6379,"192.168.2.33");
+var client = redis.createClient(6379,"192.168.3.200");
 client.on("error", function (err) {
     console.log("Error " + err);
+
 });
 var lock = require("redis-lock")(client);
 
@@ -46,7 +47,9 @@ function LimitIncrement(req,callback)
     log.info("\n.............................................Limit increment Starts....................................................\n");
     try {
         log.info("Inputs :- LimitID : "+req);
-        lock(req, 10000, function (done) {
+        lock(req, 1000, function (done) {
+
+
             DbConn.LimitInfo
                 .find({
                     where: {LimitId: req}, attributes: ['MaxCount']
@@ -92,6 +95,9 @@ function LimitIncrement(req,callback)
                         }
 
                         else {
+
+
+
                             try {
                                 log.info('Record found for LimitID: '+req+" and Check on redis : "+req);
                                 client.get(req, function (err, reply) {
@@ -589,7 +595,7 @@ function GetObj(key,obj) {
 
 
     // Simulate a 1 second long operation
-    client.get('number:82939c80-df2f-4058-9281-d3ccfd43b091',function (error, reply) {
+    client.set('number:82939c80-df2f-4058-9281-d3ccfd43b091',0,function (error, reply) {
         if (error) {
 
 
@@ -622,3 +628,4 @@ module.exports.GetCurrentLimit = GetCurrentLimit;
 module.exports.GetMaxLimit = GetMaxLimit;
 module.exports.UpdateMaxLimit = UpdateMaxLimit;
 module.exports.UpdateEnability = UpdateEnability;
+module.exports.GetObj = GetObj;
