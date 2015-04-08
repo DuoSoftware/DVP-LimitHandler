@@ -231,6 +231,7 @@ function LimitDecrement(req,callback)
 
                     setTimeout(function () {
                         log.info('Releasing lock now');
+                        console.log("Decrement happened");
                         console.log("Releasing lock now");
 
                         done(function () {
