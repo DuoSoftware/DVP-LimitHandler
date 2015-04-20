@@ -280,7 +280,7 @@ function AddSchedule(req,callback)
     }
 
     try {
-        DbConn.Schedule.find({where: [{id: obj.id}]}).complete(function (err, ScheduleObject) {
+        DbConn.Schedule.find({where: [{id: obj.ScheduleName}]}).complete(function (err, ScheduleObject) {
 
             if (err) {
                 log.error("Error in searching schedule : " + obj.id + " , Error : " + err);
@@ -1085,7 +1085,7 @@ function PickSchedule(obj,callback)
         Log.info("Inputs:- "+JSON.stringify(obj));
         DbConn.Schedule
             .findAll({
-                where: {id: obj.id}
+                where: {id: obj}
             }
         )
             .complete(function (err, result) {
@@ -1135,8 +1135,8 @@ function PickScheduleAction(obj,callback)
     try {
         log.info("Inputs :- "+JSON.stringify(obj));
         DbConn.Schedule
-            .findAll({
-                where: {id: obj.id}
+            .find({
+                where: {id: obj}
             }
         )
             .complete(function (err, result) {
@@ -1185,7 +1185,7 @@ function PickApointment(obj,callback)
         log.info("Inputs:- "+JSON.stringify(obj));
         DbConn.Appointment
             .findAll({
-                where: {id: obj.id}
+                where: {id: obj}
             }
         )
             .complete(function (err, result) {
@@ -1235,7 +1235,7 @@ function PickApointmentAction(obj,callback)
         log.info("Input :- "+JSON.stringify(obj));
         DbConn.Appointment
             .findAll({
-                where: {id: obj.id}
+                where: {id: obj}
             }
         )
             .complete(function (err, result) {
@@ -1306,7 +1306,7 @@ function UpdateScheduleData(obj,callback)
                         DbConn.Schedule
                             .update(
                             {
-                                ScheduleName: obj.ScheduleName,
+                                //ScheduleName: obj.ScheduleName,
                                 Action: obj.Action,
                                 ExtraData: obj.ExtraData,
                                 ObjClass: obj.ObjClass,
@@ -1397,7 +1397,7 @@ function UpdateAppoinmentData(obj,callback)
                             DbConn.Appointment
                                 .update(
                                 {
-                                    AppointmentName: obj.AppointmentName,
+
                                     Action: obj.Action,
                                     ExtraData: obj.ExtraData,
                                     StartDate: obj.StartDate,

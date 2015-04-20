@@ -357,15 +357,14 @@ function AddNewLimitRecord(req,callback)
                             .build(
                             {
                                 LimitId: rand,
-                                //LimitDescription: obj.Action,
-
-                                MaxCount: 3
-                                //Enable: obj.EndTime,
-
-                                ///ObjType: obj.ObjType,
-                                // ObjCategory: obj.ObjCategory,
-                                // CompanyId: obj.CompanyId,
-                                // TenantId: obj.TenantId
+                                LimitDescription: req.LimitDescription,
+                                ObjClass:req.ObjClass,
+                                ObjType: req.ObjType,
+                                ObjCategory: req.ObjCategory,
+                                MaxCount: req.MaxCount,
+                                Enable: req.EndTime,
+                                CompanyId: obj.CompanyId,
+                                TenantId: obj.TenantId
                                 // AddTime: new Date(2009, 10, 11),
                                 //  UpdateTime: new Date(2009, 10, 12),
                                 // CSDBCloudEndUserId: jobj.CSDBCloudEndUserId

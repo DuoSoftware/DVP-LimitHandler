@@ -287,7 +287,7 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/limit_decrement/:key',funct
             if(err)
             {
                 log.error("Error in Limit Decrementing  : "+err);
-                res.send(err);
+                res.send(err.toString());
                 res.end();
             }
             else
@@ -324,13 +324,13 @@ RestServer.post('/dvp/:version/limit_handler/limitapi/add_new_limit_record',func
             if(err)
             {
                 log.error("Error in Adding new Limit record  : "+err);
-                res.end(err);
+                res.end(err.toString());
             }
             else
             {
                 log.info("Adding new Limit record Succeeded : "+resz);
 
-                res.end(resz);
+                res.end(JSON.stringify(resz));
             }
             // var jsonString = messageFormatter.FormatMessage(err, "AddNewLimitRecord succeeded", true, res);
 
@@ -426,22 +426,22 @@ RestServer.post('/dvp/:version/limit_handler/limitapi/Update_EnableState',functi
 
 //.......................................get.............................................................................
 //log done
-RestServer.get('/dvp/:version/limit_handler/schedule/Pick_valid_Appointment/:app',function(req,res,next)
+RestServer.get('/dvp/:version/limit_handler/schedule/Pick_valid_Appointment',function(req,res,next)
 {
     log.info("\n.............................................Pick valid Appointment Starts.................................\n");
     try {
-        log.info("Inputs: "+req.params.app);
-        schedule.FindValidAppoinment(req.params.app,function(err,resz)
+        log.info("Inputs: "+req);
+        schedule.FindValidAppoinment(req,function(err,resz)
         {
             if(err)
             {
                 log.error("Error in Picking valid Appointment  : "+err);
-                res.end(err);
+                res.end(err.toString());
             }
             else
             {
                 log.info("Picking valid Appointment succeeded : "+resz);
-                res.end(resz);
+                res.end(JSON.stringify(resz));
             }
         });
 
@@ -475,12 +475,12 @@ RestServer.get('/dvp/:version/limit_handler/schedule/check_availables/:dt/:dy/:t
             if(err)
             {
                 log.error("Error in Checking available Appointments  : "+err);
-                res.end(err);
+                res.end(err.toString());
             }
             else
             {
                 log.info("Checking available Appointments succeeded : "+resz);
-                res.end(resz);
+                res.end(JSON.stringify(resz));
 
             }
         });
@@ -531,23 +531,23 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_app_through_schedule/:
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule',function(req,res,next)
+RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule/:id',function(req,res,next)
 {
     log.info("\n.............................................Pick Schedule Starts.................................\n");
     try {
-        log.info("Inputs :- "+req.body);
-        schedule.PickSchedule(req.body,function(err,resz)
+        log.info("Inputs :- "+req.params.id);
+        schedule.PickSchedule(req.params.id,function(err,resz)
         {
             if(err)
             {
                 log.error("Error in Picking Schedule  : "+err);
-                res.end(err);
+                res.end(err.toString());
             }
             else
             {
                 log.info("Picking Schedule Succeeded: "+resz);
 
-                res.end(resz);
+                res.end(JSON.stringify(resz));
             }
 
         });
@@ -565,12 +565,12 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule',function(req
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule_action',function(req,res,next)
+RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule_action/:id',function(req,res,next)
 {
     log.info("\n.............................................Pick Schedule Action Starts.................................\n");
     try {
-        log.info("Inputs :- "+req.body);
-        schedule.PickScheduleAction(req.body,function(err,resz)
+        log.info("Inputs :- "+req.params.id);
+        schedule.PickScheduleAction(req.params.id,function(err,resz)
         {
             if(err)
             {
@@ -598,12 +598,12 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule_action',funct
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_appointment',function(req,res,next)
+RestServer.get('/dvp/:version/limit_handler/schedule/pick_appointment/:id',function(req,res,next)
 {
     log.info("\n.............................................Pick Appointment Starts.................................\n");
     try {
-        log.info("Inputs :- "+req.body);
-        schedule.PickApointment(req.body,function(err,resz)
+        log.info("Inputs :- "+req.params.id);
+        schedule.PickApointment(req.params.id,function(err,resz)
         {
             if(err)
             {
@@ -633,13 +633,13 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_appointment',function(
 
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action',function(req,res,next)
+RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action/:id',function(req,res,next)
 {
     log.info("\n.............................................Pick Appointment Action Starts.................................\n");
 
     try {
         log.info("Inputs : - "+req.body);
-        schedule.PickApointmentAction(req.body,function(err,resz)
+        schedule.PickApointmentAction(req.params.id,function(err,resz)
         {
             if(err)
             {
@@ -695,13 +695,13 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action',fun
 
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/limitapi/get_current_limit',function(req,res,next)
+RestServer.get('/dvp/:version/limit_handler/limitapi/get_current_limit/:Rid',function(req,res,next)
 {
     log.info("\n.............................................Get current limit Starts.................................\n");
     try {
         log.info("Inputs : - "+req.body);
 
-        limit.GetCurrentLimit(req.body,function(err,resz)
+        limit.GetCurrentLimit(req.params.Rid,function(err,resz)
         {
             if(err)
             {
@@ -732,11 +732,11 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/get_current_limit',function
 //.......................................................................................................................
 
 
-RestServer.get('/dvp/:version/limit_handler/limitapi/get_max_limit',function(req,res,next)
+RestServer.get('/dvp/:version/limit_handler/limitapi/get_max_limit/:Rid',function(req,res,next)
 {
     log.info("\n.............................................Get Max limit Starts.................................\n");
     try {
-        limit.GetMaxLimit(req.body,function(err,resz)
+        limit.GetMaxLimit(req.params.Rid,function(err,resz)
         {
             if(err)
             {
