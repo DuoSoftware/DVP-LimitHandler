@@ -12,6 +12,7 @@ var log4js=require('log4js');
 var config = require('config');
 
 var port = config.Host.port || 3000;
+var version=config.Host.version;
 
 log4js.configure('./config/log4js_config.json', { cwd: './logs' });
 var log = log4js.getLogger("app");
@@ -41,7 +42,7 @@ RestServer.use(restify.queryParser());
 //Done
 
 //log done...............................................................................................................
-RestServer.post('/dvp/:version/limit_handler/schedule/add_appointment',function(req,res,next)
+RestServer.post('/dvp/'+version+'/limit_handler/schedule/add_appointment',function(req,res,next)
 {
     log.info("\n.............................................Add appointment Starts....................................................\n");
     try {
@@ -77,7 +78,7 @@ RestServer.post('/dvp/:version/limit_handler/schedule/add_appointment',function(
 
 //Done
 //log done...............................................................................................................
-RestServer.post('/dvp/:version/limit_handler/schedule/add_schedule',function(req,res,next)
+RestServer.post('/dvp/'+version+'/limit_handler/schedule/add_schedule',function(req,res,next)
 {
     log.info("\n.............................................Add schedule Starts....................................................\n");
     try {
@@ -111,7 +112,7 @@ RestServer.post('/dvp/:version/limit_handler/schedule/add_schedule',function(req
 });
 //Done.......................................................................................................................
 //log done...............................................................................................................
-RestServer.post('/dvp/:version/limit_handler/schedule/Update_Schedule',function(req,res,next)
+RestServer.post('/dvp/'+version+'/limit_handler/schedule/Update_Schedule',function(req,res,next)
 {
     log.info("\n.............................................Update schedule Starts....................................................\n");
 
@@ -145,7 +146,7 @@ RestServer.post('/dvp/:version/limit_handler/schedule/Update_Schedule',function(
 });
 //Done.......................................................................................................................
 //log done...............................................................................................................
-RestServer.post('/dvp/:version/limit_handler/schedule/update_scheduleID',function(req,res,next)
+RestServer.post('/dvp/'+version+'/limit_handler/schedule/update_scheduleID',function(req,res,next)
 {
     log.info("\n.............................................Update schedule ID Starts....................................................\n");
     try {
@@ -178,7 +179,7 @@ RestServer.post('/dvp/:version/limit_handler/schedule/update_scheduleID',functio
 });
 //Done.......................................................................................................................
 //log done...............................................................................................................
-RestServer.post('/dvp/:version/limit_handler/schedule/update_scheduleid_Appointment',function(req,res,next)
+RestServer.post('/dvp/'+version+'/limit_handler/schedule/update_scheduleid_Appointment',function(req,res,next)
 {
     log.info("\n.............................................Update scheduleID_Appointment Starts....................................................\n");
     try {
@@ -211,7 +212,7 @@ RestServer.post('/dvp/:version/limit_handler/schedule/update_scheduleid_Appointm
 });
 //Done.......................................................................................................................
 //log done...............................................................................................................
-RestServer.post('/dvp/:version/limit_handler/schedule/update_appoinment_data',function(req,res,next)
+RestServer.post('/dvp/'+version+'/limit_handler/schedule/update_appoinment_data',function(req,res,next)
 {
     log.info("\n.............................................Update Appointment Data Starts.................................\n");
     try {
@@ -246,7 +247,7 @@ RestServer.post('/dvp/:version/limit_handler/schedule/update_appoinment_data',fu
 
 //Done.......................................................................................................................
 //log done...............................................................................................................
-RestServer.get('/dvp/:version/limit_handler/limitapi/limit_increment/:key',function(req,res,next)
+RestServer.get('/dvp/'+version+'/limit_handler/limitapi/limit_increment/:key',function(req,res,next)
 {
     log.info("\n.............................................Limit Increment Starts.................................\n");
     try {
@@ -279,7 +280,7 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/limit_increment/:key',funct
 });
 //.......................................................................................................................
 //Log done...............................................................................................................
-RestServer.get('/dvp/:version/limit_handler/limitapi/limit_decrement/:key',function(req,res,next)
+RestServer.get('/dvp/'+version+'/limit_handler/limitapi/limit_decrement/:key',function(req,res,next)
 {
     log.info("\n.............................................Limit Decrement Starts.................................\n");
 
@@ -315,7 +316,7 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/limit_decrement/:key',funct
 });
 //.......................................................................................................................
 //Log done...............................................................................................................
-RestServer.post('/dvp/:version/limit_handler/limitapi/add_new_limit_record',function(req,res,next)
+RestServer.post('/dvp/'+version+'/limit_handler/limitapi/add_new_limit_record',function(req,res,next)
 {
     log.info("\n.............................................New Limit record adding Starts.................................\n");
 
@@ -353,7 +354,7 @@ RestServer.post('/dvp/:version/limit_handler/limitapi/add_new_limit_record',func
 });
 //.......................................................................................................................
 //log done
-RestServer.post('/dvp/:version/limit_handler/limitapi/update_maxlimit',function(req,res,next)
+RestServer.post('/dvp/'+version+'/limit_handler/limitapi/update_maxlimit',function(req,res,next)
 {
     log.info("\n.............................................Update max limit Starts.................................\n");
     try {
@@ -391,7 +392,7 @@ RestServer.post('/dvp/:version/limit_handler/limitapi/update_maxlimit',function(
 
 //.......................................................................................................................
 //log done
-RestServer.post('/dvp/:version/limit_handler/limitapi/Update_EnableState',function(req,res,next)
+RestServer.post('/dvp/'+version+'/limit_handler/limitapi/Update_EnableState',function(req,res,next)
 {
     log.info("\n.............................................Update EnableState Starts.................................\n");
 
@@ -429,7 +430,7 @@ RestServer.post('/dvp/:version/limit_handler/limitapi/Update_EnableState',functi
 
 //.......................................get.............................................................................
 //log done
-RestServer.get('/dvp/:version/limit_handler/schedule/Pick_valid_Appointment',function(req,res,next)
+RestServer.get('/dvp/'+version+'/limit_handler/schedule/Pick_valid_Appointment',function(req,res,next)
 {
     log.info("\n.............................................Pick valid Appointment Starts.................................\n");
     try {
@@ -462,7 +463,7 @@ RestServer.get('/dvp/:version/limit_handler/schedule/Pick_valid_Appointment',fun
 });
 //.......................................................................................................................
 //log done
-RestServer.get('/dvp/:version/limit_handler/schedule/check_availables/:dt/:dy/:tm',function(req,res,next)
+RestServer.get('/dvp/'+version+'/limit_handler/schedule/check_availables/:dt/:dy/:tm',function(req,res,next)
 {
     log.info("\n.............................................Check available Appointments Starts.................................\n");
     try {
@@ -501,7 +502,7 @@ RestServer.get('/dvp/:version/limit_handler/schedule/check_availables/:dt/:dy/:t
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_app_through_schedule/:cmp/:tent/:dt/:dy/:tm',function(req,res,next)
+RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_app_through_schedule/:cmp/:tent/:dt/:dy/:tm',function(req,res,next)
 {
     log.info("\n.............................................Pick Appointments through Schedule Starts.................................\n");
     try {
@@ -534,7 +535,7 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_app_through_schedule/:
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule/:id',function(req,res,next)
+RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule/:id',function(req,res,next)
 {
     log.info("\n.............................................Pick Schedule Starts.................................\n");
     try {
@@ -568,7 +569,7 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule/:id',function
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule_action/:id',function(req,res,next)
+RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule_action/:id',function(req,res,next)
 {
     log.info("\n.............................................Pick Schedule Action Starts.................................\n");
     try {
@@ -601,7 +602,7 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_schedule_action/:id',f
 });
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_appointment/:id',function(req,res,next)
+RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_appointment/:id',function(req,res,next)
 {
     log.info("\n.............................................Pick Appointment Starts.................................\n");
     try {
@@ -636,7 +637,7 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_appointment/:id',funct
 
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action/:id',function(req,res,next)
+RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_apointment_action/:id',function(req,res,next)
 {
     log.info("\n.............................................Pick Appointment Action Starts.................................\n");
 
@@ -698,7 +699,7 @@ RestServer.get('/dvp/:version/limit_handler/schedule/pick_apointment_action/:id'
 
 //.......................................................................................................................
 
-RestServer.get('/dvp/:version/limit_handler/limitapi/get_current_limit/:Rid',function(req,res,next)
+RestServer.get('/dvp/'+version+'/limit_handler/limitapi/get_current_limit/:Rid',function(req,res,next)
 {
     log.info("\n.............................................Get current limit Starts.................................\n");
     try {
@@ -735,7 +736,7 @@ RestServer.get('/dvp/:version/limit_handler/limitapi/get_current_limit/:Rid',fun
 //.......................................................................................................................
 
 
-RestServer.get('/dvp/:version/limit_handler/limitapi/get_max_limit/:Rid',function(req,res,next)
+RestServer.get('/dvp/'+version+'/limit_handler/limitapi/get_max_limit/:Rid',function(req,res,next)
 {
     log.info("\n.............................................Get Max limit Starts.................................\n");
     try {
