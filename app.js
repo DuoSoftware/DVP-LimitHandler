@@ -7,14 +7,14 @@ var restify = require('restify');
 var schedule=require('./SheduleApi.js');
 var group=require('./../DVP-SIPUserEndpointService/SipUserGroupManagement.js');
 var limit=require('./LimitApiNew.js');
-var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
+var messageFormatter = require('DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var log4js=require('log4js');
 var config = require('config');
 
 var port = config.Host.port || 3000;
 var version=config.Host.version;
 
-log4js.configure('./config/log4js_config.json', { cwd: './logs' });
+log4js.configure('config/log4js_config.json', { cwd: './logs' });
 var log = log4js.getLogger("app");
 fs = require('fs');
 

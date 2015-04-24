@@ -4,7 +4,7 @@
 var restify = require('restify');
 var stringify=require('stringify');
 var redis=require('redis');
-var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
+var messageFormatter = require('DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var uuid = require('node-uuid');
 var Warlock = require('node-redis-warlock');
 var DbConn = require('./DVP-DBModels');

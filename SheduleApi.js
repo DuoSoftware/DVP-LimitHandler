@@ -4,7 +4,7 @@
  */
 
 
-var DbConn = require('./DVP-DBModels');
+var DbConn = require('DVP-DBModels');
 var restify = require('restify');
 var sre = require('swagger-restify-express');
 /*var context=require('./SIPUserEndpointService.js');
@@ -15,11 +15,11 @@ var sre = require('swagger-restify-express');
 var stringify=require('stringify');
 var moment=require('moment');
 var dateutil=require('date-utils');
-var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
+var messageFormatter = require('DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var log4js=require('log4js');
 
 
-log4js.configure('./config/log4js_config.json', { cwd: './logs' });
+log4js.configure('config/log4js_config.json', { cwd: './logs' });
 var log = log4js.getLogger("shdlapi");
 
 

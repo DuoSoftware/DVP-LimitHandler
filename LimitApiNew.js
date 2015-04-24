@@ -4,16 +4,16 @@
 var restify = require('restify');
 var stringify=require('stringify');
 var redis=require('redis');
-var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
+var messageFormatter = require('DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var uuid = require('node-uuid');
-var DbConn = require('./DVP-DBModels');
+var DbConn = require('DVP-DBModels');
 var log4js=require('log4js');
 var config = require('config');
 
 var port = config.Redis.port;
 var ip=config.Redis.ip
 
-log4js.configure('./config/log4js_config.json', { cwd: './logs' });
+log4js.configure('config/log4js_config.json', { cwd: './logs' });
 var log = log4js.getLogger("limapi");
 
 var client = redis.createClient(ip,port);
