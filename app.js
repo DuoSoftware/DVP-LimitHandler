@@ -9,13 +9,13 @@ var group=require('./../DVP-SIPUserEndpointService/SipUserGroupManagement.js');
 var limit=require('./LimitApiNew.js');
 var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var log4js=require('log4js');
+var config = require('config');
 
+var port = config.Host.port || 3000;
 
 log4js.configure('./config/log4js_config.json', { cwd: './logs' });
 var log = log4js.getLogger("app");
 fs = require('fs');
-
-
 
 var RestServer = restify.createServer({
     name: "myapp",
@@ -25,7 +25,7 @@ var RestServer = restify.createServer({
 
 });
 //Server listen
-RestServer.listen(8085, function () {
+RestServer.listen(port, function () {
     console.log('%s listening at %s', RestServer.name, RestServer.url);
 
 });
@@ -33,6 +33,9 @@ RestServer.listen(8085, function () {
 RestServer.use(restify.bodyParser());
 RestServer.use(restify.acceptParser(RestServer.acceptable));
 RestServer.use(restify.queryParser());
+
+
+
 
 //.......................................post............................................................................
 //Done

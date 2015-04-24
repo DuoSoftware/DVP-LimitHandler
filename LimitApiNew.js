@@ -8,12 +8,15 @@ var messageFormatter = require('./DVP-Common/CommonMessageGenerator/ClientMessag
 var uuid = require('node-uuid');
 var DbConn = require('./DVP-DBModels');
 var log4js=require('log4js');
+var config = require('config');
 
+var port = config.Redis.port;
+var ip=config.Redis.ip
 
 log4js.configure('./config/log4js_config.json', { cwd: './logs' });
 var log = log4js.getLogger("limapi");
 
-var client = redis.createClient(6379,"192.168.3.200");
+var client = redis.createClient(ip,port);
 client.on("error", function (err) {
     console.log("Error " + err);
 
