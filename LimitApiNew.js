@@ -11,9 +11,10 @@ var log4js=require('log4js');
 var config = require('config');
 
 var port = config.Redis.port;
-var ip=config.Redis.ip
+var ip=config.Redis.ip;
+var hpath=config.Host.hostpath;
 
-log4js.configure('config/log4js_config.json', { cwd: './logs' });
+log4js.configure(hpath+'/config/log4js_config.json', { cwd: './logs' });
 var log = log4js.getLogger("limapi");
 
 var client = redis.createClient(ip,port);

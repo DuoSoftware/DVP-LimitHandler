@@ -20,7 +20,8 @@ module.exports = {
     {
         "domain": "HOST_IP",
         "port": "HOST_PORT",
-        "version":"HOST_VERSION"
+        "version":"HOST_VERSION",
+        "hostpath":"HOST_PATH"
     }
 };
 
