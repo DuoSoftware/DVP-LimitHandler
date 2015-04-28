@@ -11,7 +11,7 @@ var log4js=require('log4js');
 var config = require('config');
 
 var port = config.Redis.port;
-var ip=config.Redis.ip;
+var ip = config.Redis.ip;
 var hpath=config.Host.hostpath;
 
 log4js.configure(config.Host.logfilepath, { cwd: hpath });
