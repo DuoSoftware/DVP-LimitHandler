@@ -21,7 +21,7 @@ var config = require('config');
 var hpath=config.Host.hostpath;
 
 
-log4js.configure(hpath+'config/log4js_config.json', { cwd: './logs' });
+log4js.configure('log4js_config.json', { cwd: hpath });
 var log = log4js.getLogger("shdlapi");
 
 

@@ -15,7 +15,7 @@ var port = config.Host.port || 3000;
 var version=config.Host.version;
 var hpath=config.Host.hostpath;
 
-log4js.configure(hpath+'/config/log4js_config.json', { cwd: './logs' });
+log4js.configure('log4js_config.json', { cwd: hpath });
 var log = log4js.getLogger("app");
 fs = require('fs');
 
