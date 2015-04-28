@@ -5,7 +5,7 @@
 var restify = require('restify');
 //var sre = require('swagger-restify-express');
 var schedule=require('./SheduleApi.js');
-//var group=require('./../DVP-SIPUserEndpointService/SipUserGroupManagement.js');
+//vaup=require('./../DVP-SIPUserEndpointService/SipUserGroupManagement.js');
 var limit=require('./LimitApiNew.js');
 var messageFormatter = require('DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var log4js=require('log4js');
