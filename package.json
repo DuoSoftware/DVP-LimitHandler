@@ -11,6 +11,8 @@
     "moment": "^2.10.2",
     "node-uuid": "^1.4.3",
     "redis": "^0.12.1",
+    "DVP-Common": "DuoSoftware/DVP-Common",
+    "DVP-DBModels": "DuoSoftware/DVP-DBModels",
     "restify": "^3.0.2",
     "stringify": "^3.1.0",
     "swagger-restify-express": "^0.2.1",
