@@ -14,6 +14,8 @@ var config = require('config');
 var port = config.Host.port || 3000;
 var version=config.Host.version;
 var hpath=config.Host.hostpath;
+var logger = require('DVP-Common/LogHandler/CommonLogHandler.js').logger;
+var uuid = require('node-uuid');
 
 
 log4js.configure(config.Host.logfilepath, { cwd: hpath });
@@ -44,14 +46,27 @@ RestServer.use(restify.queryParser());
 //Done
 
 //log done...............................................................................................................
-RestServer.post('/dvp/'+version+'/limit_handler/schedule/add_appointment',function(req,res,next)
+//RestServer.post('/dvp/'+version+'/limit_handler/schedule/add_appointment',function(req,res,next)
+RestServer.post('/DVP/'+version+'/LimitHandler/Schedule/NewAppointment',function(req,res,next)
 {
-    log.info("\n.............................................Add appointment Starts....................................................\n");
+    var reqId='';
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+    logger.debug('[DVP-HTTPProgrammingMonitorAPI.ErrorMonitor.GetAllErrorRecordsOfApplicationByErrorCode] - [%s] - [HTTP]  - Request received -  Data - Application : %s of Company : %s and Tenant : %s and ErrorCode : %s',reqId,req.params.AppID,req.params.Company,req.params.Tenant,req.params.ECode);
+
+    //log.info("\n.............................................Add appointment Starts....................................................\n");
     try {
-        log.info("Inputs : "+req.body);
+        //log.info("Inputs : "+req.body);
+        logger.debug('[DVP-LimitHandler.Schedule.NewAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
         schedule.AddAppointment(req,function(err,resz)
         {
-
 
             if(err)
             {
