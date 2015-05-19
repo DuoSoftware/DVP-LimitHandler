@@ -383,13 +383,14 @@ function AddNewLimitRecord(req,reqId,callback)
                             {
                                 LimitId: rand,
                                 LimitDescription: req.LimitDescription,
-                                ObjClass:req.ObjClass,
-                                ObjType: req.ObjType,
-                                ObjCategory: req.ObjCategory,
+                                ObjClass: "OBJCLZ",
+                                ObjType: "OBJTYP",
+                                ObjCategory: "OBJCAT",
+                                CompanyId: 1,
+                                TenantId: 1,
                                 MaxCount: req.MaxCount,
-                                Enable: req.EndTime,
-                                CompanyId: obj.CompanyId,
-                                TenantId: obj.TenantId
+                                Enable: req.EndTime
+
                                 // AddTime: new Date(2009, 10, 11),
                                 //  UpdateTime: new Date(2009, 10, 12),
                                 // CSDBCloudEndUserId: jobj.CSDBCloudEndUserId
@@ -630,14 +631,14 @@ function GetObj(key,obj) {
         if (error) {
 
 
-            console.log( error);
+           // console.log( error);
 
 
 
         }
         else {
 
-            console.log(reply);
+           // console.log(reply);
 
 
 

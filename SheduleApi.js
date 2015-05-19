@@ -303,11 +303,11 @@ function AddSchedule(req,reqId,callback)
                                 ScheduleName: obj.ScheduleName,
                                 Action: obj.Action,
                                 ExtraData: obj.ExtraData,
-                                ObjClass: obj.ObjClass,
-                                ObjType: obj.ObjType,
-                                ObjCategory: obj.ObjCategory,
-                                CompanyId: obj.CompanyId,
-                                TenantId: obj.TenantId
+                                ObjClass: "OBJCLZ",
+                                ObjType: "OBJTYP",
+                                ObjCategory: "OBJCAT",
+                                CompanyId: 1,
+                                TenantId: 1
                                 // AddTime: new Date(2009, 10, 11),
                                 //  UpdateTime: new Date(2009, 10, 12),
                                 // CSDBCloudEndUserId: jobj.CSDBCloudEndUserId
@@ -402,11 +402,11 @@ function AddAppointment(req,reqId,callback)
                             StartTime: obj.StartTime,
                             EndTime: obj.EndTime,
                             DaysOfWeek:obj.DaysOfWeek,
-                            ObjClass:obj.ObjClass,
-                            ObjType:obj.ObjType,
-                            ObjCategory:obj.ObjCategory,
-                            CompanyId:obj.CompanyId,
-                            TenantId:obj.TenantId
+                            ObjClass: "OBJCLZ",
+                            ObjType: "OBJTYP",
+                            ObjCategory: "OBJCAT",
+                            CompanyId: 1,
+                            TenantId: 1
 
 
                         }
@@ -1334,11 +1334,11 @@ function UpdateScheduleData(SID,obj,reqId,callback)
                                 //ScheduleName: obj.ScheduleName,
                                 Action: obj.Action,
                                 ExtraData: obj.ExtraData,
-                                ObjClass: obj.ObjClass,
-                                ObjType: obj.ObjType,
-                                ObjCategory: obj.ObjCategory,
-                                CompanyId: obj.CompanyId,
-                                TenantId: obj.TenantId
+                                ObjClass: "OBJCLZ",
+                                ObjType: "OBJTYP",
+                                ObjCategory: "OBJCAT",
+                                CompanyId: 1,
+                                TenantId: 1
 
 
                             },
@@ -1426,11 +1426,11 @@ function UpdateAppointmentData(AID,obj,reqId,callback)
                                     StartTime: obj.StartTime,
                                     EndTime: obj.EndTime,
                                     DaysOfWeek: obj.DaysOfWeek,
-                                    ObjClass: obj.ObjClass,
-                                    ObjType: obj.ObjType,
-                                    ObjCategory: obj.ObjCategory,
-                                    CompanyId: obj.CompanyId,
-                                    TenantId: obj.TenantId
+                                    ObjClass: "OBJCLZ",
+                                    ObjType: "OBJTYP",
+                                    ObjCategory: "OBJCAT",
+                                    CompanyId: 1,
+                                    TenantId: 1
 
 
                                 },
