@@ -535,7 +535,7 @@ function GetMaxLimit(req,reqId,callback)
     }
 }
 
-function UpdateMaxLimit(req,reqId,callback)
+function UpdateMaxLimit(LID,req,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  UpdateMaxLimit starting  - Data %s',reqId,JSON.stringify(req));
     try {
@@ -548,14 +548,14 @@ function UpdateMaxLimit(req,reqId,callback)
 
             },
             {
-                where: [{LimitId: req.LimitId,CompanyId:req.CompanyId}]
+                where: [{LimitId: LID,CompanyId:req.CompanyId}]
             }
         ).then(function (result) {
                 //logger.info('Successfully Updated. ');
                 //log.info("Max limit is updated : "+result);
                 //console.log(".......................updation is succeeded ....................");
-                logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,req.MaxCount,req.LimitId);
-                var jsonString = messageFormatter.FormatMessage(null, "Maxlimit successfully updated for : "+req.LimitId, true, result);
+                logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,req.MaxCount,LID);
+                var jsonString = messageFormatter.FormatMessage(null, "Maxlimit successfully updated for : "+LID, true, result);
                 callback(null, result);
 
             }).error(function (err) {
@@ -563,7 +563,7 @@ function UpdateMaxLimit(req,reqId,callback)
                 //log.info("Error in updating max limit");
                 //console.log("updationfailed ! " + err);
                 //handle error here
-                logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit of %s is unsuccessful when updating to %s   ',reqId,req.LimitId,req.MaxCount,err);
+                logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit of %s is unsuccessful when updating to %s   ',reqId,LID,req.MaxCount,err);
                 var jsonString = messageFormatter.FormatMessage(err, "updation", false, null);
                 callback(err, undefined);
 
@@ -572,17 +572,17 @@ function UpdateMaxLimit(req,reqId,callback)
     }
     catch (ex)
     {
-        logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Exception occurred when updating Maximum limit of %s to %s  ',reqId,req.LimitId,req.MaxCount,ex);
+        logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Exception occurred when updating Maximum limit of %s to %s  ',reqId,LID,req.MaxCount,ex);
         var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, obj);
         res.end(jsonString);
     }
 }
 
-function UpdateEnability(req,reqId,callback)
+function UpdateEnability(LID,req,reqId,callback)
 {
-    logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] -  UpdateEnability starting  - Data %s',reqId,JSON.stringify(req));
+    logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] -  UpdateEnability starting   Data - Limit ID %s others %s',reqId,LID,JSON.stringify(req));
     try {
-        log.info("Inputs : - ID : "+req);
+
         DbConn.LimitInfo
             .update(
             {
@@ -591,13 +591,13 @@ function UpdateEnability(req,reqId,callback)
 
             },
             {
-                where: [{LimitId: req.LimitId,CompanyId:req.CompanyId}]
+                where: [{LimitId: LID,CompanyId:req.CompanyId}]
             }
         ).then(function (result) {
                 //logger.info('Successfully Updated. ');
                 //log.info("Updation succeeded : "+result);
                 //console.log(".......................Updation is succeeded ....................");
-                logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,req.LimitId,req.Enable);
+                logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,req.Enable);
                 var jsonString = messageFormatter.FormatMessage(null, "Maxlimit successfully updated for : "+req.LimitId, true, result);
                 callback(undefined, true);
 
@@ -605,7 +605,7 @@ function UpdateEnability(req,reqId,callback)
                 //logger.info('updation error found in saving. : ' + err);
                 //log.error("Updation error : "+err);
                // console.log("updationfailed ! " + err);
-                logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,req.LimitId,req.Enable,err);
+                logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,req.Enable,err);
                 //handle error here
                 var jsonString = messageFormatter.FormatMessage(err, "updation", false, null);
                 callback(err, false);
@@ -615,7 +615,7 @@ function UpdateEnability(req,reqId,callback)
     }
     catch (ex)
     {
-        logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] -  Exception occurred when method starts : UpdateEnableState - data %s',reqId,JSON.stringify(req),ex);
+        logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] -  Exception occurred when method starts : UpdateEnableState - data LimitID %s others %s',reqId,LID,JSON.stringify(req),ex);
         var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, obj);
         res.end(jsonString);
     }

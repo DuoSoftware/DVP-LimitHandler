@@ -542,7 +542,7 @@ function FindValidAppointment(req,reqId,callback) {
                                                     try {
                                                         if (DayCheck(result[index]),reqId) {
                                                             //console.log('Record Found : ' + result[index]);
-                                                           // log.info("Record found : "+result[index]);
+                                                            // log.info("Record found : "+result[index]);
                                                             logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment record found  %s',reqId,result[index]);
 
                                                             //var jsonString = messageFormatter.FormatMessage(null, "Successfully Found ", true, jsonString);
@@ -771,13 +771,13 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
     logger.debug('[DVP-LimitHandler.CheckAvailablesFor] - [%s]  - CheckAvailables starting  ',reqId);
 
 
-        //log.info("Inputs :- Date : "+Dt+" Days: "+Dy+" Time : "+Tm);
-        //var obj = dataz;
-        var ReqDate = Dt;
-        var ReqDay = Dy;
-        var ReqTime = Tm;
-        var DaySt = false;
-        var DbDays = null;
+    //log.info("Inputs :- Date : "+Dt+" Days: "+Dy+" Time : "+Tm);
+    //var obj = dataz;
+    var ReqDate = Dt;
+    var ReqDay = Dy;
+    var ReqTime = Tm;
+    var DaySt = false;
+    var DbDays = null;
     try {
         var DaysArray = ReqDay.split(",");
         //log.info("Days Array : "+DaysArray);
@@ -1298,7 +1298,7 @@ function PickApointmentAction(obj,reqId,callback)
 }
 
 //post :-done
-function UpdateScheduleData(obj,reqId,callback)
+function UpdateScheduleData(SID,obj,reqId,callback)
 {
     //log.info("\n.............................................Update Schedule Data Starts....................................................\n");
 
@@ -1307,20 +1307,20 @@ function UpdateScheduleData(obj,reqId,callback)
         //log.info("Inputs :- "+JSON.stringify(obj));
         DbConn.Schedule
             .find({
-                where: {id: obj.id}
+                where: {id: SID}
             }
         )
             .complete(function (err, result) {
                 if (err) {
                     //log.error("Error in searching Schedule "+err);
                     //console.log('An error occurred while searching for Extension:', err);
-                    logger.error('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Error occurred while searching Schedule %s ',reqId,obj.id,err);
+                    logger.error('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Error occurred while searching Schedule %s ',reqId,SID,err);
                     //logger.info( 'Error found in searching : '+err );
                     var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Schedule:", false, result);
                     callback(err,undefined);
 
                 } else if (!result) {
-                    logger.error('[DVP-LimitHandler.UpdateSchedule] - [%s] -  No record found for Schedule %s ',reqId,obj.id);
+                    logger.error('[DVP-LimitHandler.UpdateSchedule] - [%s] -  No record found for Schedule %s ',reqId,SID);
                     ///logger.info( 'No user found for the requirement. ' );
                     var jsonString = messageFormatter.FormatMessage(err, "Null returns :no records : no errors", false, result);
                     callback(new Error('No record found'),undefied);
@@ -1348,12 +1348,12 @@ function UpdateScheduleData(obj,reqId,callback)
                             }
                         ).then(function (result) {
                                 //logger.info('Successfully Mapped. ');
-                                logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Schedule %s is updated successfully  ',reqId,obj.id);
+                                logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Schedule %s is updated successfully  ',reqId,SID);
                                 //var jsonString = messageFormatter.FormatMessage(null, "Updation is succeeded", true, result);
                                 callback(undefined,result);
 
                             }).error(function (err) {
-                                logger.error('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Error occurred while updating Schedule %s - data %s',reqId,obj.id,JSON.stringify(obj),err);
+                                logger.error('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Error occurred while updating Schedule %s - data %s',reqId,SID,JSON.stringify(obj),err);
 
                                 // var jsonString = messageFormatter.FormatMessage(err, "mapping error found in saving. : " + err, false, null);
                                 callback(err,undefined);
@@ -1363,7 +1363,7 @@ function UpdateScheduleData(obj,reqId,callback)
                     }
                     catch (ex)
                     {
-                        logger.error('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Exception occurred when  Schedule %s update starts - data %s',reqId,obj.id,JSON.stringify(obj),ex);
+                        logger.error('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Exception occurred when  Schedule %s update starts - data %s',reqId,SID,JSON.stringify(obj),ex);
                         //var jsonString = messageFormatter.FormatMessage(ex, "Exception occures", false, obj);
                         callback(ex,undefined);
                     }
@@ -1375,7 +1375,7 @@ function UpdateScheduleData(obj,reqId,callback)
     }
     catch (ex)
     {
-        logger.error('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Exception occurred when Schedule %s searching starts - data %s',reqId,obj.id,JSON.stringify(obj),ex);
+        logger.error('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Exception occurred when Schedule %s searching starts - data %s',reqId,SID,JSON.stringify(obj),ex);
         callback(ex,undefined);
     }
 
@@ -1385,7 +1385,7 @@ function UpdateScheduleData(obj,reqId,callback)
 }
 
 //post :-done
-function UpdateAppointmentData(obj,reqId,callback)
+function UpdateAppointmentData(AID,obj,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  UpdateAppointmentData starting  - Data %s',reqId,JSON.stringify(obj));
 
@@ -1393,12 +1393,12 @@ function UpdateAppointmentData(obj,reqId,callback)
 
         DbConn.Appointment
             .find({
-                where: {id: obj.id}
+                where: {id: AID}
             }
         )
             .complete(function (err, result) {
                 if (err) {
-                    logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Error occurred while searching Appointment %s ',reqId,obj.id,err);
+                    logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Error occurred while searching Appointment %s ',reqId,AID,err);
                     //logger.info( 'Error found in searching : '+err );
                     //var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Appointment:", false, result);
                     callback(err, undefined);
@@ -1406,14 +1406,14 @@ function UpdateAppointmentData(obj,reqId,callback)
                 } else
                 {
                     if (!result) {
-                        logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - No record found for Appointment %s ',reqId,obj.id);
+                        logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - No record found for Appointment %s ',reqId,AID);
                         // console.log('No user with the Extension has been found.');
                         ///logger.info( 'No user found for the requirement. ' );
                         // var jsonString = messageFormatter.FormatMessage(err, "Null returns :no records : no errors", false, result);
-                        callback(new Error('No appointment found : ' + obj.id), undefined);
+                        callback(new Error('No appointment found : ' + AID), undefined);
 
                     } else {
-                        logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - Record found for Appointment %s ',reqId,obj.id);
+                        logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - Record found for Appointment %s ',reqId,AID);
                         try {
                             DbConn.Appointment
                                 .update(
@@ -1435,15 +1435,15 @@ function UpdateAppointmentData(obj,reqId,callback)
 
                                 },
                                 {
-                                    where: [{id: obj.id}]
+                                    where: [{id: AID}]
                                 }
                             ).then(function (results) {
                                     //logger.info('Successfully Updated. ');
-                                    logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Appointment %s updated successfully',reqId,obj.id);
+                                    logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Appointment %s updated successfully',reqId,AID);
                                     callback(undefined, results);
 
                                 }).error(function (err) {
-                                    logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Error occurred while updating Appointment %s ',reqId,obj.id,err);
+                                    logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Error occurred while updating Appointment %s ',reqId,AID,err);
                                     callback(err, undefined);
                                     //handle error here
 
@@ -1451,7 +1451,7 @@ function UpdateAppointmentData(obj,reqId,callback)
                         }
                         catch (ex) {
 
-                            logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Exception occurred when starting updation of Appointment %s ',reqId,obj.id,ex);
+                            logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Exception occurred when starting updation of Appointment %s Data %s',reqId,AID,JSON.stringify(obj),ex);
                             callback(ex, undefined);
                         }
 
@@ -1463,86 +1463,91 @@ function UpdateAppointmentData(obj,reqId,callback)
     }
     catch (ex)
     {
-        logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Exception occurred when starting method: UpdateAppointmentData - Data ',reqId,JSON.stringify(obj),ex);
+        logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Exception occurred when starting method: UpdateAppointmentData - Appointment %s Data %s',reqId,AID,JSON.stringify(obj),ex);
         callback(ex,undefined);
     }
 }
 
 //post:-done
-function UpdateScheduleIDAppointment(obj,callback)
+function UpdateScheduleIDAppointment(SID,AID,obj,reqId,callback)
 {
     //log.info("\n.............................................UpdateScheduleIDAppointment Starts....................................................\n");
     try {
         log.info("Inputs :-"+JSON.stringify(obj));
         DbConn.Schedule
             .find({
-                where: {id: obj.id}
+                where: {id: SID}
             }
         )
             .complete(function (err, result) {
                 if (err) {
-                    log.error('Error in searching : '+err);
-                    console.log('An error occurred while searching for Extension:', err);
+                    //log.error('Error in searching : '+err);
+                    //console.log('An error occurred while searching for Extension:', err);
+                    logger.error('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [PGSQL]  - Error in searching Schedule %s ', reqId, SID, err);
                     //logger.info( 'Error found in searching : '+err );
                     //var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Schedule:", false, result);
-                    callback(err,undefined);
+                    callback(err, undefined);
 
-                } else if (!result) {
-                    log.error('No record found');
-                    console.log("No user with the Schedule id : "+obj.id+" has been found.");
-                    ///logger.info( 'No user found for the requirement. ' );
-                    //var jsonString = messageFormatter.FormatMessage(err, "Null returns for "+obj.id, false, result);
-                    callback(new Error("No user with the Schedule id : "+obj.id+" has been found."),undefined);
-
-
-                } else if(result) {
-                    log.info("Records found : "+JSON.stringify(result));
-                    console.log("Submitted Schedule id is valid : "+obj.id);
-                    try{
-                        DbConn.Appointment
-                            .update(
-                            {
-                                CSDBScheduleId: obj.id
+                } else
+                {
+                    if (!result) {
+                        //log.error('No record found');
+                        //console.log("No user with the Schedule id : "+obj.id+" has been found.");
+                        logger.error('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [PGSQL]  - No records found for Schedule %s ', reqId, SID);
+                        ///logger.info( 'No user found for the requirement. ' );
+                        //var jsonString = messageFormatter.FormatMessage(err, "Null returns for "+obj.id, false, result);
+                        callback(new Error("No user with the Schedule id : " + SID + " has been found."), undefined);
 
 
-                            },
-                            {
-                                where: [{id: obj.AppID}]
-                            }
-                        ).then(function (results) {
-                                //logger.info('Successfully Mapped. ');
-                                log.info("Successfully updated : "+results);
-                                console.log(".......................Updation is succeeded ....................");
-                                // var jsonString = messageFormatter.FormatMessage(err, "Updation is succeeded", true, results);
-                                //res.end(jsonString);
-                                callback(undefined,results);
-
-                            }).error(function (err) {
-                                log.error("Error found in updating : "+err);
-                                //logger.info('mapping error found in saving. : ' + err);
-                                console.log("Updation failed ! " + err);
-                                callback(err,undefined);
-                                //handle error here
-
-                            });
                     }
-                    catch(ex)
+                    else
                     {
-                        log.fatal("Exception : "+ex);
-                        callback(ex,undefined);
-                    }
+                        // log.info("Records found : "+JSON.stringify(result));
+                        //console.log("Submitted Schedule id is valid : "+obj.id);
+                        logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [PGSQL]  - Record found for Schedule %s ', reqId, SID);
+                        try {
+                            DbConn.Appointment
+                                .update(
+                                {
+                                    CSDBScheduleId: SID
 
-                }
-                else
-                {log.error("error ");
-                    callback(err,result);
+
+                                },
+                                {
+                                    where: [{id: AID}]
+                                }
+                            ).then(function (results) {
+                                    //logger.info('Successfully Mapped. ');
+                                    //log.info("Successfully updated : "+results);
+                                    //console.log(".......................Updation is succeeded ....................");
+                                    // var jsonString = messageFormatter.FormatMessage(err, "Updation is succeeded", true, results);
+                                    //res.end(jsonString);
+                                    logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [PGSQL]  - Updation succeeded of Schedule %s and Appointment %s', reqId, SID, AID);
+                                    callback(undefined, results);
+
+                                }).error(function (err) {
+                                    //log.error("Error found in updating : "+err);
+                                    //logger.info('mapping error found in saving. : ' + err);
+                                    // console.log("Updation failed ! " + err);
+                                    logger.error('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [PGSQL]  - Error in Updation of Schedule %s and Appointment %s', reqId, SID, AID, err);
+                                    callback(err, undefined);
+                                    //handle error here
+
+                                });
+                        }
+                        catch (ex) {
+                            logger.error('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [PGSQL]  - Exception in Updation of Schedule %s and Appointment %s', reqId, SID, AID, ex);
+                            callback(ex, undefined);
+                        }
+
+                    }
                 }
 
             });
     }
     catch(ex)
     {
-        log.fatal("Exception : "+ex);
+        logger.error('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [PGSQL]  - Exception in Startion method :UpdateScheduleIDAppointment with Schedule %s and Appointment %s',reqId,SID,AID,ex);
         callback(ex,undefined);
     }
     return next();
