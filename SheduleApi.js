@@ -786,7 +786,7 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
     {
         //var jsonString = messageFormatter.FormatMessage(err, "Error in object creation from request", false, dataz);
         //res.end(jsonString);
-        logger.error('[DVP-LimitHandler.CheckAvailablesFor] - [%s]  - Exception occurred when formatting requesting dates   ',reqId,ex);
+        logger.error('[DVP-LimitHandler.CheckAvailables] - [%s]  - Exception occurred when formatting requesting dates   ',reqId,ex);
         callback(ex,undefined);
     }
 
@@ -797,16 +797,16 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
         )
             .complete(function (err, result) {
                 if (err) {
-                    console.log('An error occurred while searching for Extension:', err);
+                   // console.log('An error occurred while searching for Extension:', err);
                     //logger.info( 'Error found in searching : '+err );
-                    logger.error('[DVP-LimitHandler.CheckAvailablesFor] - [%s] - [PGSQL]  - Errors occurred while searching appintments  ',reqId,ex);
+                    logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - [PGSQL]  - Errors occurred while searching appintments  ',reqId,ex);
                     callback(err, undefined);
 
                 } else
                 {
                     if (!result) {
-                        logger.error('[DVP-LimitHandler.CheckAvailablesFor] - [%s] - [PGSQL] - No Appointment found  ',reqId,ex);
-                        console.log('No user with the Extension has been found.');
+                        logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - [PGSQL] - No Appointment found  ',reqId,ex);
+                      //  console.log('No user with the Extension has been found.');
                         ///logger.info( 'No user found for the requirement. ' );
                         callback('No record found', undefined);
 
@@ -839,8 +839,8 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
 
                                         if (DaySt) {
                                             //log.info("Record found :"+result[index]);
-                                            console.log('Record Found' + result[index].id);
-                                            logger.debug('[DVP-LimitHandler.CheckAvailablesFor] - [%s]- [PGSQL] - Appointment found %s  ',reqId,result[index].id);
+                                          //  console.log('Record Found' + result[index].id);
+                                            logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s]- [PGSQL] - Appointment found %s  ',reqId,result[index].id);
                                             // var jsonString = messageFormatter.FormatMessage(err, "SUCCESS", true, result[index]);
                                             // res.end(jsonString);
                                             callback(undefined,result[index].id);
@@ -864,12 +864,12 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
                             if(result.length==index+1)
                             {
                                 //log.error("No maching record found");
-                                logger.error('[DVP-LimitHandler.CheckAvailablesFor] - [%s]- Appointment is not found ',reqId);
+                                logger.error('[DVP-LimitHandler.CheckAvailables] - [%s]- Appointment is not found ',reqId);
                                 callback("No maching record found",undefined);
                             }
                         }
                         catch (ex) {
-                            logger.error('[DVP-LimitHandler.CheckAvailablesFor] - [%s] - Exception occurred when searching records one by one ',reqId,ex);
+                            logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - Exception occurred when searching records one by one ',reqId,ex);
                             callback(ex,undefined);
                         }
                     }
@@ -879,7 +879,7 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.CheckAvailablesFor] - [%s] - Exception occurred when starting method : CheckAvailables ',reqId,ex);
+        logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - Exception occurred when starting method : CheckAvailables ',reqId,ex);
         callback(ex,undefined);
     }
 
