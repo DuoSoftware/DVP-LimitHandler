@@ -374,7 +374,7 @@ function AddNewLimitRecord(req,reqId,callback)
             }
             else
             {
-                if(!LimitObject)
+                if(LimitObject.length==0)
                 {
                     logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  No record found for LimitId %s'   ,reqId,rand);
                     try {
@@ -389,7 +389,7 @@ function AddNewLimitRecord(req,reqId,callback)
                                 CompanyId: 1,
                                 TenantId: 1,
                                 MaxCount: req.MaxCount,
-                                Enable: req.EndTime
+                                Enable: req.Enable
 
                                 // AddTime: new Date(2009, 10, 11),
                                 //  UpdateTime: new Date(2009, 10, 12),
@@ -511,7 +511,7 @@ function GetMaxLimit(req,reqId,callback)
             }
             else
             {
-                if(LimitObject)
+                if(LimitObject.length>0)
                 {
                     logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - MaxLimit is %s ',reqId,LimitObject);
                     var jsonString = messageFormatter.FormatMessage(err, "Record already in DB", true, LimitObject);
@@ -549,15 +549,15 @@ function UpdateMaxLimit(LID,req,reqId,callback)
 
             },
             {
-                where: [{LimitId: LID,CompanyId:req.CompanyId}]
+                where: [{LimitId: LID}]
             }
         ).then(function (result) {
                 //logger.info('Successfully Updated. ');
                 //log.info("Max limit is updated : "+result);
                 //console.log(".......................updation is succeeded ....................");
                 logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,req.MaxCount,LID);
-                var jsonString = messageFormatter.FormatMessage(null, "Maxlimit successfully updated for : "+LID, true, result);
-                callback(null, result);
+                //var jsonString = messageFormatter.FormatMessage(null, "Maxlimit successfully updated for : "+LID, true, result);
+                callback(undefined, result);
 
             }).error(function (err) {
                 //logger.info('updation error found in saving. : ' + err);
@@ -592,7 +592,7 @@ function UpdateEnability(LID,req,reqId,callback)
 
             },
             {
-                where: [{LimitId: LID,CompanyId:req.CompanyId}]
+                where: [{LimitId: LID}]
             }
         ).then(function (result) {
                 //logger.info('Successfully Updated. ');

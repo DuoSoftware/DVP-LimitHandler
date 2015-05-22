@@ -307,7 +307,8 @@ function AddSchedule(req,reqId,callback)
                                 ObjType: "OBJTYP",
                                 ObjCategory: "OBJCAT",
                                 CompanyId: 1,
-                                TenantId: 1
+                                TenantId: 1,
+                                Availability:obj.Availability
                                 // AddTime: new Date(2009, 10, 11),
                                 //  UpdateTime: new Date(2009, 10, 12),
                                 // CSDBCloudEndUserId: jobj.CSDBCloudEndUserId
@@ -379,7 +380,7 @@ function AddAppointment(req,reqId,callback)
     }
 
     try {
-        DbConn.Schedule.find({where: [{id: obj.CSDBScheduleId}]}).complete(function (err, ScheduleObject) {
+        DbConn.Schedule.find({where: [{id: obj.ScheduleId}]}).complete(function (err, ScheduleObject) {
 
             if(err)
             {
@@ -508,7 +509,7 @@ function FindValidAppointment(req,reqId,callback) {
 
                 } else
                 {
-                    if (!result) {
+                    if (result.length==0) {
                         //log.error('No user with the Extension has been found.');
                         //console.log('No user with the Extension has been found.');
                         logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - No appointment data found  ',reqId);
@@ -797,16 +798,16 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
         )
             .complete(function (err, result) {
                 if (err) {
-                   // console.log('An error occurred while searching for Extension:', err);
+                    // console.log('An error occurred while searching for Extension:', err);
                     //logger.info( 'Error found in searching : '+err );
                     logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - [PGSQL]  - Errors occurred while searching appintments  ',reqId,ex);
                     callback(err, undefined);
 
                 } else
                 {
-                    if (!result) {
+                    if (result.length==0) {
                         logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - [PGSQL] - No Appointment found  ',reqId,ex);
-                      //  console.log('No user with the Extension has been found.');
+                        //  console.log('No user with the Extension has been found.');
                         ///logger.info( 'No user found for the requirement. ' );
                         callback('No record found', undefined);
 
@@ -839,7 +840,7 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
 
                                         if (DaySt) {
                                             //log.info("Record found :"+result[index]);
-                                          //  console.log('Record Found' + result[index].id);
+                                            //  console.log('Record Found' + result[index].id);
                                             logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s]- [PGSQL] - Appointment found %s  ',reqId,result[index].id);
                                             // var jsonString = messageFormatter.FormatMessage(err, "SUCCESS", true, result[index]);
                                             // res.end(jsonString);
@@ -986,7 +987,7 @@ function PickAppThroughSchedule(cmp,tent,dt,dy,tm,reqId,callback) {
 
                 else
                 {
-                    if (!result) {
+                    if (result.length==0) {
                         logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] - No records found while searching Schedules of Company %s and Tenant %s ',reqId,cmp,tent,err);
                         ///logger.info( 'No user found for the requirement. ' );
                         log.error("No record found");
@@ -1012,7 +1013,7 @@ function PickAppThroughSchedule(cmp,tent,dt,dy,tm,reqId,callback) {
                                             //logger.info( 'Error found in searching : '+err );
 
                                         } else {
-                                            if (!resultapp) {
+                                            if (resultapp.length==0) {
                                                 //log.error("No appointment found");
                                                 console.log('No user with the Extension has been found.');
                                                 ///logger.info( 'No user found for the requirement. ' );
@@ -1119,21 +1120,27 @@ function PickSchedule(obj,reqId,callback)
 
                 } else
                 {
-                    if (!result) {
+                    if (result.length==0) {
 
                         logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - No record found for Schedule %s ',reqId,obj);
                         //console.log('No user with the Extension has been found.');
                         ///logger.info( 'No user found for the requirement. ' );
 
-                        console.log('Empty found....................');
-                        var jsonString = messageFormatter.FormatMessage(null, "Null object returns", false, result);
-                        callback('No record', undefined);
+                        //console.log('Empty found....................');
+                        var jsonString = messageFormatter.FormatMessage(null, "No record found", false, result);
+                        callback(new Error('No record'), undefined);
 
                     } else {
-
-                        logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Record found for Schedule %s ',reqId,obj);
-                        var jsonString = messageFormatter.FormatMessage(null, "Success", false, result);
-                        callback(undefined, result);
+                        if(result.length==0)
+                        {
+                            var jsonString = messageFormatter.FormatMessage(undefined, "Empty result returns", false, result);
+                            callback(new Error('No record'), undefined);
+                        }
+                        else {
+                            //logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Record found for Schedule %s ',reqId,obj);
+                            var jsonString = messageFormatter.FormatMessage(undefined, "Success", false, result);
+                            callback(undefined, result);
+                        }
                     }
                 }
 
@@ -1177,7 +1184,7 @@ function PickScheduleAction(obj,reqId,callback)
                         console.log('No user with the Extension has been found.');
                         ///logger.info( 'No user found for the requirement. ' );
                         var jsonString = messageFormatter.FormatMessage(err, "Null object returns", false, result);
-                        callback('No record', undefined);
+                        callback(new Error('No record'), undefined);
 
                     } else {
 
@@ -1220,18 +1227,18 @@ function PickApointment(obj,reqId,callback)
 
                 } else
                 {
-                    if (!result) {
-                        logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  -No record found appointment for %s   ',reqId,obj);
+                    if (result.length == 0) {
+                        logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - No record found for appointment %s   ',reqId,obj);
                         console.log('No user with the Extension has been found.');
                         ///logger.info( 'No user found for the requirement. ' );
-                        var jsonString = messageFormatter.FormatMessage(ex, "Null found: no records: no errors", false, result);
+                        var jsonString = messageFormatter.FormatMessage("Empty", "Null found: no records: no errors", false, result);
                         callback('No record', undefined);
 
 
                     } else {
                         logger.debug('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - Record found appointment for %s   ',reqId,obj);
-                        var jsonString = messageFormatter.FormatMessage(ex, "Success", false, result);
-                        callback(undefined, Json.stringify(result));
+                        //var jsonString = messageFormatter.FormatMessage(ex, "Success", false, result);
+                        callback(undefined, JSON.stringify(result));
 
                         //console.log(result.Action)
 
@@ -1271,11 +1278,11 @@ function PickApointmentAction(obj,reqId,callback)
 
                 } else
                 {
-                    if (!result) {
+                    if (result.length==0) {
                         logger.error('[DVP-LimitHandler.PickAppointmentAction] - [%s] - [PGSQL]  - No record found for appointments of Id %s  ',reqId,obj);
                         console.log('No user with the Extension has been found.');
                         ///logger.info( 'No user found for the requirement. ' );
-                        var jsonString = messageFormatter.FormatMessage(err, "Null returns :no records : no errors", false, result);
+                        var jsonString = messageFormatter.FormatMessage(undefined, "Null returns :no records : no errors", false, result);
                         callback('No record', undefined);
 
                     } else {
@@ -1556,7 +1563,6 @@ function UpdateScheduleIDAppointment(SID,AID,obj,reqId,callback)
 module.exports.AddSchedule = AddSchedule;
 module.exports.AddAppointment = AddAppointment;
 module.exports.UpdateScheduleData = UpdateScheduleData;
-module.exports.UpdateAppoinmentData = UpdateAppoinmentData;
 module.exports.UpdateScheduleIDAppointment = UpdateScheduleIDAppointment;
 module.exports.FindValidAppointment = FindValidAppointment;
 module.exports.CheckAvailables = CheckAvailables;
