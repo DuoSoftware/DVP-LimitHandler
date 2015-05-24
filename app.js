@@ -708,7 +708,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/CheckAvailablesFor/:d
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_app_through_schedule/:cmp/:tent/:dt/:dy/:tm',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/ApplicationThroughSchedule/:cmp/:tent/:dt/:dy/:tm',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/ApplicationThroughSchedule/:dt/:dy/:tm',function(req,res,next)
 
 {
     var reqId='';
@@ -723,11 +723,14 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/ApplicationThroughSch
 
     }
 
+    var cmp=1;
+    var tent=1;
+
     try {
         logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - [HTTP]  - Request received   -  Data - Date %s  Day %s Time %s Company %s Tenant %s',reqId,req.params.dt,req.params.dy,req.params.tm,req.params.cmp,req.params.tent);
 
         //log.info("Inputs :- CompanyID :  "+req.params.cmp+" TenentID : "+req.params.tent+" Date : "+req.params.dt+" Day : "+req.params.dy+" Time : "+req.params.tm);
-        schedule.PickAppThroughSchedule(req.params.cmp,req.params.tent,req.params.dt,req.params.dy,req.params.tm,reqId,function(err,resz)
+        schedule.PickAppThroughSchedule(cmp,tent,req.params.dt,req.params.dy,req.params.tm,reqId,function(err,resz)
         {
             if(err)
             {
