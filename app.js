@@ -50,7 +50,7 @@ RestServer.use(restify.queryParser());
 
 //log done...............................................................................................................
 //RestServer.post('/dvp/'+version+'/limit_handler/schedule/add_appointment',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitHandler/Schedule/Appointment',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Appointment',function(req,res,next)
 {
     var reqId='';
 
@@ -104,7 +104,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/Schedule/Appointment',functio
 //Done
 //log done...............................................................................................................
 //RestServer.post('/dvp/'+version+'/limit_handler/schedule/add_schedule',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitHandler/Schedule/Schedule',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Schedule',function(req,res,next)
 {
     var reqId='';
 
@@ -156,7 +156,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/Schedule/Schedule',function(r
 
 //RestServer.post('/dvp/'+version+'/limit_handler/schedule/Update_Schedule',function(req,res,next)
 //check params and body
-RestServer.post('/DVP/API/'+version+'/LimitHandler/Schedule/UpdateSchedule/:id',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/UpdateSchedule/:id',function(req,res,next)
 {
     var reqId='';
 
@@ -207,7 +207,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/Schedule/UpdateSchedule/:id',
 //log done...............................................................................................................
 //RestServer.post('/dvp/'+version+'/limit_handler/schedule/update_scheduleID',function(req,res,next)
 //check no body
-RestServer.post('/DVP/API/'+version+'/LimitHandler/Schedule/ScheduleId/:SID/ToAppointment/:AID',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleId/:SID/ToAppointment/:AID',function(req,res,next)
 {
     var reqId='';
 
@@ -289,7 +289,7 @@ RestServer.post('/dvp/'+version+'/limit_handler/schedule/update_scheduleid_Appoi
 //Done.......................................................................................................................
 //log done...............................................................................................................
 //RestServer.post('/dvp/'+version+'/limit_handler/schedule/update_appoinment_data',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitHandler/Schedule/Appointment/:id',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Appointment/:id',function(req,res,next)
 {
     var reqId='';
 
@@ -651,7 +651,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/ValidAppointment',fun
 //.......................................................................................................................
 //log done
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/check_availables/:dt/:dy/:tm',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/CheckAvailablesFor/:dt/:dy/:tm',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/CheckAvailablesFor/:dt/:dy/:tm',function(req,res,next)
 {
     var reqId='';
 
@@ -708,7 +708,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/CheckAvailablesFor/:d
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_app_through_schedule/:cmp/:tent/:dt/:dy/:tm',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/ApplicationThroughSchedule/:dt/:dy/:tm',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ApplicationThroughSchedule/:dt/:dy/:tm',function(req,res,next)
 
 {
     var reqId='';
@@ -766,7 +766,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/ApplicationThroughSch
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/Schedule/:id',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Schedule/:id',function(req,res,next)
 {
     var reqId='';
 
@@ -822,7 +822,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/Schedule/:id',functio
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule_action/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/ScheduleAction/:id',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleAction/:id',function(req,res,next)
 {
     var reqId='';
 
@@ -875,7 +875,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/ScheduleAction/:id',f
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_appointment/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/Appointment/:id',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Appointment/:id',function(req,res,next)
 {
     var reqId='';
 
@@ -929,7 +929,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/Appointment/:id',func
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_apointment_action/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/AppointmentAction/:id',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/AppointmentAction/:id',function(req,res,next)
 {
     var reqId='';
 
