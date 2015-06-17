@@ -80,7 +80,7 @@ function LimitIncrement(req,reqId,callback)
                             });
                         }, 1000);
                         //var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, null);
-                        callback(err,false);
+                        callback(err,undefined);
 
                     } else {
                         if (!result) {
@@ -98,7 +98,7 @@ function LimitIncrement(req,reqId,callback)
                                 });
                             }, 1000);
 
-                            callback('No record', false);
+                            callback(new Error('No record'), undefined);
 
                         }
 
@@ -128,7 +128,7 @@ function LimitIncrement(req,reqId,callback)
                                             });
                                         }, 1000);
                                         //var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, null);
-                                        callback(err, false);
+                                        callback(err, undefined);
                                     }
                                     else {
                                         //log.info('Redis returns : '+reply)
@@ -165,7 +165,7 @@ function LimitIncrement(req,reqId,callback)
                                                             });
                                                         }, 1000);
                                                         // var jsonString = messageFormatter.FormatMessage(err, "ERROR found in incrementing", false, null);
-                                                        callback(err, false);
+                                                        callback(err, undefined);
                                                     }
                                                     else {
                                                         //log.info("incrementing is succeeded. New current :  "+res);
@@ -183,7 +183,7 @@ function LimitIncrement(req,reqId,callback)
                                                             });
                                                         }, 1000);
                                                         //var jsonString = messageFormatter.FormatMessage(null, "SUCCESS New Current Value : "+res, true, null);
-                                                        callback(undefined, true);
+                                                        callback(undefined, res);
                                                     }
                                                 });
                                             }
@@ -192,7 +192,7 @@ function LimitIncrement(req,reqId,callback)
                                                 //log.fatal('Exception : '+ex);
                                                 logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] -  Exception occurred while count increment starting   ',reqId,ex);
                                                 //var jsonString = messageFormatter.FormatMessage(ex, "Catch exception in incrementing", false, null);
-                                                callback(ex, false);
+                                                callback(ex, undefined);
                                             }
 
                                         }
@@ -210,7 +210,7 @@ function LimitIncrement(req,reqId,callback)
                                                 });
                                             }, 1000);
                                             //var jsonString = messageFormatter.FormatMessage(parseInt(reply), "Maximum limit released", false, null);
-                                            callback(undefined, false);
+                                            callback(new Error("Maxcount <=Redis value"), false);
 
                                         }
                                     }
@@ -221,7 +221,7 @@ function LimitIncrement(req,reqId,callback)
                                 // var jsonString = messageFormatter.FormatMessage(ex, "Exception in getting current value", false, null);
                                 //log.fatal('Exception : '+ex);
                                 logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Exception occurred when getting current limit  ',reqId,ex);
-                                callback(ex, false);
+                                callback(ex, undefined);
                             }
                         }
 
@@ -236,7 +236,7 @@ function LimitIncrement(req,reqId,callback)
         //var jsonString = messageFormatter.FormatMessage(ex, "Exception in Entering to function Increment", false, null);
         //log.fatal('Exception : '+ex);
         logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Exception occurred when starting method :LimitIncrement',reqId,ex);
-        callback(ex,false);
+        callback(ex,undefined);
     }
 }
 
@@ -262,7 +262,7 @@ function LimitDecrement(req,reqId,callback)
                         });
                     }, 1000);
                     //var jsonString = messageFormatter.FormatMessage(err, "Error found in getting current limit", false, null);
-                    callback(null, false);
+                    callback(err, undefined);
                 }
                 else {
                     //log.info("Decrement is starting,current value is : "+reply);
@@ -286,7 +286,7 @@ function LimitDecrement(req,reqId,callback)
                                         });
                                     }, 1000);
                                     var jsonString = messageFormatter.FormatMessage(err, "ERROR found in decrementing", false, null);
-                                    callback(null, false);
+                                    callback(err, undefined);
                                 }
                                 else {
                                     log.info('Decrementing succeeded');
@@ -302,7 +302,7 @@ function LimitDecrement(req,reqId,callback)
                                         });
                                     }, 1000);
                                     var jsonString = messageFormatter.FormatMessage(err, "Decrement Success", true, null);
-                                    callback(null, true);
+                                    callback(undefined, result);
                                 }
 
                             });
@@ -314,7 +314,7 @@ function LimitDecrement(req,reqId,callback)
                             //console.log('Exception in incermenting');
                             logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Exception occurred when decrement is starting of %s',reqId,req,ex);
                             var jsonString = messageFormatter.FormatMessage(ex, "Exception in decrementing", false, null);
-                            callback(null, false);
+                            callback(ex, undefined);
                         }
                     }
                     else {
@@ -330,7 +330,7 @@ function LimitDecrement(req,reqId,callback)
                             });
                         }, 1000);
                         var jsonString = messageFormatter.FormatMessage(parseInt(reply), "Current limit is 0", false, null);
-                        callback(null, false);
+                        callback(new Error("Limit = 0 "), undefined);
                     }
                 }
 
@@ -341,7 +341,7 @@ function LimitDecrement(req,reqId,callback)
     {
         logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Exception occurred when starting method :LimitDecrement',reqId,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "Exception in entering to decrement function", false, null);
-        callback(null, false);
+        callback(ex, undefined);
     }
 }
 
@@ -410,8 +410,8 @@ function AddNewLimitRecord(req,reqId,callback)
                             //log.error("Error found in saving to DB : "+err);
                             //console.log("..................... Error found in saving.................................... : " + err);
                             logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  error occurred while saving data record of LimitId %s'   ,reqId,rand,err);
-                            var jsonString = messageFormatter.FormatMessage(err, "ERROR found in saving to PG", false, null);
-                            callback(null, jsonString);
+                            //var jsonString = messageFormatter.FormatMessage(err, "ERROR found in saving to PG", false, null);
+                            callback(err, undefined);
 
 
                         }
@@ -428,13 +428,13 @@ function AddNewLimitRecord(req,reqId,callback)
                                 {
                                     logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [REDIS] -  Error in setting redis key of LimitId %s'   ,reqId,rand,err);
                                     //var jsonString = messageFormatter.FormatMessage(err, "Error Found in Saving to redis : "+rand, false, null);
-                                    callback(err, false);
+                                    callback(err, undefined);
                                 }
                                 else
                                 {
                                     logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - [REDIS] -  Setting redis key of LimitId %s is succeeded'   ,reqId,rand);
                                     //var jsonString = messageFormatter.FormatMessage(err, "Successfully saved to redis : "+rand, true, null);
-                                    callback(null, true);
+                                    callback(undefined, rand);
                                 }
 
                             });
@@ -446,8 +446,8 @@ function AddNewLimitRecord(req,reqId,callback)
                 else
                 {
                     logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  Records are already in db of LimitId %s'   ,reqId,rand);
-                    var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
-                    callback(null, jsonString);
+                    //var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
+                    callback(new Error("Already in DB"), undefined);
                 }
             }
 
@@ -457,8 +457,8 @@ function AddNewLimitRecord(req,reqId,callback)
     catch(ex)
     {
         logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  Exceptions occurred while searching records of LimitId %s'   ,reqId,rand,ex);
-        var jsonString = messageFormatter.FormatMessage(err, "Exception found", false, null);
-        callback(null, jsonString);
+        //var jsonString = messageFormatter.FormatMessage(err, "Exception found", false, null);
+        callback(ex, undefined);
     }
 
 }
@@ -506,7 +506,7 @@ function GetMaxLimit(req,reqId,callback)
             if(err)
             {
                 logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - Error occurred while searching LinitInfo of %s ',reqId,req,err);
-                var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
+                //var jsonString = messageFormatter.FormatMessage(err, "ERROR found", false, null);
                 callback(err, undefined);
             }
             else
@@ -515,13 +515,13 @@ function GetMaxLimit(req,reqId,callback)
                 {
                     logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - MaxLimit is %s ',reqId,LimitObject);
                     var jsonString = messageFormatter.FormatMessage(err, "Record already in DB", true, LimitObject);
-                    callback(undefined,JSON.stringify(LimitObject));
+                    callback(undefined,LimitObject);
                 }
                 else
                 {
                     logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - No record found for %s ',reqId,req);
                     var jsonString = messageFormatter.FormatMessage(err, "No Record in DB", false, null);
-                    callback('Error', undefined);
+                    callback(new Error('No limit Record'), undefined);
                 }
             }
 
@@ -599,8 +599,8 @@ function UpdateEnability(LID,req,reqId,callback)
                 //log.info("Updation succeeded : "+result);
                 //console.log(".......................Updation is succeeded ....................");
                 logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,req.Enable);
-                var jsonString = messageFormatter.FormatMessage(null, "Maxlimit successfully updated for : "+req.LimitId, true, result);
-                callback(undefined, true);
+                //var jsonString = messageFormatter.FormatMessage(null, "Maxlimit successfully updated for : "+req.LimitId, true, result);
+                callback(undefined, result);
 
             }).error(function (err) {
                 //logger.info('updation error found in saving. : ' + err);
@@ -609,7 +609,7 @@ function UpdateEnability(LID,req,reqId,callback)
                 logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,req.Enable,err);
                 //handle error here
                 var jsonString = messageFormatter.FormatMessage(err, "updation", false, null);
-                callback(err, false);
+                callback(err, undefined);
 
             });
 
@@ -617,8 +617,7 @@ function UpdateEnability(LID,req,reqId,callback)
     catch (ex)
     {
         logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] -  Exception occurred when method starts : UpdateEnableState - data LimitID %s others %s',reqId,LID,JSON.stringify(req),ex);
-        var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, obj);
-        res.end(jsonString);
+        callback(ex,undefined);
     }
 }
 

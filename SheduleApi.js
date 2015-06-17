@@ -283,7 +283,7 @@ function AddSchedule(req,reqId,callback)
     }
 
     try {
-        DbConn.Schedule.find({where: [{id: obj.ScheduleName}]}).complete(function (err, ScheduleObject) {
+        DbConn.Schedule.find({where: [{ScheduleName: obj.ScheduleName}]}).complete(function (err, ScheduleObject) {
 
             if (err) {
                 logger.error('[DVP-LimitHandler.NewSchedule] - [%s] - [PGSQL] - Error occurred while searching existing schedules - Schedule :  %s',reqId,obj.ScheduleName,err);
@@ -907,7 +907,6 @@ function UpdateAppointmentScheduleId(obj,reqId,callback)
                             {
                                 CSDBScheduleId: obj.SID
 
-
                             },
                             {
                                 where: [{id: obj.AID}]
@@ -1349,7 +1348,7 @@ function UpdateScheduleData(SID,obj,reqId,callback)
 
                             },
                             {
-                                where: [{id: obj.id}]
+                                where: [{id: SID}]
 
                             }
                         ).then(function (result) {
@@ -1515,12 +1514,11 @@ function UpdateScheduleIDAppointment(SID,AID,obj,reqId,callback)
                             DbConn.Appointment
                                 .update(
                                 {
-                                    CSDBScheduleId: SID
-
+                                    ScheduleId: SID
 
                                 },
                                 {
-                                    where: [{id: AID}]
+                                    where: {id: AID}
                                 }
                             ).then(function (results) {
                                     //logger.info('Successfully Mapped. ');
@@ -1556,7 +1554,7 @@ function UpdateScheduleIDAppointment(SID,AID,obj,reqId,callback)
         logger.error('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [PGSQL]  - Exception in Startion method :UpdateScheduleIDAppointment with Schedule %s and Appointment %s',reqId,SID,AID,ex);
         callback(ex,undefined);
     }
-    return next();
+
 }
 
 module.exports.AddSchedule = AddSchedule;

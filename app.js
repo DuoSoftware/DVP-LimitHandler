@@ -171,8 +171,9 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/UpdateSchedule/:i
 
     try {
         //log.info("Inputs : "+req.body);
+        var ID=parseInt(req.params.id);
         logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] - [HTTP]  - Request received -  Data - id %s Other %s ',reqId,req.params.id,JSON.stringify(req.body));
-        schedule.UpdateScheduleData(req.params.id,req.body,reqId,function(err,resz)
+        schedule.UpdateScheduleData(ID,req.body,reqId,function(err,resz)
         {
             if(err)
             {
@@ -209,6 +210,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/UpdateSchedule/:i
 //check no body
 RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleId/:SID/ToAppointment/:AID',function(req,res,next)
 {
+    console.log("Hit");
     var reqId='';
 
     try
@@ -221,12 +223,13 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleId/:SID/T
     }
 
     try {
-        logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [HTTP]  - Request received -  Data - Schedule %s Appointment %s ',reqId,SID,AID);
-        schedule.UpdateScheduleIDAppointment(req.params.AID,req.body,reqId,function(err,resz)
+        logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [HTTP]  - Request received -  Data - Schedule %d Appointment %d ',reqId,req.params.SID,req.params.AID);
+        schedule.UpdateScheduleIDAppointment(parseInt(req.params.SID),parseInt(req.params.AID),req.body,reqId,function(err,resz)
         {
             if(err)
             {
                 //log.error("Error in Update ScheduleID: "+err);
+                console.log(err);
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
                 logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
@@ -244,12 +247,12 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleId/:SID/T
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [HTTP]  - Exception occurred when service started : UpdateSceduleId -  Data - Schedule %s Appointment %s ',reqId,SID,AID,ex);
+        logger.error('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [HTTP]  - Exception occurred when service started : UpdateSceduleId -  Data - Schedule %s Appointment %s ',reqId,req.params.SID,req.params.AID,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false,undefined);
         logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
-    return next();
+    next();
 });
 //Done.......................................................................................................................
 //log done...............................................................................................................

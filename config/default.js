@@ -1,10 +1,10 @@
 module.exports = {
   "DB": {
     "Type":"postgres",
-    "User":"duo",
+    "User":"postgres",
     "Password":"DuoS123",
     "Port":5432,
-    "Host":"192.168.3.200",
+    "Host":"127.0.0.1",
     "Database":"dvpdb"
   },
   "Redis":
