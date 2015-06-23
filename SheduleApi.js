@@ -493,7 +493,7 @@ function FindValidAppointment(req,reqId,callback) {
     {
         DbConn.Appointment
             .findAll({
-                // where: {id: req}
+                where: {ScheduleId: req}
             }
         )
             .complete(function (err, result) {
@@ -517,18 +517,18 @@ function FindValidAppointment(req,reqId,callback) {
 
                         //console.log("An error occurred in date searching process ");
                         //var jsonString = messageFormatter.FormatMessage(err, "Null object returened as result for : " + req, false, result);
-                        callback('No record',undefined);
+                        callback(new Error('No record'),undefined);
 
 
                     } else {
-                        logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data found  %s',reqId,JSON.stringify(result));
+                        logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data found  ',reqId,JSON.stringify(result));
                         try {
 
                             // var index=
                             for (var index in result) {
 
                                 //log.info("Appointment : "+result[index]);
-                                logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data  %s',reqId,result[index]);
+                                logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data  ',reqId,JSON.stringify(result[index]));
                                 if (result[index].StartDate == null || result[index].EndDate == null) {
 
                                     // console.log('Null found');
@@ -543,7 +543,7 @@ function FindValidAppointment(req,reqId,callback) {
                                                         if (DayCheck(result[index]),reqId) {
                                                             //console.log('Record Found : ' + result[index]);
                                                             // log.info("Record found : "+result[index]);
-                                                            logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment record found  %s',reqId,result[index]);
+                                                            logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment record found ',reqId,JSON.stringify(result[index]));
 
                                                             //var jsonString = messageFormatter.FormatMessage(null, "Successfully Found ", true, jsonString);
                                                             callback(undefined,result[index]);
@@ -557,7 +557,7 @@ function FindValidAppointment(req,reqId,callback) {
                                                         //var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching DayCheck ", false, null);
                                                         //res.end(jsonString);
                                                         //log.fatal("Exception in Day check : "+ex);
-                                                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment day checking %s',reqId,result[index],ex);
+                                                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment day validating %s',reqId,result[index],ex);
                                                         callback('Error in Day check : '+ex,undefined);
                                                     }
                                                 }
@@ -612,14 +612,15 @@ function FindValidAppointment(req,reqId,callback) {
 
 
 
-function DateCheck(req,reqId,reslt)
+//function DateCheck(req,reqId,reslt)
+function DateCheck(req,reqId)
 {
-    logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  Date check starts - Data %s',reqId,JSON.stringify(reslt));
+    logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  Date check starts - Data',reqId,JSON.stringify(req));
     try {
-        log.info("Inputs :- "+JSON.stringify(reslt));
-        if (reslt.StartDate == null && reslt.EndDate == null) {
+        // log.info("Inputs :- "+JSON.stringify(req));
+        if (req.StartDate == null && req.EndDate == null) {
 
-            log.info("start and end dates are null, return true");
+            logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  Start Date and End time is not specified in Appointment %s  ',reqId,req.id);
 
             return true;
             // console.log('Null found');
@@ -630,21 +631,22 @@ function DateCheck(req,reqId,reslt)
         else {
 
             try {
-                var x = moment(moment()).isBetween(reslt.StartDate, reslt.EndDate);
+                var x = moment(moment()).isBetween(req.StartDate, req.EndDate);
                 if (x) {
-                    log.info("Today is between record's starting and end date");
+                    //log.info("Today is between record's starting and end date");
+                    logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  Today is a valid date for Appointment %s  ',reqId,req.id);
                     return true;
                 }
                 else {
-                    log.error("Date is not matched");
-                    console.log('Date error 2');
+                    logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] -  Date is not matched %s  ',reqId,req.id);
+                    //console.log('Date error 2');
                     return false;
                 }
             }
             catch(ex)
             {
-                log.fatal("Exception in Date comparing : "+ex);
-                console.log("Exception in date :"+ex);
+                logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] -  Exception in Date validation algo. Appointment %s  ',reqId,req.id,ex);
+
                 return false;
             }
 
@@ -653,68 +655,71 @@ function DateCheck(req,reqId,reslt)
     }
     catch(ex)
     {
-        log.fatal("Exception Date checking : "+ex);
+        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] -  Exception in Date validation of Appointment %s  ',reqId,req.id,ex);
         return false;
     }
 }
 
-function TimeCheck(reslt)
+function TimeCheck(reslt,reqId)
 {
     log.info("\n.............................................TimeCheck Starts....................................................\n");
     try {
-        log.info("Inputs :- StratTime :-  "+reslt.StartTime+" EndTime :- "+reslt.EndTime);
-        var dblCTm = moment().format("HH.mm");
+        logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  Time validation of Appointment %s  ',reqId,reslt.id,JSON.stringify(reslt));
+        //log.info("Inputs :- StratTime :-  "+reslt.StartTime+" EndTime :- "+reslt.EndTime);
+        var dblCTm = moment().format("HH:mm");
         var dblStTm = reslt.StartTime;
         var dblEdTm = reslt.EndTime;
 
-        log.info("Inputs :- StratTime :  "+dblStTm+" EndTime : "+dblEdTm+" Current Time: "+dblCTm);
+        //logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  Time validation of Appointment %s  ',reqId,reslt.id,JSON.stringify(reslt));
+        logger.debug("DVP-LimitHandler.PickValidAppointment] - [%s] - Time validation - Inputs :- StratTime :  %s EndTime : %s Current Time: %s",reqId,dblStTm,dblEdTm,dblCTm);
     }
     catch(ex)
     {
-        log.fatal("Exception in Time formatting or in inputs ");
+        logger.error("DVP-LimitHandler.PickValidAppointment] - [%s] - Exception in Time formatting - Inputs :- StratTime :  %s EndTime : %s Current Time: %s",reqId,dblStTm,dblEdTm,dblCTm,ex);
         return false;
     }
 
     if(reslt.StartTime == null && reslt.EndTime==null)
     {
-        log.info("Start time and End Time is empty");
+        //log.info("Start time and End Time is empty");
+        logger.debug("DVP-LimitHandler.PickValidAppointment] - [%s] - Start and EndTime is  not initiated",reqId );
         return true;
         // console.log('Null found');
 
     }
     else if(reslt.StartTime == null || reslt.EndTime==null)
-    {log.info("Start time or End Time is empty");
+    {
+        logger.debug("DVP-LimitHandler.PickValidAppointment] - [%s] - Start or EndTime is not initiated",reqId );
 
         return true;
-        console.log('time null');
+
     }
     else {
 
         if (dblCTm >= dblStTm && dblCTm < dblEdTm) {
 
-            log.info("Current time is in between Start and end time of record ");
+            logger.debug("DVP-LimitHandler.PickValidAppointment] - [%s] - Valid time for Appointment %s",reqId,reslt.id );
 
             return true;
 
 
         }
         else {
-            log.error("Current time isn't in between Start and end time of record ");
-            console.log('time range error');
+            logger.error("DVP-LimitHandler.PickValidAppointment] - [%s] - Appointment time is invalid for CurrentTime ",reqId);
             return false;
 
         }
     }
 }
 
-function DayCheck(reslt)
+function DayCheck(reslt,reqId)
 {
     log.info("\n.............................................DayCheck Starts....................................................\n");
     try {
-        log.info("Input : - "+reslt);
+        logger.debug("DVP-LimitHandler.PickValidAppointment] - [%s] -  Details of Appointment  ",reqId,JSON.stringify(reslt) );
         if (reslt.DaysOfWeek == null) {
 
-            log.info("Days details of Record is not specified");
+            logger.debug("DVP-LimitHandler.PickValidAppointment] - [%s] -  Days are not initiated of Appointment  %s",reqId,reslt.id );
             return true;
         }
 
@@ -722,12 +727,11 @@ function DayCheck(reslt)
 
             try {
                 var DaysArray = reslt.DaysOfWeek.split(",");
-                log.info("Record Day details "+JSON.stringify(DaysArray));
+                //logger.debug("DVP-LimitHandler.PickValidAppointment] - [%s] -  Days of Appointment  %s",reqId,reslt.id,DaysArray );
             }
             catch(ex)
             {
-                log.fatal("Exception in Day details seperating : "+ex);
-                consloe.log("Invalid days");
+                logger.error("DVP-LimitHandler.PickValidAppointment] - [%s] -  Day seperation failed in  Appointment  %s",reqId,reslt.id,ex);
                 return false;
             }
             //  var str = "123, 124, 234,252";
@@ -735,11 +739,11 @@ function DayCheck(reslt)
 
             try{
                 var dt = moment(moment()).format('dddd');
-                log.info("Today is : "+dt);
+                //log.info("Today is : "+dt);
             }
             catch(ex)
             {
-                log.fatal("Exception in getting current day : "+ex);
+                logger.error("DVP-LimitHandler.PickValidAppointment] - [%s] -  Current day picking failed",reqId,ex);
                 return false;
             }
 
@@ -747,26 +751,27 @@ function DayCheck(reslt)
 
             if (DaysArray.indexOf(dt) > -1) {
 
-                log.info("Today is valid day")
+                logger.debug("DVP-LimitHandler.PickValidAppointment] - [%s] -  Today is a valid day for Appointment %s",reqId,reslt.id);
                 return true;
             }
             else {
-                log.error("Today is invalid day");
+                logger.error("DVP-LimitHandler.PickValidAppointment] - [%s] -  Today is not a valid day for Appointment %s ",reqId,reslt.id);
+                //log.error("Today is invalid day");
                 return false;
-                console.log('Days error ' + DaysArray);
+
             }
         }
     }
     catch(ex)
     {
-        log.fatal("Exception  : "+ex);
+        logger.error("DVP-LimitHandler.PickValidAppointment] - [%s] -  Exception in Day checking of Appointment %s ",reqId,reslt.id,ex);
         return false;
     }
 }
 
 
 //get :- done
-function CheckAvailables(Dt,Dy,Tm,reqId,callback)
+function CheckAvailables(Dt,Tm,cmp,ten,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.CheckAvailablesFor] - [%s]  - CheckAvailables starting  ',reqId);
 
@@ -774,12 +779,21 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
     //log.info("Inputs :- Date : "+Dt+" Days: "+Dy+" Time : "+Tm);
     //var obj = dataz;
     var ReqDate = Dt;
-    var ReqDay = Dy;
+    //var ReqDay = Dy;
+    var ReqDay = moment(Dt).format('dddd');
+    console.log(ReqDay);
     var ReqTime = Tm;
     var DaySt = false;
-    var DbDays = null;
+    var IsFound=false;
+
+
+
+
+
+
     try {
         var DaysArray = ReqDay.split(",");
+
         //log.info("Days Array : "+DaysArray);
     }
     catch (ex)
@@ -792,8 +806,9 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
 
     try {
 
+
         DbConn.Appointment
-            .findAll({}
+            .findAll({where:[{CompanyId:cmp},{TenantId:ten}]}
         )
             .complete(function (err, result) {
                 if (err) {
@@ -808,7 +823,7 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
                         logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - [PGSQL] - No Appointment found  ',reqId,ex);
                         //  console.log('No user with the Extension has been found.');
                         ///logger.info( 'No user found for the requirement. ' );
-                        callback('No record found', undefined);
+                        callback(new Error('No record found'), undefined);
 
                     } else {
                         try {
@@ -816,57 +831,83 @@ function CheckAvailables(Dt,Dy,Tm,reqId,callback)
 
                             for (var index in result) {
 
-                                if (moment(ReqDate).isBetween(result[index].StartDate, result[index].EndDate)) {
+                                if (result[index].StartDate == null || result[index].EndDate == null) {
+                                    callback(undefined, result[index]);
+                                }
+                                else{
+                                    if (moment(ReqDate).isBetween(result[index].StartDate, result[index].EndDate)) {
 
-                                    if (ReqTime >= result[index].StartTime && ReqTime < result[index].EndTime) {
-                                        DbDays = result[index].DaysOfWeek.split(',');
-
-                                        for (var dindex in DaysArray) {
-                                            //var dt = moment(DaysArray[dindex]).format('dddd');
-                                            if (DbDays.indexOf(DaysArray[dindex]) > -1) {
+                                        if (ReqTime >= result[index].StartTime && ReqTime < result[index].EndTime) {
+                                           var DbDays = result[index].DaysOfWeek.split(',');
+                                           // console.log(DbDays);
 
 
-                                                DaySt = true;
-                                                //callback(undefined,+result[index]);
+                                            if(DbDays.indexOf(ReqDay) > -1)
+                                            {
+                                                logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s]- [PGSQL] - Appointment found %s  ', reqId, result[index].id);
+                                                // var jsonString = messageFormatter.FormatMessage(err, "SUCCESS", true, result[index]);
+                                                // res.end(jsonString);
+                                                IsFound=true;
+                                                callback(undefined, result[index]);
+                                                break;
+                                            }
+                                            else
+                                            {
+                                               continue;
+                                            }
+
+                                          /*  for (var dindex in DaysArray) {
+                                                //var dt = moment(DaysArray[dindex]).format('dddd');
+                                                if (DbDays.indexOf(DaysArray[dindex]) > -1) {
+
+
+                                                    DaySt = true;
+                                                    //callback(undefined,+result[index]);
+                                                }
+                                                else {
+                                                    // log.info("Record found :"+result[index]);
+                                                    DaySt = false;
+                                                    continue;
+                                                }
+
+                                            }
+
+
+                                            if (DaySt) {
+                                                //log.info("Record found :"+result[index]);
+                                                //  console.log('Record Found' + result[index].id);
+                                                logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s]- [PGSQL] - Appointment found %s  ', reqId, result[index].id);
+                                                // var jsonString = messageFormatter.FormatMessage(err, "SUCCESS", true, result[index]);
+                                                // res.end(jsonString);
+                                                callback(undefined, result[index].id);
+                                                break;
                                             }
                                             else {
-                                                // log.info("Record found :"+result[index]);
-                                                DaySt = false;
+                                                //callback('Record not matched',undefined);
                                                 continue;
                                             }
+                                            */
 
-                                        }
-
-                                        if (DaySt) {
-                                            //log.info("Record found :"+result[index]);
-                                            //  console.log('Record Found' + result[index].id);
-                                            logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s]- [PGSQL] - Appointment found %s  ',reqId,result[index].id);
-                                            // var jsonString = messageFormatter.FormatMessage(err, "SUCCESS", true, result[index]);
-                                            // res.end(jsonString);
-                                            callback(undefined,result[index].id);
-                                            break;
                                         }
                                         else {
-                                            //callback('Record not matched',undefined);
                                             continue;
                                         }
-
                                     }
                                     else {
                                         continue;
                                     }
-                                }
-                                else {
-                                    continue;
-                                }
-                            }
 
-                            if(result.length==index+1)
+                                }
+
+
+                            }
+                            if(IsFound==false)
                             {
                                 //log.error("No maching record found");
                                 logger.error('[DVP-LimitHandler.CheckAvailables] - [%s]- Appointment is not found ',reqId);
-                                callback("No maching record found",undefined);
+                                callback(new Error("No maching record found"),undefined);
                             }
+
                         }
                         catch (ex) {
                             logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - Exception occurred when searching records one by one ',reqId,ex);
@@ -963,137 +1004,116 @@ function UpdateAppointmentScheduleId(obj,reqId,callback)
 }
 
 //get :-done
-function PickAppThroughSchedule(cmp,tent,dt,dy,tm,reqId,callback) {
+function PickAppThroughSchedule(cmp,tent,dt,tm,SID,reqId,callback) {
 
-    try{
-        //log.info("Inputs :- CompanyID : "+cmp+" TenentID : "+tent+" Date : "+dt+" Day : "+dy+" Time : "+tm);
-        DbConn.Schedule
+    var IsFound=false;
+
+    var dy= moment(dt).format('dddd');
+
+
+    try {
+        DbConn.Appointment
             .findAll({
-                where: [{CompanyId: cmp} ,{TenantId: tent}], attributes: ['id']
+                where: [{ScheduleId: SID},{CompanyId: cmp} ,{TenantId: tent}]
             }
         )
-            .complete(function (err, result) {
+            .complete(function (err, resultapp) {
                 if (err) {
-
-                    //log.error("Error in searching Scedule");
-                    logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] -  Error occurred while searching Schedules of Company %s and Tenant %s ',reqId,cmp,tent,err);
-                    console.log('An error occurred while searching for Extension:', err);
+                    //log.error("Error in searching Appointment  "+err);
+                    logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] - Error found while searching Appointment records of Schedule %s ',reqId,result[index].id,err);
                     //logger.info( 'Error found in searching : '+err );
-                    var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Schedule : " + id, false, result);
-                    callback(null, jsonString);
-                }
+                    callback(err,undefined);
 
-                else
-                {
-                    if (result.length==0) {
-                        logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] - No records found while searching Schedules of Company %s and Tenant %s ',reqId,cmp,tent,err);
+                } else {
+                    if (resultapp.length==0) {
+                        //log.error("No appointment found");
+                        console.log('No user with the Extension has been found.');
                         ///logger.info( 'No user found for the requirement. ' );
-                        log.error("No record found");
-                        var jsonString = messageFormatter.FormatMessage(err, "Null object returns: no Schedule for id : " + id, false, result);
-                        callback(null, jsonString);
+                        logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] - No records found while searching Appointment records of Schedule %s ',reqId,result[index].id);
+                        // var jsonString = messageFormatter.FormatMessage(err, "EMPTY", false, resultapp);
+                        callback(new Error("No Appointments found"), undefined);
 
                     } else {
 
-                        logger.debug('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] - Records found while searching Schedules of Company %s and Tenant %s ',reqId,cmp,tent);
-                        for (var index in result) {
+                        //log.info("Appointment record found");
+                        for (var index in resultapp) {
 
-                            try {
-                                DbConn.Appointment
-                                    .findAll({
-                                        where: [{CSDBScheduleId: result[index].id}]
-                                    }
-                                )
-                                    .complete(function (err, resultapp) {
-                                        if (err) {
-                                            //log.error("Error in searching Appointment  "+err);
-                                            console.log('An error occurred while searching for Extension:', err);
-                                            logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] - Error found while searching Appointment records of Schedule %s ',reqId,result[index].id,err);
-                                            //logger.info( 'Error found in searching : '+err );
+                            if (resultapp[index].StartDate == null || resultapp[index].EndDate == null) {
+                                /*if(moment(dt).isBefore(resultapp[index].EndDate))
+                                 {
 
-                                        } else {
-                                            if (resultapp.length==0) {
-                                                //log.error("No appointment found");
-                                                console.log('No user with the Extension has been found.');
-                                                ///logger.info( 'No user found for the requirement. ' );
-                                                logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] - No records found while searching Appointment records of Schedule %s ',reqId,result[index].id);
-                                                var jsonString = messageFormatter.FormatMessage(err, "EMPTY", false, resultapp);
-                                                callback("Empty found", undefined);
-
-                                            } else {
-
-                                                //log.info("Appointment record found");
-                                                for (var index in resultapp) {
-                                                    if (moment(dt).isBetween(resultapp[index].StartDate, resultapp[index].EndDate)) {
-                                                        if (tm >= resultapp[index].StartTime && tm < resultapp[index].EndTime) {
-                                                            DbDays = resultapp[index].DaysOfWeek.split(',');
+                                 }
+                                 */
+                                callback(undefined, result[index]);
+                            }
+                            else {
+                                if (moment(dt).isBetween(resultapp[index].StartDate, resultapp[index].EndDate)) {
+                                    if (tm >= resultapp[index].StartTime && tm < resultapp[index].EndTime) {
+                                        DbDays = resultapp[index].DaysOfWeek.split(',');
 
 
-                                                            //var dt = moment(DaysArray[dindex]).format('dddd');
-                                                            if (DbDays.indexOf(dy) > -1) {
-                                                                DaySt = true;
-                                                            }
-                                                            else {
-                                                                DaySt = false;
-                                                            }
+                                        //var dt = moment(DaysArray[dindex]).format('dddd')
 
-                                                            //console.log('Today is :' + dt);
+                                        //console.log('Today is :' + dt);
 
 
-                                                            if (DaySt) {
+                                        if (DbDays.indexOf(dy) > -1) {
 
-                                                                // var jsonString = messageFormatter.FormatMessage(null, "Success , Record found : ", true, result[index]);
-                                                                //log.info("record found : "+JSON.stringify(result[index]));
-                                                                logger.debug('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - Records found while searching Appointment records of Schedule %s ',reqId,JSON.stringify(result[index]));
-                                                                callback(undefined, result[index]);
+                                            // var jsonString = messageFormatter.FormatMessage(null, "Success , Record found : ", true, result[index]);
+                                            //log.info("record found : "+JSON.stringify(result[index]));
+                                            logger.debug('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - Records found while searching Appointment records of Schedule  ', reqId, JSON.stringify(resultapp[index]));
+                                            callback(undefined, resultapp[index]);
 
 
-                                                                break;
-                                                            }
-                                                            else {
-
-                                                                continue;
-                                                            }
-                                                        }
-                                                        else {
-                                                            continue;
-                                                        }
-                                                    }
-                                                    else {
-                                                        continue;
-                                                    }
-
-                                                }
-
-                                                if (resultapp.length == index + 1) {
-
-                                                    logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - - No Records found while searching Appointment records of Schedule %s ',reqId,JSON.stringify(result[index]));
-                                                    callback('No record', undefined);
-                                                }
-
-                                            }
+                                            break;
                                         }
+                                        else {
 
-                                    });
+                                            continue;
 
+                                        }
+                                    }
+                                    else {
+                                        continue;
+
+                                    }
+                                }
+                                else {
+                                    continue;
+
+                                }
                             }
-                            catch (ex) {
-                                logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - - Exception occurred while searching Appointment records of Schedule %s ',reqId,JSON.stringify(result[index]),ex);
-                                var jsonString = messageFormatter.FormatMessage(ex, "Exception in searching appintment", false, result[index]);
-                                callback(ex, undefined);
-                            }
+                            /*if (resultapp.length == index + 1) {
+
+                                logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - - No Records found while searching Appointment records of Schedule  ',reqId,JSON.stringify(resultapp[index]));
+                                callback(new Error('No valid Appointment found'), undefined);
+                            }*/
+                        }
+
+                        if(IsFound==false)
+                        {
+                            //log.error("No maching record found");
+                            logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s]- Appointment is not found ',reqId);
+                            callback(new Error("No maching record found"),undefined);
                         }
 
                     }
                 }
 
             });
+
     }
-    catch(ex)
-    {
-        logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - Exception occurred when starting method:  PickAppThroughSchedule ',reqId,ex);
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception in searching Schedule", false, result[index]);
-        callback(ex,undefined);
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - - Exception occurred while searching Appointment records of Schedule ',reqId,JSON.stringify(result[index]),ex);
+        // var jsonString = messageFormatter.FormatMessage(ex, "Exception in searching appintment", false, result[index]);
+        callback(ex, undefined);
     }
+
+
+
+
+
+
 
 }
 
@@ -1125,18 +1145,18 @@ function PickSchedule(obj,reqId,callback)
                         ///logger.info( 'No user found for the requirement. ' );
 
                         //console.log('Empty found....................');
-                        var jsonString = messageFormatter.FormatMessage(null, "No record found", false, result);
+                       // var jsonString = messageFormatter.FormatMessage(null, "No record found", false, result);
                         callback(new Error('No record'), undefined);
 
                     } else {
                         if(result.length==0)
                         {
-                            var jsonString = messageFormatter.FormatMessage(undefined, "Empty result returns", false, result);
+                            //var jsonString = messageFormatter.FormatMessage(undefined, "Empty result returns", false, result);
                             callback(new Error('No record'), undefined);
                         }
                         else {
                             //logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Record found for Schedule %s ',reqId,obj);
-                            var jsonString = messageFormatter.FormatMessage(undefined, "Success", false, result);
+                           // var jsonString = messageFormatter.FormatMessage(undefined, "Success", false, result);
                             callback(undefined, result);
                         }
                     }
@@ -1150,7 +1170,7 @@ function PickSchedule(obj,reqId,callback)
         logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - Exception occurred when starting method : PickSchedule ',reqId,obj);
         var jsonString = messageFormatter.FormatMessage(ex, "Exception found in Schedule search ", false, null);
 
-        callback(null,jsonString);
+        callback(ex,undefined);
     }
 }
 
@@ -1170,7 +1190,7 @@ function PickScheduleAction(obj,reqId,callback)
 
                     logger.error('[DVP-LimitHandler.PickScheduleActionById] - [%s] - [PGSQL]  - Error occurred while searching Schedule %s ',reqId,obj,err);
                     console.log('An error occurred while searching for Extension:', err);
-                    var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Extension", false, result);
+                    //var jsonString = messageFormatter.FormatMessage(err, "An error occurred while searching for Extension", false, result);
 
                     callback(err, undefined);
                     //logger.info( 'Error found in searching : '+err );
@@ -1188,8 +1208,8 @@ function PickScheduleAction(obj,reqId,callback)
 
                         //log.info("Schedule record found : "+JSON.stringify(result));
                         logger.debug('[DVP-LimitHandler.PickScheduleActionById] - [%s] - [PGSQL]  - Record found for Schedule %s  -  Data - Id %s',reqId,obj);
-                        var jsonString = messageFormatter.FormatMessage(err, "Successfully object returend with records: " + result.length, true, result);
-                        callback(undefined, JSON.stringify(result));
+                       // var jsonString = messageFormatter.FormatMessage(err, "Successfully object returend with records: " + result.length, true, result);
+                        callback(undefined, result.Action);
 
                     }
                 }
@@ -1199,7 +1219,7 @@ function PickScheduleAction(obj,reqId,callback)
     catch(ex)
     {
         logger.error('[DVP-LimitHandler.PickScheduleActionById] - [%s] - [PGSQL]  - Exception occurred when starting method : PickScheduleAction  -  Data - Id %s',reqId,obj,ex);
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception in searching ", false, obj);
+
         callback(ex,undefined);
     }
 }
@@ -1287,7 +1307,7 @@ function PickApointmentAction(obj,reqId,callback)
 
                         logger.debug('[DVP-LimitHandler.PickAppointmentAction] - [%s] - [PGSQL]  - Record found for appointments of Id %s  ',reqId,obj);
                         var jsonString = messageFormatter.FormatMessage(err, "Successfully object returns with records: " + result.length, true, result);
-                        callback(undefined, JSON.stringify(result));
+                        callback(undefined, result.Action);
 
                     }
                 }

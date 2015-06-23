@@ -407,20 +407,20 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitDecrement/:key'
         logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.key);
 
         //log.info("Inputs:- key :"+req.params.key);
-        limit.LimitDecrement(req.params.key,function(err,resz)
+        limit.LimitDecrement(req.params.key,reqId,function(err,resz)
         {
             if(err)
             {
                 //log.error("Error in Limit Decrementing  : "+err);
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
-                logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - Request response : ',reqId,jsonString);
                 res.end(jsonString);
             }
             else
             {
                 //log.info("Limit Decrementing Succeeded : "+resz);
                 var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
-                logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - Request response : ',reqId,jsonString);
                 res.end(jsonString);
             }
 
@@ -432,9 +432,9 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitDecrement/:key'
     catch(ex)
     {
         //log.fatal("Exception found in Limit Decrementing : "+
-        logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Exception occurred while requesting method : LimitDecrement  -  Data - %s ',reqId,req.params.key,ex);
+        logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Exception occurred while requesting method : LimitDecrement  -  Data - ',reqId,req.params.key,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
-        logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - Request response : %s ',reqId,jsonString);
+        logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - Request response : ',reqId,jsonString);
         res.end(jsonString);
     }
     return next();
@@ -458,7 +458,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitRecord',functio
         logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
 
         //log.info("Inputs: "+req.body);
-        limit.AddNewLimitRecord(req.body,function(err,resz)
+        limit.AddNewLimitRecord(req.body,reqId,function(err,resz)
         {
             if(err)
             {
@@ -472,7 +472,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitRecord',functio
                 //log.info("Adding new Limit record Succeeded : "+resz);
 
                 var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
-                logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - Request response : ',reqId,jsonString);
                 res.end(jsonString);
             }
             // var jsonString = messageFormatter.FormatMessage(err, "AddNewLimitRecord succeeded", true, res);
@@ -552,6 +552,8 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitMax/:LID',funct
 //check body params
 RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/EnableState/:LID',function(req,res,next)
 {
+
+
     var reqId='';
 
 
@@ -602,7 +604,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/EnableState/:LID',fu
 //.......................................get.............................................................................
 //log done
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/Pick_valid_Appointment',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/ValidAppointment',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ValidAppointment/:ScheduleID',function(req,res,next)
 {
     var reqId='';
 
@@ -620,7 +622,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/ValidAppointment',fun
         logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
 
        // log.info("Inputs: "+req);
-        schedule.FindValidAppointment(req,reqId,function(err,resz)
+        schedule.FindValidAppointment(req.params.ScheduleID,reqId,function(err,resz)
         {
             if(err)
             {
@@ -654,8 +656,11 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/Schedule/ValidAppointment',fun
 //.......................................................................................................................
 //log done
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/check_availables/:dt/:dy/:tm',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/CheckAvailablesFor/:dt/:dy/:tm',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/CheckAvailablesFor/:dt/:tm',function(req,res,next)
 {
+    //dt = 2015-09-09
+    //dy = Friday
+    //tm = 11:20 (24Hrs)
     var reqId='';
 
 
@@ -674,10 +679,12 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/CheckAvailablesFor
         var Dt=req.params.dt;
         var Dy=req.params.dy;
         var Tm=req.params.tm;
+        var Cmp=1;
+        var Ten=1;
 
         log.info("Inputs :- date :  "+Dt+" Day : "+Dy+" Time : "+Tm);
 
-        schedule.CheckAvailables(Dt,Dy,Tm,reqId,function(err,resz)
+        schedule.CheckAvailables(Dt,Tm,Cmp,Ten,reqId,function(err,resz)
         {
             if(err)
             {
@@ -711,7 +718,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/CheckAvailablesFor
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_app_through_schedule/:cmp/:tent/:dt/:dy/:tm',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ApplicationThroughSchedule/:dt/:dy/:tm',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ApplicationThroughSchedule/:dt/:tm/:sid',function(req,res,next)
 
 {
     var reqId='';
@@ -733,7 +740,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ApplicationThrough
         logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - [HTTP]  - Request received   -  Data - Date %s  Day %s Time %s Company %s Tenant %s',reqId,req.params.dt,req.params.dy,req.params.tm,req.params.cmp,req.params.tent);
 
         //log.info("Inputs :- CompanyID :  "+req.params.cmp+" TenentID : "+req.params.tent+" Date : "+req.params.dt+" Day : "+req.params.dy+" Time : "+req.params.tm);
-        schedule.PickAppThroughSchedule(cmp,tent,req.params.dt,req.params.dy,req.params.tm,reqId,function(err,resz)
+        schedule.PickAppThroughSchedule(cmp,tent,req.params.dt,req.params.tm,req.params.sid,reqId,function(err,resz)
         {
             if(err)
             {
@@ -851,7 +858,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleAction/:id
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
                // logger.debug('[DVP-LimitHandler.PickScheduleActionById] - [%s] - Request response : %s ',reqId,jsonString);
                // res.end(jsonString);
-                res.end("ERROR");
+                res.end(err);
             }
             else
             {
@@ -1031,7 +1038,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/LimitApi/CurrentLimit/:Rid',fu
 
         //log.info("Inputs : - "+req.body);
 
-        limit.GetCurrentLimit(req.params.Rid,function(err,resz)
+        limit.GetCurrentLimit(req.params.Rid,reqId,function(err,resz)
         {
             if(err)
             {

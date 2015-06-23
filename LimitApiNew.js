@@ -242,27 +242,28 @@ function LimitIncrement(req,reqId,callback)
 
 function LimitDecrement(req,reqId,callback)
 {
-    logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  LimitDecrement starting  - Data %s',reqId,req);
+    logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  LimitDecrement starting  -',reqId);
     try {
 
-        lock(req, 10000, function (done) {
-            logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - [PGSQL] -  Lock started for %s ',reqId,req);
+        lock(req, 1000, function (done) {
+            logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - [PGSQL] -  Lock started ',reqId,req);
             client.get(req, function (err, reply) {
                 if (err) {
 
-                    log.error("Error in getting current value of : " +req+" in redis");
-                    logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in searching LimitID %s  ',reqId,req,err);
+console.log(err);
+                    logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in searching Limit  ',reqId,req,err);
 
-                    setTimeout(function () {
-                        logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is releasing  ',reqId);
+                    //setTimeout(function () {
+                       // logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is releasing  ',reqId);
 
+                    callback(err, undefined);
                         done(function () {
                             logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is released  ',reqId);
 
                         });
-                    }, 1000);
+                   //}, 1000);
                     //var jsonString = messageFormatter.FormatMessage(err, "Error found in getting current limit", false, null);
-                    callback(err, undefined);
+
                 }
                 else {
                     //log.info("Decrement is starting,current value is : "+reply);
@@ -276,33 +277,33 @@ function LimitDecrement(req,reqId,callback)
                                 if (err) {
                                     //log.error("Decrementing error occurs : "+err);
                                     //console.log('Error in decermententing');
-                                    logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Errors occurred while decrementing count of %s  ',reqId,req,err);
-                                    setTimeout(function () {
-                                        logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is releasing  ',reqId);
-
+                                    logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Errors occurred while decrementing count of   ',reqId,req,err);
+                                    //setTimeout(function () {
+                                     //   logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is releasing  ',reqId);
+                                    callback(err, undefined);
                                         done(function () {
                                             logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is released  ',reqId);
 
                                         });
-                                    }, 1000);
-                                    var jsonString = messageFormatter.FormatMessage(err, "ERROR found in decrementing", false, null);
-                                    callback(err, undefined);
+                                   // }, 1000);
+                                    //var jsonString = messageFormatter.FormatMessage(err, "ERROR found in decrementing", false, null);
+
                                 }
                                 else {
                                     log.info('Decrementing succeeded');
                                     //console.log('Succesive in incermenting');
-                                    logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Decrement succeeded of %s   ',reqId,req);
-                                    setTimeout(function () {     // Simulate some task
+                                    logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Decrement succeeded of   ',reqId,req);
+                                    //setTimeout(function () {     // Simulate some task
 
-                                        logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is releasing  ',reqId);
-
+                                        //logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is releasing  ',reqId);
+                                    callback(undefined, result);
                                         done(function () {
                                             logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is released  ',reqId);
 
                                         });
-                                    }, 1000);
-                                    var jsonString = messageFormatter.FormatMessage(err, "Decrement Success", true, null);
-                                    callback(undefined, result);
+                                   // }, 1000);
+                                    //var jsonString = messageFormatter.FormatMessage(err, "Decrement Success", true, null);
+
                                 }
 
                             });
@@ -314,23 +315,30 @@ function LimitDecrement(req,reqId,callback)
                             //console.log('Exception in incermenting');
                             logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Exception occurred when decrement is starting of %s',reqId,req,ex);
                             var jsonString = messageFormatter.FormatMessage(ex, "Exception in decrementing", false, null);
+
                             callback(ex, undefined);
+                            done(function () {
+                                logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is released  ',reqId);
+
+                            });
+
+
                         }
                     }
                     else {
-                        logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Decrement denied of %s current value is 0',reqId,req);
+                        logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Decrement denied of  current value is 0',reqId,req);
                         console.log("Decrement denied ..... Current value is 0");
-                        setTimeout(function () {
-                            logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is releasing  ',reqId);
+                        //setTimeout(function () {
+                          //  logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is releasing  ',reqId);
 
+                        callback(new Error("Limit = 0 "), undefined);
 
                             done(function () {
                                 logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is released  ',reqId);
 
                             });
-                        }, 1000);
+                       // }, 1000);
                         var jsonString = messageFormatter.FormatMessage(parseInt(reply), "Current limit is 0", false, null);
-                        callback(new Error("Limit = 0 "), undefined);
                     }
                 }
 
@@ -340,14 +348,19 @@ function LimitDecrement(req,reqId,callback)
     catch(ex)
     {
         logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Exception occurred when starting method :LimitDecrement',reqId,ex);
-        var jsonString = messageFormatter.FormatMessage(ex, "Exception in entering to decrement function", false, null);
+
         callback(ex, undefined);
+        done(function () {
+            logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Lock is released  ',reqId);
+
+        });
+
     }
 }
 
 function AddNewLimitRecord(req,reqId,callback)
 {
-    logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] -  UpdateEnability starting  - Data %s',reqId,JSON.stringify(req));
+    logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] -  UpdateEnability starting ',reqId);
     try
     {
         var rand = "number" + uuid.v4().toString();
@@ -356,20 +369,20 @@ function AddNewLimitRecord(req,reqId,callback)
     catch(ex)
     {
         //log.fatal("Exception in creating UUID : "+ex);
-        logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] -  Exception in creating UUID   - Data %s',reqId,JSON.stringify(req),ex);
+        logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] -  Exception in creating UUID ',reqId,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "Exception in generating UUID ", false, null);
         callback(ex, undefined);
     }
 
     try{
 
-        logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] -  Checking record for LimitId %s'   ,reqId,rand,ex);
+        logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] -  Checking record for LimitId %s'   ,reqId,rand);
         DbConn.LimitInfo.findAll({where: [{LimitId: rand}]}).complete(function (err, LimitObject) {
 
             if(err)
             {
                // log.error("Error in Searching Limitrecord for : "+req);
-                logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  Error occurred while searching for LimitId %s',reqId,rand,ex);
+                logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  Error occurred while searching for LimitId %s',reqId,rand,err);
                 callback(err,undefined);
             }
             else
@@ -434,6 +447,7 @@ function AddNewLimitRecord(req,reqId,callback)
                                 {
                                     logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - [REDIS] -  Setting redis key of LimitId %s is succeeded'   ,reqId,rand);
                                     //var jsonString = messageFormatter.FormatMessage(err, "Successfully saved to redis : "+rand, true, null);
+                                    console.log(rand);
                                     callback(undefined, rand);
                                 }
 
@@ -513,8 +527,8 @@ function GetMaxLimit(req,reqId,callback)
             {
                 if(LimitObject.length>0)
                 {
-                    logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - MaxLimit is %s ',reqId,LimitObject);
-                    var jsonString = messageFormatter.FormatMessage(err, "Record already in DB", true, LimitObject);
+                    logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - MaxLimit is  ',reqId,LimitObject.MaxCount);
+                    //var jsonString = messageFormatter.FormatMessage(err, "Record already in DB", true, LimitObject);
                     callback(undefined,LimitObject);
                 }
                 else
