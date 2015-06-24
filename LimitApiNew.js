@@ -67,20 +67,20 @@ function LimitIncrement(req,reqId,callback)
                         //console.log('An error occurred while searching maxlimit for ID:' + req, err);
                         logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [PGSQL] -  Error occurred while searching LimitId %s  ',reqId,req,err);
 
-                        setTimeout(function () {
+                        //setTimeout(function () {
                             //log.info('Lock is releasing');// Simulate some task
                             //console.log("Releasing lock now");
-                            logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
-
+                           // logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
+                        callback(err,undefined);
                             done(function () {
                                // log.info('Lock is released, Available for others to use');
                                 //console.log("Lock has been released, and is available for others to use");
                                 logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId);
 
                             });
-                        }, 1000);
+                       // }, 1000);
                         //var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, null);
-                        callback(err,undefined);
+
 
                     } else {
                         if (!result) {
@@ -89,16 +89,16 @@ function LimitIncrement(req,reqId,callback)
                             logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [PGSQL] -  No record for LimitID %s  ',reqId,req,err);
                             ///logger.info( 'No user found for the requirement. ' );
 
-                            setTimeout(function () {
-                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
-
+                           // setTimeout(function () {
+                               // logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
+                            callback(new Error('No record'), undefined);
                                 done(function () {
                                     logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId);
 
                                 });
-                            }, 1000);
+                           // }, 1000);
 
-                            callback(new Error('No record'), undefined);
+
 
                         }
 
@@ -115,20 +115,20 @@ function LimitIncrement(req,reqId,callback)
                                         //console.log("Error found in searching key : " + req + "in REDIS..");
                                         logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in searching LimitID %s  ',reqId,req,err);
 
-                                        setTimeout(function () {
+                                        //setTimeout(function () {
                                             //log.info('Lock is releasing');// Simulate some task
                                             //console.log("Releasing lock now");
-                                            logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
-
+                                           // logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
+                                        callback(err, undefined);
                                             done(function () {
                                                 //log.info('Lock is released, Available for others to use');
                                                 //console.log("Lock has been released, and is available for others to use");
                                                 logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId);
 
                                             });
-                                        }, 1000);
+                                       // }, 1000);
                                         //var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, null);
-                                        callback(err, undefined);
+
                                     }
                                     else {
                                         //log.info('Redis returns : '+reply)
@@ -156,7 +156,7 @@ function LimitIncrement(req,reqId,callback)
                                                         setTimeout(function () { log.info('Lock is releasing');
                                                             // Simulate some task
                                                             logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
-
+                                                            callback(err, undefined);
                                                             done(function () {
                                                                 //log.info('Lock is released, Available for others to use');
                                                                 //console.log("Lock has been released, and is available for others to use");
@@ -165,25 +165,25 @@ function LimitIncrement(req,reqId,callback)
                                                             });
                                                         }, 1000);
                                                         // var jsonString = messageFormatter.FormatMessage(err, "ERROR found in incrementing", false, null);
-                                                        callback(err, undefined);
+
                                                     }
                                                     else {
                                                         //log.info("incrementing is succeeded. New current :  "+res);
                                                         //console.log('Successive in incermenting');
                                                         //console.log('new current ' + res);
                                                         logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Count increment is succeeded of LimitId %s current count : %s  ',reqId,req,res);
-                                                        setTimeout(function () {
-                                                            logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
-
+                                                       // setTimeout(function () {
+                                                           // logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
+                                                        callback(undefined, res);
                                                             done(function () {
                                                                 //log.info('Lock is released, Available for others to use');
                                                                 //console.log("Lock has been released, and is available for others to use");
                                                                 logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId)
 
                                                             });
-                                                        }, 1000);
+                                                      //  }, 1000);
                                                         //var jsonString = messageFormatter.FormatMessage(null, "SUCCESS New Current Value : "+res, true, null);
-                                                        callback(undefined, res);
+
                                                     }
                                                 });
                                             }
@@ -201,16 +201,16 @@ function LimitIncrement(req,reqId,callback)
                                             //console.log("Maximum limit reached");
                                             logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s]  -  Redis record"s Max count %s <  Current count %s  - Maximum limit reached ',reqId,result.MaxCount,reply);
 
-                                            setTimeout(function () {     // Simulate some task
-                                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
-
+                                            //setTimeout(function () {     // Simulate some task
+                                               // logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
+                                            callback(new Error("Maxcount <=Redis value"), false);
                                                 done(function () {
                                                     logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId);
 
                                                 });
-                                            }, 1000);
+                                           // }, 1000);
                                             //var jsonString = messageFormatter.FormatMessage(parseInt(reply), "Maximum limit released", false, null);
-                                            callback(new Error("Maxcount <=Redis value"), false);
+
 
                                         }
                                     }
@@ -314,7 +314,7 @@ console.log(err);
                             //log.fatal('Exception : '+ex);
                             //console.log('Exception in incermenting');
                             logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Exception occurred when decrement is starting of %s',reqId,req,ex);
-                            var jsonString = messageFormatter.FormatMessage(ex, "Exception in decrementing", false, null);
+                           // var jsonString = messageFormatter.FormatMessage(ex, "Exception in decrementing", false, null);
 
                             callback(ex, undefined);
                             done(function () {
@@ -338,7 +338,7 @@ console.log(err);
 
                             });
                        // }, 1000);
-                        var jsonString = messageFormatter.FormatMessage(parseInt(reply), "Current limit is 0", false, null);
+                        //var jsonString = messageFormatter.FormatMessage(parseInt(reply), "Current limit is 0", false, null);
                     }
                 }
 
