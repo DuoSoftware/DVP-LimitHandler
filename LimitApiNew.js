@@ -523,15 +523,15 @@ function UpdateMaxLimit(LID,req,reqId,callback)
     }
 }
 
-function UpdateEnability(LID,req,reqId,callback)
+function UpdateEnability(LID,status,reqId,callback)
 {
-    logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] -  UpdateEnability starting   Data - Limit ID %s others %s',reqId,LID,JSON.stringify(req));
+    logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] -  UpdateEnability starting   Data - Limit ID %s others %s',reqId,LID,status);
     try {
 
         DbConn.LimitInfo
             .update(
             {
-                Enable: req.Enable
+                Enable: status
 
 
             },
@@ -540,13 +540,13 @@ function UpdateEnability(LID,req,reqId,callback)
             }
         ).then(function (result) {
 
-                logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,req.Enable);
+                logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
 
                 callback(undefined, result);
 
             }).error(function (err) {
 
-                logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,req.Enable,err);
+                logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,status,err);
 
                 callback(err, undefined);
 
@@ -555,7 +555,7 @@ function UpdateEnability(LID,req,reqId,callback)
     }
     catch (ex)
     {
-        logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] -  Exception occurred when method starts : UpdateEnableState - data LimitID %s others %s',reqId,LID,JSON.stringify(req),ex);
+        logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] -  Exception occurred when method starts : UpdateEnableState - data LimitID %s others %s',reqId,LID,status,ex);
         callback(ex,undefined);
     }
 }

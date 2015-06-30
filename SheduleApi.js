@@ -246,48 +246,48 @@ function FindValidAppointment(SID,reqId,callback) {
                 where: {ScheduleId: SID}
             }
         )
-            .complete(function (err, result) {
-                if (err) {
+            .complete(function (errApp, resApp) {
+                if (errApp) {
 
 
-                    logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - error occurred while searching appointments  ',reqId,err);
-                    callback(err, undefined);
+                    logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - error occurred while searching appointments  ',reqId,errApp);
+                    callback(errApp, undefined);
 
                 } else
                 {
-                    if (result.length==0) {
+                    if (resApp.length==0) {
 
                         logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - No appointment data found  ',reqId);
                         callback(new Error('No record'),undefined);
 
 
                     } else {
-                        logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data found  ',reqId,JSON.stringify(result));
+                        logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data found  ',reqId,JSON.stringify(resApp));
                         try {
 
 
-                            for (var index in result) {
+                            for (var index in resApp) {
 
 
-                                logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data  ',reqId,JSON.stringify(result[index]));
-                                if (result[index].StartDate == null || result[index].EndDate == null) {
+                                logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data  ',reqId,JSON.stringify(resApp[index]));
+                                if (resApp[index].StartDate == null || resApp[index].EndDate == null) {
 
                                     IsFound=true;
-                                    callback(undefined,result[index]);
+                                    callback(undefined,resApp[index]);
                                 }
                                 else {
                                     try {
 
-                                        if (DateCheck(result[index],reqId)) {
+                                        if (DateCheck(resApp[index],reqId)) {
                                             try {
-                                                if (TimeCheck(result[index],reqId)) {
+                                                if (TimeCheck(resApp[index],reqId)) {
                                                     try {
-                                                        if (DayCheck(result[index]),reqId) {
+                                                        if (DayCheck(resApp[index]),reqId) {
 
-                                                            logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment record found ',reqId,JSON.stringify(result[index]));
+                                                            logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment record found ',reqId,JSON.stringify(resApp[index]));
 
                                                             IsFound=true;
-                                                            callback(undefined,result[index]);
+                                                            callback(undefined,resApp[index]);
 
                                                         }
                                                         else {
@@ -296,7 +296,7 @@ function FindValidAppointment(SID,reqId,callback) {
                                                     }
                                                     catch (ex) {
 
-                                                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment day validating %s',reqId,result[index],ex);
+                                                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment day validating %s',reqId,resApp[index],ex);
                                                         callback('Error in Day check : '+ex,undefined);
                                                     }
                                                 }
@@ -305,7 +305,7 @@ function FindValidAppointment(SID,reqId,callback) {
                                                 }
                                             }
                                             catch (ex) {
-                                                logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment time checking ',reqId,result[index],ex);
+                                                logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment time checking ',reqId,resApp[index],ex);
                                                 callback('Error in Time check : '+ex,undefined);
                                             }
                                         }
@@ -313,7 +313,7 @@ function FindValidAppointment(SID,reqId,callback) {
                                             continue;
                                         }
                                     } catch (ex) {
-                                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment date checking ',reqId,result[index],ex);
+                                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment date checking ',reqId,resApp[index],ex);
                                         callback('Error in Date check : '+ex,undefined);
                                     }
 

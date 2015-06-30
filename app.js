@@ -46,7 +46,7 @@ RestServer.use(restify.queryParser());
 //.......................................post............................................................................
 
 //RestServer.post('/dvp/'+version+'/limit_handler/schedule/add_appointment',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Appointment',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(req,res,next)
 {
     var reqId='';
 
@@ -96,7 +96,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Appointment',func
 });
 
 //RestServer.post('/dvp/'+version+'/limit_handler/schedule/add_schedule',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Schedule',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',function(req,res,next)
 {
     var reqId='';
 
@@ -147,7 +147,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Schedule',functio
 
 //RestServer.post('/dvp/'+version+'/limit_handler/schedule/Update_Schedule',function(req,res,next)
 
-RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/UpdateSchedule/:id',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,next)
 {
     var reqId='';
 
@@ -198,7 +198,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/UpdateSchedule/:i
 
 //RestServer.post('/dvp/'+version+'/limit_handler/schedule/update_scheduleID',function(req,res,next)
 
-RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleId/:SID/ToAppointment/:AID',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:appid',function(req,res,next)
 {
 
     var reqId='';
@@ -213,8 +213,8 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleId/:SID/T
     }
 
     try {
-        logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [HTTP]  - Request received -  Data - Schedule %d Appointment %d ',reqId,req.params.SID,req.params.AID);
-        schedule.UpdateScheduleIDAppointment(parseInt(req.params.SID),parseInt(req.params.AID),reqId,function(err,resz)
+        logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [HTTP]  - Request received -  Data - Schedule %d Appointment %d ',reqId,req.params.sid,req.params.appid);
+        schedule.UpdateScheduleIDAppointment(parseInt(req.params.sid),parseInt(req.params.appid),reqId,function(err,resz)
         {
             if(err)
             {
@@ -237,7 +237,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleId/:SID/T
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [HTTP]  - Exception occurred when service started : UpdateSceduleId -  Data - Schedule %s Appointment %s ',reqId,req.params.SID,req.params.AID,ex);
+        logger.error('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [HTTP]  - Exception occurred when service started : UpdateSceduleId -  Data - Schedule %s Appointment %s ',reqId,eq.params.sid,req.params.appid,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false,undefined);
         logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
@@ -245,7 +245,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleId/:SID/T
     next();
 });
 //RestServer.post('/dvp/'+version+'/limit_handler/schedule/update_appoinment_data',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Appointment/:id',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',function(req,res,next)
 {
     var reqId='';
 
@@ -283,7 +283,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Appointment/:id',
     catch(ex)
     {
 
-        logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - [HTTP]  - Exception occurred when service started : UpdateAppointmentData -  Appointment %s Data %s',reqId,req.params.AID,JSON.stringify(req.body),ex);
+        logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - [HTTP]  - Exception occurred when service started : UpdateAppointmentData -  Appointment %s Data %s',reqId,req.params.id,JSON.stringify(req.body),ex);
 
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
         logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - Request response : %s ',reqId,jsonString);
@@ -294,7 +294,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Appointment/:id',
 
 
 //RestServer.get('/dvp/'+version+'/limit_handler/limitapi/limit_increment/:key',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitIncrement/:key',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Increment/:key',function(req,res,next)
 {
 
     var reqId='';
@@ -340,7 +340,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitIncrement/:key'
 });
 
 //RestServer.get('/dvp/'+version+'/limit_handler/limitapi/limit_decrement/:key',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitDecrement/:key',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Decrement/:key',function(req,res,next)
 {
     var reqId='';
 
@@ -390,7 +390,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitDecrement/:key'
 });
 
 //RestServer.post('/dvp/'+version+'/limit_handler/limitapi/add_new_limit_record',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitRecord',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next)
 {
     var reqId='';
 
@@ -442,7 +442,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitRecord',functio
 });
 
 //RestServer.post('/dvp/'+version+'/limit_handler/limitapi/update_maxlimit',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitMax/:LID',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Max/:lid',function(req,res,next)
 {
     var reqId='';
 
@@ -455,10 +455,10 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitMax/:LID',funct
 
     }
     try {
-        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - [HTTP]  - Request received -  Data - LimitId %s others %s ',reqId,req.params.LID,JSON.stringify(req.body));
+        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - [HTTP]  - Request received -  Data - LimitId %s others %s ',reqId,req.params.lid,JSON.stringify(req.body));
 
 
-        limit.UpdateMaxLimit(req.params.LID,req.body,reqId,function(err,resz)
+        limit.UpdateMaxLimit(req.params.lid,req.body,reqId,function(err,resz)
         {
             if(err)
             {
@@ -484,7 +484,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitMax/:LID',funct
     catch(ex)
     {
 
-        logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Exception occurred while requesting method : UpdateMaxLimit  -  Data - LimitId %s others %s ',reqId,req.params.LID,JSON.stringify(req.body),ex);
+        logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Exception occurred while requesting method : UpdateMaxLimit  -  Data - LimitId %s others %s ',reqId,req.params.lid,JSON.stringify(req.body),ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
         logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
@@ -495,7 +495,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/LimitMax/:LID',funct
 
 //RestServer.post('/dvp/'+version+'/limit_handler/limitapi/Update_EnableState',function(req,res,next)
 
-RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/EnableState/:LID',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',function(req,res,next)
 {
 
 
@@ -513,7 +513,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/EnableState/:LID',fu
 
     try {
         logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - [HTTP]  - Request received -  Data - Limit ID %s others %s',reqId,req.params.LID,JSON.stringify(req.body));
-        limit.UpdateEnability(req.params.LID,req.body,reqId,function(err,resz)
+        limit.UpdateEnability(req.params.lid,req.params.status,reqId,function(err,resz)
         {
             if(err)
             {
@@ -549,7 +549,7 @@ RestServer.post('/DVP/API/'+version+'/LimitHandler/LimitApi/EnableState/:LID',fu
 //.......................................get.............................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/Pick_valid_Appointment',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ValidAppointment/:ScheduleID',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:scheduleID',function(req,res,next)
 {
     var reqId='';
 
@@ -564,10 +564,10 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ValidAppointment/:
     }
 
     try {
-        logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
+        logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.scheduleID);
 
 
-        schedule.FindValidAppointment(req.params.ScheduleID,reqId,function(err,resz)
+        schedule.FindValidAppointment(req.params.scheduleID,reqId,function(err,resz)
         {
             if(err)
             {
@@ -590,7 +590,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ValidAppointment/:
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [HTTP]  - Exception occurred when requesting : PickValidAppointment -  Data - %s ',reqId,JSON.stringify(req.body),ex);
+        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [HTTP]  - Exception occurred when requesting : PickValidAppointment -  Data - %s ',reqId,req.params.scheduleID,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
         logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
@@ -600,7 +600,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ValidAppointment/:
 });
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/check_availables/:dt/:dy/:tm',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/CheckAvailablesFor/:dt/:tm',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:date/:time',function(req,res,next)
 {
     //dt = 2015-09-09
     //dy = Friday
@@ -618,9 +618,9 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/CheckAvailablesFor
     }
 
     try {
-        logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s] - [HTTP]  - Request received   -  Data - Date %s  Day %s Time %s',reqId,req.params.dt,req.params.dy,req.params.tm);
-        var Dt=req.params.dt;
-        var Tm=req.params.tm;
+        logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s] - [HTTP]  - Request received   -  Data - Date %s Time %s',reqId,req.params.date,req.params.time);
+        var Dt=req.params.date;
+        var Tm=req.params.time;
         var Cmp=1;
         var Ten=1;
 
@@ -660,7 +660,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/CheckAvailablesFor
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_app_through_schedule/:cmp/:tent/:dt/:dy/:tm',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ApplicationThroughSchedule/:dt/:tm/:sid',function(req,res,next)
+/*RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ApplicationThroughSchedule/:dt/:tm/:sid',function(req,res,next)
 
 {
     var reqId='';
@@ -715,10 +715,11 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ApplicationThrough
     }
     return next();
 });
+*/
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Schedule/:id',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,next)
 {
     var reqId='';
 
@@ -774,7 +775,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Schedule/:id',func
 
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule_action/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleAction/:id',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',function(req,res,next)
 {
     var reqId='';
 
@@ -824,7 +825,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/ScheduleAction/:id
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_appointment/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Appointment/:id',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointment',function(req,res,next)
 {
     var reqId='';
 
@@ -878,7 +879,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/Appointment/:id',f
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_apointment_action/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/AppointmentAction/:id',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointmen/:id/Action',function(req,res,next)
 {
     var reqId='';
 
@@ -930,7 +931,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/ScheduleApi/AppointmentAction/
 
 
 //RestServer.get('/dvp/'+version+'/limit_handler/limitapi/get_current_limit/:Rid',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/LimitApi/CurrentLimit/:Rid',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Current/:Rid',function(req,res,next)
 {
     var reqId='';
 
@@ -973,7 +974,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/LimitApi/CurrentLimit/:Rid',fu
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.CurrentLimit] - [%s] - [HTTP]  - Exception occurred on request : CurrentLimit   -  Data - Id %s',reqId,req.params.id,ex);
+        logger.error('[DVP-LimitHandler.CurrentLimit] - [%s] - [HTTP]  - Exception occurred on request : CurrentLimit   -  Data - Id %s',reqId,req.params.Rid,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
         logger.debug('[DVP-LimitHandler.CurrentLimit] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
@@ -986,7 +987,7 @@ RestServer.get('/DVP/API/'+version+'/LimitHandler/LimitApi/CurrentLimit/:Rid',fu
 
 
 //RestServer.get('/dvp/'+version+'/limit_handler/limitapi/get_max_limit/:Rid',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitHandler/LimitApi/MaxLimit/:Rid',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',function(req,res,next)
 {
     var reqId='';
 
