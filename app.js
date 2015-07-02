@@ -62,7 +62,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
     try {
 
         logger.debug('[DVP-LimitHandler.NewAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
-        schedule.AddAppointment(req,reqId,function(err,resz)
+        schedule.CreateAppointment(req,reqId,function(err,resz)
         {
 
             if(err)
@@ -113,7 +113,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',function(req,res,next)
     try {
 
         logger.debug('[DVP-LimitHandler.NewSchedule] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
-        schedule.AddSchedule(req,reqId,function(err,resz)
+        schedule.CreateSchedule(req,reqId,function(err,resz)
         {
             if(err)
             {
@@ -164,7 +164,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,ne
 
         var ID=parseInt(req.params.id);
         logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] - [HTTP]  - Request received -  Data - id %s Other %s ',reqId,req.params.id,JSON.stringify(req.body));
-        schedule.UpdateScheduleData(ID,req.body,reqId,function(err,resz)
+        schedule.UpdateSchedule(ID,req.body,reqId,function(err,resz)
         {
             if(err)
             {
@@ -214,7 +214,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
 
     try {
         logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [HTTP]  - Request received -  Data - Schedule %d Appointment %d ',reqId,req.params.sid,req.params.appid);
-        schedule.UpdateScheduleIDAppointment(parseInt(req.params.sid),parseInt(req.params.appid),reqId,function(err,resz)
+        schedule.AssignAppointment(parseInt(req.params.sid),parseInt(req.params.appid),reqId,function(err,resz)
         {
             if(err)
             {
@@ -259,7 +259,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',functio
     }
     try {
         logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - [HTTP]  - Request received -  Appointment %s Data %s',reqId,req.params.id,JSON.stringify(req.body));
-        schedule.UpdateAppointmentData(req.params.id,req.body,reqId,function(err,resz)
+        schedule.UpdateAppointment(req.params.id,req.body,reqId,function(err,resz)
         {
             if(err)
             {
@@ -406,7 +406,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next)
         logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
 
 
-        limit.AddNewLimitRecord(req.body,reqId,function(err,resz)
+        limit.CreateLimit(req.body,reqId,function(err,resz)
         {
             if(err)
             {
@@ -513,7 +513,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',func
 
     try {
         logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - [HTTP]  - Request received -  Data - Limit ID %s others %s',reqId,req.params.LID,JSON.stringify(req.body));
-        limit.UpdateEnability(req.params.lid,req.params.status,reqId,function(err,resz)
+        limit.ActivateLimit(req.params.lid,req.params.status,reqId,function(err,resz)
         {
             if(err)
             {
@@ -567,7 +567,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:schedul
         logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.scheduleID);
 
 
-        schedule.FindValidAppointment(req.params.scheduleID,reqId,function(err,resz)
+        schedule.PickValidAppointment(req.params.scheduleID,reqId,function(err,resz)
         {
             if(err)
             {

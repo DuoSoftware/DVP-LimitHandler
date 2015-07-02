@@ -313,7 +313,7 @@ function LimitDecrement(req,reqId,callback)
     }
 }
 
-function AddNewLimitRecord(req,reqId,callback)
+function CreateLimit(req,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] -  UpdateEnability starting ',reqId);
     try
@@ -523,7 +523,7 @@ function UpdateMaxLimit(LID,req,reqId,callback)
     }
 }
 
-function UpdateEnability(LID,status,reqId,callback)
+function ActivateLimit(LID,status,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] -  UpdateEnability starting   Data - Limit ID %s others %s',reqId,LID,status);
     try {
@@ -562,9 +562,9 @@ function UpdateEnability(LID,status,reqId,callback)
 
 module.exports.LimitIncrement = LimitIncrement;
 module.exports.LimitDecrement = LimitDecrement;
-module.exports.AddNewLimitRecord = AddNewLimitRecord;
+module.exports.CreateLimit = CreateLimit;
 module.exports.GetCurrentLimit = GetCurrentLimit;
 module.exports.GetMaxLimit = GetMaxLimit;
 module.exports.UpdateMaxLimit = UpdateMaxLimit;
-module.exports.UpdateEnability = UpdateEnability;
+module.exports.ActivateLimit = ActivateLimit;
 

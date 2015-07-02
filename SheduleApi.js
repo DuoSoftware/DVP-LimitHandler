@@ -22,7 +22,7 @@ var log = log4js.getLogger("shdlapi");
 
 
 
-function AddSchedule(req,reqId,callback)
+function CreateSchedule(req,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.NewSchedule] - [%s] -  New Schedule adding started  ',reqId);
 
@@ -116,7 +116,7 @@ function AddSchedule(req,reqId,callback)
 
 }
 
-function AddAppointment(req,reqId,callback)
+function CreateAppointment(req,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.NewAppointment] - [%s] -  New appointment adding started  ',reqId);
     try{
@@ -235,7 +235,7 @@ function AddAppointment(req,reqId,callback)
 
 
 
-function FindValidAppointment(SID,reqId,callback) {
+function PickValidAppointment(SID,reqId,callback) {
 
     var IsFound = false;
     logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  New appointment adding started  ',reqId);
@@ -868,7 +868,7 @@ function PickApointmentAction(AID,reqId,callback)
 }
 
 //post :-done
-function UpdateScheduleData(SID,obj,reqId,callback)
+function UpdateSchedule(SID,obj,reqId,callback)
 {
 
     logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] -  New Schedule adding started  - Data %s',reqId,JSON.stringify(obj));
@@ -953,7 +953,7 @@ function UpdateScheduleData(SID,obj,reqId,callback)
 }
 
 //post :-done
-function UpdateAppointmentData(AID,obj,reqId,callback)
+function UpdateAppointment(AID,obj,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  UpdateAppointmentData starting  - Data %s AppId %s',reqId,JSON.stringify(obj),AID);
 
@@ -1031,7 +1031,7 @@ function UpdateAppointmentData(AID,obj,reqId,callback)
 }
 
 //post:-done
-function UpdateScheduleIDAppointment(SID,AID,reqId,callback)
+function AssignAppointment(SID,AID,reqId,callback)
 {
 
     try {
@@ -1098,13 +1098,13 @@ function UpdateScheduleIDAppointment(SID,AID,reqId,callback)
 
 }
 
-module.exports.AddSchedule = AddSchedule;
-module.exports.AddAppointment = AddAppointment;
-module.exports.UpdateScheduleData = UpdateScheduleData;
-module.exports.UpdateScheduleIDAppointment = UpdateScheduleIDAppointment;
-module.exports.FindValidAppointment = FindValidAppointment;
+module.exports.CreateSchedule = CreateSchedule;
+module.exports.CreateAppointment = CreateAppointment;
+module.exports.UpdateSchedule = UpdateSchedule;
+module.exports.AssignAppointment = AssignAppointment;
+module.exports.PickValidAppointment = PickValidAppointment;
 module.exports.CheckAvailables = CheckAvailables;
-module.exports.UpdateAppointmentData = UpdateAppointmentData;
+module.exports.UpdateAppointment = UpdateAppointment;
 module.exports.PickAppThroughSchedule = PickAppThroughSchedule;
 module.exports.PickSchedule = PickSchedule;
 module.exports.PickScheduleAction = PickScheduleAction;
