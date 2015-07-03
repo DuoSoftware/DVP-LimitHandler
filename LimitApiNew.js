@@ -315,7 +315,7 @@ function LimitDecrement(req,reqId,callback)
 
 function CreateLimit(req,reqId,callback)
 {
-    logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] -  UpdateEnability starting ',reqId);
+    logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] -  UpdateEnability starting ',reqId);
     try
     {
         var rand = "number" + uuid.v4().toString();
@@ -324,27 +324,27 @@ function CreateLimit(req,reqId,callback)
     catch(ex)
     {
 
-        logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] -  Exception in creating UUID ',reqId,ex);
+        logger.error('[DVP-LimitHandler.CreateLimit] - [%s] -  Exception in creating UUID ',reqId,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "Exception in generating UUID ", false, null);
         callback(ex, undefined);
     }
 
     try{
 
-        logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] -  Checking record for LimitId %s'   ,reqId,rand);
+        logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] -  Checking record for LimitId %s'   ,reqId,rand);
         DbConn.LimitInfo.findAll({where: [{LimitId: rand}]}).complete(function (err, LimitObject) {
 
             if(err)
             {
 
-                logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  Error occurred while searching for LimitId %s',reqId,rand,err);
+                logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  Error occurred while searching for LimitId %s',reqId,rand,err);
                 callback(err,undefined);
             }
             else
             {
                 if(LimitObject.length==0)
                 {
-                    logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  No record found for LimitId %s'   ,reqId,rand);
+                    logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  No record found for LimitId %s'   ,reqId,rand);
                     try {
                         var NewLimobj = DbConn.LimitInfo
                             .build(
@@ -365,14 +365,14 @@ function CreateLimit(req,reqId,callback)
                     }
                     catch(ex)
                     {
-                        logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  Exception occurred while creating data record of LimitId %s'   ,reqId,rand,ex);
+                        logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  Exception occurred while creating data record of LimitId %s'   ,reqId,rand,ex);
                         callback(ex,undefined);
                     }
                     NewLimobj.save().complete(function (err,result) {
                         if (err) {
 
 
-                            logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  error occurred while saving data record of LimitId %s'   ,reqId,rand,err);
+                            logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  error occurred while saving data record of LimitId %s'   ,reqId,rand,err);
 
                             callback(err, undefined);
 
@@ -381,19 +381,19 @@ function CreateLimit(req,reqId,callback)
                         else {
 
 
-                            logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - [REDIS] -  Setting redis key of LimitId %s'   ,reqId,rand);
+                            logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Setting redis key of LimitId %s'   ,reqId,rand);
                             client.set(rand,0,function(err,reply)
                             {
 
                                 if(err)
                                 {
-                                    logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [REDIS] -  Error in setting redis key of LimitId %s'   ,reqId,rand,err);
+                                    logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Error in setting redis key of LimitId %s'   ,reqId,rand,err);
 
                                     callback(err, undefined);
                                 }
                                 else
                                 {
-                                    logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - [REDIS] -  Setting redis key of LimitId %s is succeeded'   ,reqId,rand);
+                                    logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Setting redis key of LimitId %s is succeeded'   ,reqId,rand);
                                     callback(undefined, rand);
                                 }
 
@@ -405,7 +405,7 @@ function CreateLimit(req,reqId,callback)
                 }
                 else
                 {
-                    logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  Records are already in db of LimitId %s'   ,reqId,rand);
+                    logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  Records are already in db of LimitId %s'   ,reqId,rand);
                     callback(new Error("Already in DB"), undefined);
                 }
             }
@@ -415,7 +415,7 @@ function CreateLimit(req,reqId,callback)
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [PGSQL] -  Exceptions occurred while searching records of LimitId %s'   ,reqId,rand,ex);
+        logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  Exceptions occurred while searching records of LimitId %s'   ,reqId,rand,ex);
         callback(ex, undefined);
     }
 
@@ -525,7 +525,7 @@ function UpdateMaxLimit(LID,req,reqId,callback)
 
 function ActivateLimit(LID,status,reqId,callback)
 {
-    logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] -  UpdateEnability starting   Data - Limit ID %s others %s',reqId,LID,status);
+    logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] -  ActivateLimit starting   Data - Limit ID %s others %s',reqId,LID,status);
     try {
 
         DbConn.LimitInfo
@@ -540,13 +540,13 @@ function ActivateLimit(LID,status,reqId,callback)
             }
         ).then(function (result) {
 
-                logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
+                logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
 
                 callback(undefined, result);
 
             }).error(function (err) {
 
-                logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,status,err);
+                logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,status,err);
 
                 callback(err, undefined);
 
@@ -555,7 +555,7 @@ function ActivateLimit(LID,status,reqId,callback)
     }
     catch (ex)
     {
-        logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] -  Exception occurred when method starts : UpdateEnableState - data LimitID %s others %s',reqId,LID,status,ex);
+        logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] -  Exception occurred when method starts : ActivateLimit - data LimitID %s others %s',reqId,LID,status,ex);
         callback(ex,undefined);
     }
 }

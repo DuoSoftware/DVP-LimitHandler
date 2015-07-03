@@ -61,7 +61,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
 
     try {
 
-        logger.debug('[DVP-LimitHandler.NewAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
+        logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
         schedule.CreateAppointment(req,reqId,function(err,resz)
         {
 
@@ -70,14 +70,14 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
 
 
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
-                logger.debug('[DVP-LimitHandler.NewAppointment] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
             else if(resz)
             {
 
                 var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
-                logger.debug('[DVP-LimitHandler.NewAppointment] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
 
@@ -87,9 +87,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
     catch(ex)
     {
 
-        logger.error('[DVP-LimitHandler.NewAppointment] - [%s] - [HTTP]  - Exception occurred when service started : NewAppointment -  Data - %s ',reqId,JSON.stringify(req.body),ex);
+        logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [HTTP]  - Exception occurred when service started : CreateAppointment -  Data - %s ',reqId,JSON.stringify(req.body),ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
-        logger.debug('[DVP-LimitHandler.NewAppointment] - [%s] - Request response : %s ',reqId,jsonString);
+        logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
     return next();
@@ -112,21 +112,21 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',function(req,res,next)
 
     try {
 
-        logger.debug('[DVP-LimitHandler.NewSchedule] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
+        logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
         schedule.CreateSchedule(req,reqId,function(err,resz)
         {
             if(err)
             {
 
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
-                logger.debug('[DVP-LimitHandler.NewSchedule] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
             else
             {
 
                 var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
-                logger.debug('[DVP-LimitHandler.NewSchedule] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
 
@@ -137,9 +137,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',function(req,res,next)
     catch(ex)
     {
         //log.fatal("Exception found in AddSchedule : "+ex);
-        logger.error('[DVP-LimitHandler.NewAppointment] - [%s] - [HTTP]  - Exception occurred when service started : NewSchedule -  Data - %s ',reqId,JSON.stringify(req.body),ex);
+        logger.error('[DVP-LimitHandler.CreateSchedule] - [%s] - [HTTP]  - Exception occurred when service started : NewSchedule -  Data - %s ',reqId,JSON.stringify(req.body),ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
-        logger.debug('[DVP-LimitHandler.NewSchedule] - [%s] - Request response : %s ',reqId,jsonString);
+        logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
     return next();
@@ -213,7 +213,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
     }
 
     try {
-        logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [HTTP]  - Request received -  Data - Schedule %d Appointment %d ',reqId,req.params.sid,req.params.appid);
+        logger.debug('[DVP-LimitHandler.AssignAppointment] - [%s] - [HTTP]  - Request received -  Data - Schedule %d Appointment %d ',reqId,req.params.sid,req.params.appid);
         schedule.AssignAppointment(parseInt(req.params.sid),parseInt(req.params.appid),reqId,function(err,resz)
         {
             if(err)
@@ -221,14 +221,14 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
 
 
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
-                logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.AssignAppointment] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
             else if(resz)
             {
 
                 var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
-                logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.AssignAppointment] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
         });
@@ -237,9 +237,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - [HTTP]  - Exception occurred when service started : UpdateSceduleId -  Data - Schedule %s Appointment %s ',reqId,eq.params.sid,req.params.appid,ex);
+        logger.error('[DVP-LimitHandler.AssignAppointment] - [%s] - [HTTP]  - Exception occurred when service started : UpdateSceduleId -  Data - Schedule %s Appointment %s ',reqId,eq.params.sid,req.params.appid,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false,undefined);
-        logger.debug('[DVP-LimitHandler.UpdateScheduleIdOfAppointment] - [%s] - Request response : %s ',reqId,jsonString);
+        logger.debug('[DVP-LimitHandler.AssignAppointment] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
     next();
@@ -403,7 +403,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next)
 
     }
     try {
-        logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
+        logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
 
 
         limit.CreateLimit(req.body,reqId,function(err,resz)
@@ -412,7 +412,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next)
             {
 
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
-                logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
             else
@@ -420,7 +420,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next)
 
 
                 var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
-                logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - Request response : ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - Request response : ',reqId,jsonString);
                 res.end(jsonString);
             }
 
@@ -432,10 +432,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next)
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.NewLimitRecord] - [%s] - [HTTP]  - Exception occurred while requesting method : NewLimitRecord  -  Data - %s ',reqId,req.params.key,ex);
+        logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Exception occurred while requesting method : NewLimitRecord  -  Data - %s ',reqId,req.params.key,ex);
 
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
-        logger.debug('[DVP-LimitHandler.NewLimitRecord] - [%s] - Request response : %s ',reqId,jsonString);
+        logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
     return next();
@@ -512,21 +512,21 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',func
     }
 
     try {
-        logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - [HTTP]  - Request received -  Data - Limit ID %s others %s',reqId,req.params.LID,JSON.stringify(req.body));
+        logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [HTTP]  - Request received -  Data - Limit ID %s others %s',reqId,req.params.LID,JSON.stringify(req.body));
         limit.ActivateLimit(req.params.lid,req.params.status,reqId,function(err,resz)
         {
             if(err)
             {
 
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
-                logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
             else
             {
 
                 var jsonString = messageFormatter.FormatMessage(err, "SUCCESS", true, resz);
-                logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - Request response : %s ',reqId,jsonString);
+                logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
 
@@ -536,9 +536,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',func
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.UpdateEnableState] - [%s] - [HTTP]  - Exception occurred whe startiong request : UpdateEnableState -  Data - Limit ID %s others %s',reqId,req.params.LID,JSON.stringify(req.body),ex);
+        logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [HTTP]  - Exception occurred whe startiong request : UpdateEnableState -  Data - Limit ID %s others %s',reqId,req.params.LID,JSON.stringify(req.body),ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
-        logger.debug('[DVP-LimitHandler.UpdateEnableState] - [%s] - Request response : %s ',reqId,jsonString);
+        logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
     return next();
@@ -879,7 +879,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointment',function
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_apointment_action/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointmen/:id/Action',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',function(req,res,next)
 {
     var reqId='';
 
