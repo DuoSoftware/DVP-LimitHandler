@@ -626,7 +626,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:dat
 
 
 
-        schedule.CheckAvailables(Dt,Tm,Cmp,Ten,reqId,function(err,resz)
+        schedule.CheckAvailables(req.params.id,Dt,Tm,Cmp,Ten,reqId,function(err,resz)
         {
             if(err)
             {

@@ -493,7 +493,7 @@ function DayCheck(reslt,reqId)
 
 
 //get :- done
-function CheckAvailables(Dt,Tm,cmp,ten,reqId,callback)
+function CheckAvailables(SID,Dt,Tm,cmp,ten,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.CheckAvailablesFor] - [%s]  - CheckAvailables starting  ',reqId);
     var ReqDate = Dt;
@@ -503,27 +503,14 @@ function CheckAvailables(Dt,Tm,cmp,ten,reqId,callback)
 
 
     try {
-        var DaysArray = ReqDay.split(",");
-
-
-    }
-    catch (ex)
-    {
-
-        logger.error('[DVP-LimitHandler.CheckAvailables] - [%s]  - Exception occurred when formatting requesting dates   ',reqId,ex);
-        callback(ex,undefined);
-    }
-
-    try {
 
 
         DbConn.Appointment
-            .findAll({where:[{CompanyId:cmp},{TenantId:ten}]}
+            .findAll({where:[{CompanyId:cmp},{TenantId:ten},{ScheduleId:SID}]}
         )
             .complete(function (err, result) {
                 if (err) {
-                    // console.log('An error occurred while searching for Extension:', err);
-                    //logger.info( 'Error found in searching : '+err );
+                    
                     logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - [PGSQL]  - Errors occurred while searching appintments  ',reqId,ex);
                     callback(err, undefined);
 
