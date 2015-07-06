@@ -593,7 +593,16 @@ function PickAppThroughSchedule(cmp,tent,dt,tm,SID,reqId,callback) {
 
     var IsFound=false;
 
-    var dy= moment(dt).format('dddd');
+    try
+    {
+        var dy= moment(dt).format('dddd');
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [MOMENT] - Exception found while Getting Day byDate %s ',reqId,dt,ex);
+        callback(ex,undefined);
+    }
+
 
 
     try {
@@ -602,39 +611,39 @@ function PickAppThroughSchedule(cmp,tent,dt,tm,SID,reqId,callback) {
                 where: [{ScheduleId: SID},{CompanyId: cmp} ,{TenantId: tent}]
             }
         )
-            .complete(function (err, resultapp) {
-                if (err) {
+            .complete(function (errApp, resApp) {
+                if (errApp) {
 
-                    logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] - Error found while searching Appointment records of Schedule %s ',reqId,result[index].id,err);
-                    callback(err,undefined);
+                    logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] - Error found while searching Appointment records of Schedule %s ',reqId,SID,errApp);
+                    callback(errApp,undefined);
 
                 } else {
-                    if (resultapp.length==0) {
+                    if (resApp.length==0) {
 
 
 
-                        logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] - No records found while searching Appointment records of Schedule %s ',reqId,result[index].id);
+                        logger.error('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - [PGSQL] - No records found while searching Appointment records of Schedule %s ',reqId,SID);
                         callback(new Error("No Appointments found"), undefined);
 
                     } else {
 
 
-                        for (var index in resultapp) {
+                        for (var index in resApp) {
 
-                            if (resultapp[index].StartDate == null || resultapp[index].EndDate == null) {
+                            if (resApp[index].StartDate == null || resApp[index].EndDate == null) {
                                 IsFound=true;
                                 callback(undefined, result[index]);
                             }
                             else {
-                                if (moment(dt).isBetween(resultapp[index].StartDate, resultapp[index].EndDate)) {
-                                    if (tm >= resultapp[index].StartTime && tm < resultapp[index].EndTime) {
-                                        DbDays = resultapp[index].DaysOfWeek.split(',');
+                                if (moment(dt).isBetween(resApp[index].StartDate, resApp[index].EndDate)) {
+                                    if (tm >= resApp[index].StartTime && tm < resApp[index].EndTime) {
+                                        DbDays = resApp[index].DaysOfWeek.split(',');
 
                                         if (DbDays.indexOf(dy) > -1) {
 
 
-                                            logger.debug('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - Records found while searching Appointment records of Schedule  ', reqId, JSON.stringify(resultapp[index]));
-                                            callback(undefined, resultapp[index]);
+                                            logger.debug('[DVP-LimitHandler.PickAppThroughSchedule] - [%s] - Records found while searching Appointment records of Schedule  ', reqId, JSON.stringify(resApp[index]));
+                                            callback(undefined, resApp[index]);
 
 
                                             break;
