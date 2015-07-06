@@ -799,7 +799,7 @@ function PickApointment(AID,reqId,callback)
 
                     } else {
                         logger.debug('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - Record found appointment for %s   ',reqId,AID);
-                        callback(undefined, JSON.stringify(result));
+                        callback(undefined, result);
 
 
                     }
