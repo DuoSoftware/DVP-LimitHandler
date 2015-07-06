@@ -47,7 +47,7 @@ function CreateSchedule(req,reqId,callback)
             else
             {
                 if (!ScheduleObject) {
-                    // console.log(cloudEndObject);
+
                     log.info("No record found for given id : "+obj.id);
                     try {
                         var NewScheduleObject = DbConn.Schedule
@@ -62,34 +62,30 @@ function CreateSchedule(req,reqId,callback)
                                 CompanyId: 1,
                                 TenantId: 1,
                                 Availability:obj.Availability
-                                // AddTime: new Date(2009, 10, 11),
-                                //  UpdateTime: new Date(2009, 10, 12),
-                                // CSDBCloudEndUserId: jobj.CSDBCloudEndUserId
 
 
                             }
                         )
                     }
                     catch (ex) {
-                        //var jsonString = messageFormatter.FormatMessage(ex, "Exception found in building appointment objecty", false, req);
                         logger.error('[DVP-LimitHandler.CreateSchedule] - [%s] - [PGSQL] - Exception occurred while formatting Scehdule data',reqId,ex);
                         callback(ex, undefined);
                     }
 
-                    NewScheduleObject.save().complete(function (err, result) {
+                    NewScheduleObject.save().complete(function (errSave, resSave) {
 
-                        if(err)
+                        if(errSave)
                         {
-                            logger.error('[DVP-LimitHandler.CreateSchedule] - [%s] - [PGSQL] - New Schedule %s is added unsuccessful',reqId,err);
+                            logger.error('[DVP-LimitHandler.CreateSchedule] - [%s] - [PGSQL] - New Schedule %s is added unsuccessful',reqId,errSave);
 
-                            callback(err, undefined);
+                            callback(errSave, undefined);
                         }
 
                         else
                         {
 
                             logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - [PGSQL] - New Schedule %s is added successfully',reqId);
-                            callback(undefined, result);
+                            callback(undefined, resSave);
 
                         }
 
@@ -116,7 +112,7 @@ function CreateSchedule(req,reqId,callback)
 
 }
 
-function CreateAppointment(req,reqId,callback)
+function CreateAppointment(req,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] -  New appointment adding started  ',reqId);
     try{
@@ -160,8 +156,8 @@ function CreateAppointment(req,reqId,callback)
                             ObjClass: "OBJCLZ",
                             ObjType: "OBJTYP",
                             ObjCategory: "OBJCAT",
-                            CompanyId: 1,
-                            TenantId: 1
+                            CompanyId: Company,
+                            TenantId: Tenant
 
 
                         }
@@ -235,7 +231,7 @@ function CreateAppointment(req,reqId,callback)
 
 
 
-function PickValidAppointment(SID,reqId,callback) {
+function PickValidAppointment(SID,Company,Tenant,reqId,callback) {
 
     var IsFound = false;
     logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  New appointment adding started  ',reqId);
@@ -243,7 +239,7 @@ function PickValidAppointment(SID,reqId,callback) {
     {
         DbConn.Appointment
             .findAll({
-                where: {ScheduleId: SID}
+                where: [{ScheduleId: SID},{CompanyId: Company} ,{TenantId: Tenant}]
             }
         )
             .complete(function (errApp, resApp) {
@@ -694,40 +690,36 @@ function PickAppThroughSchedule(cmp,tent,dt,tm,SID,reqId,callback) {
 }
 
 //get :-done
-function PickSchedule(SID,reqId,callback)
+function PickSchedule(SID,Company,Tenant,reqId,callback)
 {
 
     try {
 
         DbConn.Schedule
             .findAll({
-                where: {id: SID}
+                where: [{id: SID},{CompanyId:Company},{TenantId:Tenant}]
             }
         )
-            .complete(function (err, result) {
-                if (err) {
-                    logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Error occurred when searching for Schedule %s ',reqId,SID,err);
-                    callback(err, undefined);
+            .complete(function (errSchedule, resSchedule) {
+                if (errSchedule) {
+                    logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Error occurred when searching for Schedule %s ',reqId,SID,errSchedule);
+                    callback(errSchedule, undefined);
 
                 } else
                 {
-                    if (result.length==0) {
+                    if (resSchedule.length==0) {
 
                         logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - No record found for Schedule %s ',reqId,SID);
-                        callback(new Error('No record'), undefined);
+                        callback(new Error('No Schedule record'), undefined);
 
-                    } else {
-                        if(result.length==0)
-                        {
+                    }
 
-                            callback(new Error('No record'), undefined);
-                        }
                         else {
                             logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Record found for Schedule ',reqId,SID);
 
-                            callback(undefined, result);
+                            callback(undefined, resSchedule);
                         }
-                    }
+
                 }
 
             });
@@ -741,34 +733,34 @@ function PickSchedule(SID,reqId,callback)
 }
 
 //get :-done
-function PickScheduleAction(SID,reqId,callback)
+function PickScheduleAction(SID,Company,Tenant,reqId,callback)
 {
     try {
 
         DbConn.Schedule
             .find({
-                where: {id: SID}
+                where: [{id: SID},{CompanyId:Company},{TenantId:Tenant}]
             }
         )
-            .complete(function (err, result) {
-                if (err) {
+            .complete(function (errSchedule, resSchedule) {
+                if (errSchedule) {
 
-                    logger.error('[DVP-LimitHandler.PickScheduleActionById] - [%s] - [PGSQL]  - Error occurred while searching Schedule %s ',reqId,SID,err);
-                    console.log('An error occurred while searching for Extension:', err);
+                    logger.error('[DVP-LimitHandler.PickScheduleActionById] - [%s] - [PGSQL]  - Error occurred while searching Schedule %s ',reqId,SID,errSchedule);
+                    console.log('An error occurred while searching for Extension:', errSchedule);
 
-                    callback(err, undefined);
+                    callback(errSchedule, undefined);
 
                 } else
                 {
-                    if (!result) {
+                    if (!resSchedule) {
                         logger.error('[DVP-LimitHandler.PickScheduleActionById] - [%s] - [PGSQL]  - No record found for Schedule %s ',reqId,SID);
-                        callback(new Error('No record'), undefined);
+                        callback(new Error('No Schedule record'), undefined);
 
                     } else {
 
 
                         logger.debug('[DVP-LimitHandler.PickScheduleActionById] - [%s] - [PGSQL]  - Record found for Schedule %s  -  Data - Id %s',reqId,SID);
-                        callback(undefined, result.Action);
+                        callback(undefined, resSchedule.Action);
 
                     }
                 }
@@ -784,14 +776,14 @@ function PickScheduleAction(SID,reqId,callback)
 }
 
 //get :-done
-function PickApointment(AID,reqId,callback)
+function PickAppointment(AID,Company,Tenant,reqId,callback)
 {
 
     try {
 
         DbConn.Appointment
             .findAll({
-                where: {ScheduleId: AID}
+                where: [{ScheduleId: AID},{CompanyId:Company},{TenantId:Tenant}]
             }
         )
             .complete(function (err, result) {
@@ -825,14 +817,14 @@ function PickApointment(AID,reqId,callback)
 }
 
 //get :-done
-function PickApointmentAction(AID,reqId,callback)
+function PickAppointmentAction(AID,Company,Tenant,reqId,callback)
 {
 
     try {
 
         DbConn.Appointment
             .findAll({
-                where: {id: AID}
+                where: [{id: AID},{CompanyId:Company},{TenantId:Tenant}]
             }
         )
             .complete(function (err, result) {
@@ -864,14 +856,14 @@ function PickApointmentAction(AID,reqId,callback)
 }
 
 //post :-done
-function UpdateSchedule(SID,obj,reqId,callback)
+function UpdateSchedule(SID,obj,Company,Tenant,reqId,callback)
 {
 
     logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] -  New Schedule adding started  - Data %s',reqId,JSON.stringify(obj));
     try {
         DbConn.Schedule
             .find({
-                where: {id: SID}
+                where: [{id: SID},{CompanyId:Company},{TenantId:Tenant}]
             }
         )
             .complete(function (err, result) {
@@ -949,7 +941,7 @@ function UpdateSchedule(SID,obj,reqId,callback)
 }
 
 //post :-done
-function UpdateAppointment(AID,obj,reqId,callback)
+function UpdateAppointment(AID,obj,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  UpdateAppointmentData starting  - Data %s AppId %s',reqId,JSON.stringify(obj),AID);
 
@@ -957,7 +949,7 @@ function UpdateAppointment(AID,obj,reqId,callback)
 
         DbConn.Appointment
             .find({
-                where: {id: AID}
+                where: [{id: AID},{CompanyId:Company},{TenantId:Tenant}]
             }
         )
             .complete(function (err, result) {
@@ -1027,14 +1019,14 @@ function UpdateAppointment(AID,obj,reqId,callback)
 }
 
 //post:-done
-function AssignAppointment(SID,AID,reqId,callback)
+function AssignAppointment(SID,AID,Company,Tenant,reqId,callback)
 {
 
     try {
 
         DbConn.Schedule
             .find({
-                where: {id: SID}
+                where:[ {id: SID},{CompanyId:Company},{TenantId:Tenant}]
             }
         )
             .complete(function (err, result) {
@@ -1061,7 +1053,7 @@ function AssignAppointment(SID,AID,reqId,callback)
 
                                 },
                                 {
-                                    where: {id: AID}
+                                    where: [{id: AID},{CompanyId:Company},{TenantId:Tenant}]
                                 }
                             ).then(function (results) {
 
@@ -1104,8 +1096,8 @@ module.exports.UpdateAppointment = UpdateAppointment;
 module.exports.PickAppThroughSchedule = PickAppThroughSchedule;
 module.exports.PickSchedule = PickSchedule;
 module.exports.PickScheduleAction = PickScheduleAction;
-module.exports.PickApointmentAction = PickApointmentAction;
-module.exports.PickApointment = PickApointment;
+module.exports.PickAppointmentAction = PickAppointmentAction;
+module.exports.PickAppointment = PickAppointment;
 
 
 

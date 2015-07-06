@@ -58,11 +58,12 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
     {
 
     }
-
+var Compay=1;
+    var Tenant=1;
     try {
 
         logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
-        schedule.CreateAppointment(req,reqId,function(err,resz)
+        schedule.CreateAppointment(req,Compay,Tenant,reqId,function(err,resz)
         {
 
             if(err)
@@ -160,11 +161,14 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,ne
 
     }
 
+    var Company=1;
+    var Tenant=1;
+
     try {
 
         var ID=parseInt(req.params.id);
         logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] - [HTTP]  - Request received -  Data - id %s Other %s ',reqId,req.params.id,JSON.stringify(req.body));
-        schedule.UpdateSchedule(ID,req.body,reqId,function(err,resz)
+        schedule.UpdateSchedule(ID,req.body,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -212,9 +216,13 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
 
     }
 
+    var Company=1;
+    var Tenant=1;
+
+
     try {
         logger.debug('[DVP-LimitHandler.AssignAppointment] - [%s] - [HTTP]  - Request received -  Data - Schedule %d Appointment %d ',reqId,req.params.sid,req.params.appid);
-        schedule.AssignAppointment(parseInt(req.params.sid),parseInt(req.params.appid),reqId,function(err,resz)
+        schedule.AssignAppointment(parseInt(req.params.sid),parseInt(req.params.appid),Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -257,9 +265,13 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',functio
     {
 
     }
+
+    var Company=1;
+    var Tenant=1;
+
     try {
         logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - [HTTP]  - Request received -  Appointment %s Data %s',reqId,req.params.id,JSON.stringify(req.body));
-        schedule.UpdateAppointment(req.params.id,req.body,reqId,function(err,resz)
+        schedule.UpdateAppointment(req.params.id,req.body,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -454,11 +466,15 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Max/:lid',function(req,res,
     {
 
     }
+
+    var Company=1;
+    var Tenant=1;
+
     try {
         logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - [HTTP]  - Request received -  Data - LimitId %s others %s ',reqId,req.params.lid,JSON.stringify(req.body));
 
 
-        limit.UpdateMaxLimit(req.params.lid,req.body,reqId,function(err,resz)
+        limit.UpdateMaxLimit(req.params.lid,req.body,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -511,9 +527,12 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',func
 
     }
 
+    var Company=1;
+    var Tenant=1;
+
     try {
         logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [HTTP]  - Request received -  Data - Limit ID %s others %s',reqId,req.params.LID,JSON.stringify(req.body));
-        limit.ActivateLimit(req.params.lid,req.params.status,reqId,function(err,resz)
+        limit.ActivateLimit(req.params.lid,req.params.status,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -563,11 +582,14 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:schedul
 
     }
 
+    var Company=1;
+    var Tenant=1;
+
     try {
         logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.scheduleID);
 
 
-        schedule.PickValidAppointment(req.params.scheduleID,reqId,function(err,resz)
+        schedule.PickValidAppointment(req.params.scheduleID,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -733,12 +755,14 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,nex
 
     }
 
+    var Company=1;
+    var Tenant=1;
     try {
         logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
 
 
-        schedule.PickSchedule(req.params.id,reqId,function(err,resz)
+        schedule.PickSchedule(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -789,11 +813,13 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',function(req,
 
     }
 
+    var Company=1;
+    var Tenant=1;
     try {
         logger.debug('[DVP-LimitHandler.PickScheduleActionById] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
 
-        schedule.PickScheduleAction(req.params.id,reqId,function(err,resz)
+        schedule.PickScheduleAction(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -839,11 +865,14 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointment',function
 
     }
 
+    var Company= 1;
+        var Tenant=1;
+
     try {
         logger.debug('[DVP-LimitHandler.PickAppointmentById] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
 
-        schedule.PickApointment(req.params.id,reqId,function(err,resz)
+        schedule.PickAppointment(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -892,12 +921,13 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',f
     {
 
     }
-
+    var Company=1;
+    var Tenant=1;
     try {
         logger.debug('[DVP-LimitHandler.PickAppointmentAction] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
 
-        schedule.PickApointmentAction(req.params.id,reqId,function(err,resz)
+        schedule.PickAppointmentAction(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -1001,10 +1031,13 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',function(req,
 
     }
 
+    var Company=1;
+    var Tenant=1;
+
     try {
         logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.Rid);
 
-        limit.GetMaxLimit(req.params.Rid,reqId,function(err,resz)
+        limit.GetMaxLimit(req.params.Rid,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {

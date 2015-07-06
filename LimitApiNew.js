@@ -448,13 +448,13 @@ function GetCurrentLimit(key,reqId,callback)
     }
 }
 
-function GetMaxLimit(key,reqId,callback)
+function GetMaxLimit(key,Company,Tenant,reqId,callback)
 {
 
     try{
 
 
-        DbConn.LimitInfo.findAll({where: [{LimitId: key}],attributes:['MaxCount']}).complete(function (err, LimitObject) {
+        DbConn.LimitInfo.findAll({where: [{LimitId: key},{CompanyId:Company},{TenantId:Tenant}],attributes:['MaxCount']}).complete(function (err, LimitObject) {
 
             if(err)
             {
@@ -485,7 +485,7 @@ function GetMaxLimit(key,reqId,callback)
     }
 }
 
-function UpdateMaxLimit(LID,req,reqId,callback)
+function UpdateMaxLimit(LID,req,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  UpdateMaxLimit starting  - Data %s',reqId,JSON.stringify(req));
     try {
@@ -498,19 +498,18 @@ function UpdateMaxLimit(LID,req,reqId,callback)
 
             },
             {
-                where: [{LimitId: LID}]
+                where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]
             }
-        ).then(function (result) {
+        ).then(function (resLimit) {
 
                 logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,req.MaxCount,LID);
 
-                callback(undefined, result);
+                callback(undefined, resLimit);
 
-            }).error(function (err) {
+            }).error(function (errLimit) {
 
-                logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit of %s is unsuccessful when updating to %s   ',reqId,LID,req.MaxCount,err);
-                var jsonString = messageFormatter.FormatMessage(err, "updation", false, null);
-                callback(err, undefined);
+                logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit of %s is unsuccessful when updating to %s   ',reqId,LID,req.MaxCount,errLimit);
+                callback(errLimit, undefined);
 
             });
 
@@ -523,7 +522,7 @@ function UpdateMaxLimit(LID,req,reqId,callback)
     }
 }
 
-function ActivateLimit(LID,status,reqId,callback)
+function ActivateLimit(LID,status,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] -  ActivateLimit starting   Data - Limit ID %s others %s',reqId,LID,status);
     try {
@@ -536,19 +535,19 @@ function ActivateLimit(LID,status,reqId,callback)
 
             },
             {
-                where: [{LimitId: LID}]
+                where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]
             }
-        ).then(function (result) {
+        ).then(function (resLimit) {
 
                 logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
 
-                callback(undefined, result);
+                callback(undefined, resLimit);
 
-            }).error(function (err) {
+            }).error(function (errLimit) {
 
-                logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,status,err);
+                logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,status,errLimit);
 
-                callback(err, undefined);
+                callback(errLimit, undefined);
 
             });
 
