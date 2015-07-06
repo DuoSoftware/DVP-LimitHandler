@@ -510,7 +510,7 @@ function CheckAvailables(SID,Dt,Tm,cmp,ten,reqId,callback)
         )
             .complete(function (err, result) {
                 if (err) {
-                    
+
                     logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - [PGSQL]  - Errors occurred while searching appintments  ',reqId,ex);
                     callback(err, undefined);
 
@@ -782,7 +782,7 @@ function PickApointment(AID,reqId,callback)
 
         DbConn.Appointment
             .findAll({
-                where: {id: AID}
+                where: {ScheduleId: AID}
             }
         )
             .complete(function (err, result) {
