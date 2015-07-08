@@ -556,19 +556,27 @@ function DayCheck(reslt,reqId)
 
 function ValidateTime(result,Time,reqId)
 {
-    var Tm= moment(Time).zone("00:00");
-
-    var ST= moment(result.StartTime.toGMTString()).zone("00:00").format('HH:mm:ss');
-    var ET= moment(result.EndTime.toGMTString()).zone("00:00").format('HH:mm:ss');
-
-    if(moment(Tm).isBetween(ST,ET))
+    try
     {
-        return true;
+        var Tm= moment(Time).zone("00:00");
+
+        var ST= moment(result.StartTime.toGMTString()).zone("00:00").format('HH:mm:ss');
+        var ET= moment(result.EndTime.toGMTString()).zone("00:00").format('HH:mm:ss');
+
+        if(moment(Tm).isBetween(ST,ET))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
-    else
+    catch(ex)
     {
         return false;
     }
+
 
 }
 
