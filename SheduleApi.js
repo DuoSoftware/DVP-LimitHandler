@@ -273,7 +273,7 @@ function PickValidAppointment(SID,Company,Tenant,reqId,callback) {
 
                 } else
                 {
-                    if (resApp.length==0) {
+                    /*if (resApp.length==0) {
 
                         logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - No appointment data found  ',reqId);
                         callback(new Error('No record'),undefined);
@@ -351,6 +351,11 @@ function PickValidAppointment(SID,Company,Tenant,reqId,callback) {
                             callback("Exception : "+ex,undefined);
                         }
                     }
+                    */
+                    console.log("DATAAA "+resApp[0].StartTime.toGMTString());
+                    console.log(moment(resApp[0].StartTime.toGMTString()).zone("00:00").format('HH:mm:ss'));
+
+                    callback(undefined,resApp);
                 }
 
             });
@@ -421,15 +426,29 @@ function DateCheck(req,reqId)
 
 }
 
-function TimeCheck(reslt,reqId)
+function TimeCheck(reslt,Time,reqId)
 {
     if(reslt)
     {
         try {
             logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  Time validation of Appointment %s  ',reqId,reslt.id,JSON.stringify(reslt));
-            var dblCTm = moment().format("HH:mm");
-            var dblStTm = reslt.StartTime;
-            var dblEdTm = reslt.EndTime;
+            //var dblCTm = moment().format("HH:mm");
+            var dblCTm =new Date().toGMTString();
+            var dblStTm = reslt.StartTime.toGMTString();
+            var dblEdTm = reslt.EndTime.toGMTString();
+
+            /*var x= moment(dblCTm).format("HH:mm");
+            console.log("Format Now  "+x);
+            var y= moment(dblStTm).format("HH:mm");
+            console.log("Format Start  "+y);
+            var z= moment(dblEdTm).format("HH:mm");
+            console.log("Format End  "+z);
+*/
+            console.log("Now "+dblCTm);
+            console.log("ST "+dblStTm);
+            console.log("ED "+dblEdTm);
+            //var n=moment(x).isBetween(y, z);
+            //console.log("Between "+n);
 
             logger.debug("DVP-LimitHandler.PickValidAppointment] - [%s] - Time validation - Inputs :- StratTime :  %s EndTime : %s Current Time: %s",reqId,dblStTm,dblEdTm,dblCTm);
         }
@@ -535,6 +554,24 @@ function DayCheck(reslt,reqId)
 }
 
 
+function ValidateTime(result,Time,reqId)
+{
+    var Tm= moment(Time).zone("00:00");
+
+    var ST= moment(result.StartTime.toGMTString()).zone("00:00").format('HH:mm:ss');
+    var ET= moment(result.EndTime.toGMTString()).zone("00:00").format('HH:mm:ss');
+
+    if(moment(Tm).isBetween(ST,ET))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+}
+
 //get :- done
 function CheckAvailables(SID,Dt,Tm,cmp,ten,reqId,callback)
 {
@@ -543,6 +580,7 @@ function CheckAvailables(SID,Dt,Tm,cmp,ten,reqId,callback)
     var ReqDay = moment(Dt).format('dddd');
     var ReqTime = Tm;
     var IsFound=false;
+
 
 
     try {
@@ -573,9 +611,12 @@ function CheckAvailables(SID,Dt,Tm,cmp,ten,reqId,callback)
                                     callback(undefined,result[index]);
                                 }
                                 else{
+
                                     if (moment(ReqDate).isBetween(result[index].StartDate, result[index].EndDate)) {
 
-                                        if (ReqTime >= result[index].StartTime && ReqTime < result[index].EndTime) {
+                                        var TmVal=ValidateTime(result[index],ReqTime,reqId);
+                                        //if (ReqTime >= result[index].StartTime && ReqTime < result[index].EndTime) {
+                                        if (TmVal) {
                                             var DbDays = result[index].DaysOfWeek.split(',');
 
                                             if(DbDays.indexOf(ReqDay) > -1)
