@@ -461,46 +461,54 @@ function GetCurrentLimit(key,reqId,callback)
 
 function GetMaxLimit(key,Company,Tenant,reqId,callback)
 {
+    if(key)
+    {
+        try{
 
-    try{
 
+            DbConn.LimitInfo.findAll({where: [{LimitId: key},{CompanyId:Company},{TenantId:Tenant}],attributes:['MaxCount']}).complete(function (err, LimitObject) {
 
-        DbConn.LimitInfo.findAll({where: [{LimitId: key},{CompanyId:Company},{TenantId:Tenant}],attributes:['MaxCount']}).complete(function (err, LimitObject) {
-
-            if(err)
-            {
-                logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - Error occurred while searching LinitInfo of %s ',reqId,key,err);
-                callback(err, undefined);
-            }
-            else
-            {
-                if(LimitObject.length>0)
+                if(err)
                 {
-                    logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - MaxLimit is  ',reqId,LimitObject.MaxCount);
-                    callback(undefined,LimitObject);
+                    logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - Error occurred while searching LinitInfo of %s ',reqId,key,err);
+                    callback(err, undefined);
                 }
                 else
                 {
-                    logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - No record found for %s ',reqId,key);
-                    callback(new Error('No limit Record'), undefined);
+                    if(LimitObject.length>0)
+                    {
+                        logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - MaxLimit is  ',reqId,LimitObject.MaxCount);
+                        callback(undefined,LimitObject);
+                    }
+                    else
+                    {
+                        logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - No record found for %s ',reqId,key);
+                        callback(new Error('No limit Record'), undefined);
+                    }
                 }
-            }
 
-        });
+            });
 
+        }
+        catch(ex)
+        {
+            logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  -Exception occurred when starting : GetMaxLimit ',reqId,key,ex);
+            callback(ex, undefined);
+        }
     }
-    catch(ex)
+    else
     {
-        logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  -Exception occurred when starting : GetMaxLimit ',reqId,key,ex);
-        callback(ex, undefined);
+        logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - Limit Key is Undefined');
+        callback(new Error("Limit Key is Undefined"), undefined);
     }
+
 }
 
 function UpdateMaxLimit(LID,req,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  UpdateMaxLimit starting  - Data %s',reqId,JSON.stringify(req));
 
-    if(req)
+    if(req && LID)
     {
         try {
 
@@ -537,7 +545,7 @@ function UpdateMaxLimit(LID,req,Company,Tenant,reqId,callback)
     }
     else
     {
-        callback(new Error("Empty request Body"),undefined);
+        callback(new Error("Empty request Body or Undefined LimitID"),undefined);
     }
 
 
@@ -546,38 +554,48 @@ function UpdateMaxLimit(LID,req,Company,Tenant,reqId,callback)
 function ActivateLimit(LID,status,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] -  ActivateLimit starting   Data - Limit ID %s others %s',reqId,LID,status);
-    try {
 
-        DbConn.LimitInfo
-            .update(
-            {
-                Enable: status
-
-
-            },
-            {
-                where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]
-            }
-        ).then(function (resLimit) {
-
-                logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
-
-                callback(undefined, resLimit);
-
-            }).error(function (errLimit) {
-
-                logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,status,errLimit);
-
-                callback(errLimit, undefined);
-
-            });
-
-    }
-    catch (ex)
+    if(LID)
     {
-        logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] -  Exception occurred when method starts : ActivateLimit - data LimitID %s others %s',reqId,LID,status,ex);
-        callback(ex,undefined);
+        try {
+
+            DbConn.LimitInfo
+                .update(
+                {
+                    Enable: status
+
+
+                },
+                {
+                    where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]
+                }
+            ).then(function (resLimit) {
+
+                    logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
+
+                    callback(undefined, resLimit);
+
+                }).error(function (errLimit) {
+
+                    logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,status,errLimit);
+
+                    callback(errLimit, undefined);
+
+                });
+
+        }
+        catch (ex)
+        {
+            logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] -  Exception occurred when method starts : ActivateLimit - data LimitID %s others %s',reqId,LID,status,ex);
+            callback(ex,undefined);
+        }
     }
+    else
+    {
+        logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] -  LimitID is Undefined');
+        callback(new Error("LimitID is Undefined"),undefined);
+    }
+
 }
 
 module.exports.LimitIncrement = LimitIncrement;
