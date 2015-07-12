@@ -134,7 +134,7 @@ function CreateSchedule(req,reqId,callback)
 
 }
 
-function CreateAppointment(req,Company,Tenant,reqId,callback)
+function CreateAppointment(req,Days,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] -  New appointment adding started  ',reqId);
     if(req.body)
@@ -178,7 +178,7 @@ function CreateAppointment(req,Company,Tenant,reqId,callback)
                                     EndDate: obj.EndDate,
                                     StartTime: obj.StartTime,
                                     EndTime: obj.EndTime,
-                                    DaysOfWeek:obj.DaysOfWeek,
+                                    DaysOfWeek:Days,
                                     ObjClass: "OBJCLZ",
                                     ObjType: "OBJTYP",
                                     ObjCategory: "OBJCAT",
@@ -268,6 +268,123 @@ function PickValidAppointment(SID,Company,Tenant,reqId,callback) {
     logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  New appointment adding started  ',reqId);
    if(SID)
    {
+       try
+       {
+           DbConn.Appointment
+               .findAll({
+                   where: [{ScheduleId: SID},{CompanyId: Company} ,{TenantId: Tenant}]
+               }
+           )
+               .complete(function (errApp, resApp) {
+                   if (errApp) {
+
+
+                       logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - error occurred while searching appointments  ',reqId,errApp);
+                       callback(errApp, undefined);
+
+                   } else
+                   {
+                       if(resApp.length==0)
+                       {
+                           callback(new Error("No record for ScheduleID"),undefined);
+                       }
+                       else
+                       {
+                           console.log("DATAAA "+resApp[0].StartTime.toGMTString());
+                           console.log(moment(resApp[0].StartTime.toGMTString()).zone("00:00").format('HH:mm:ss'));
+
+                           callback(undefined,resApp);
+                       }
+                       /*if (resApp.length==0) {
+
+                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - No appointment data found  ',reqId);
+                        callback(new Error('No record'),undefined);
+
+
+                        } else {
+                        logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data found  ',reqId,JSON.stringify(resApp));
+                        try {
+
+
+                        for (var index in resApp) {
+
+
+                        logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data  ',reqId,JSON.stringify(resApp[index]));
+                        if (resApp[index].StartDate == null || resApp[index].EndDate == null) {
+
+                        IsFound=true;
+                        callback(undefined,resApp[index]);
+                        }
+                        else {
+                        try {
+
+                        if (DateCheck(resApp[index],reqId)) {
+                        try {
+                        if (TimeCheck(resApp[index],reqId)) {
+                        try {
+                        if (DayCheck(resApp[index]),reqId) {
+
+                        logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment record found ',reqId,JSON.stringify(resApp[index]));
+
+                        IsFound=true;
+                        callback(undefined,resApp[index]);
+
+                        }
+                        else {
+                        continue;
+                        }
+                        }
+                        catch (ex) {
+
+                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment day validating %s',reqId,resApp[index],ex);
+                        callback('Error in Day check : '+ex,undefined);
+                        }
+                        }
+                        else {
+                        continue;
+                        }
+                        }
+                        catch (ex) {
+                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment time checking ',reqId,resApp[index],ex);
+                        callback('Error in Time check : '+ex,undefined);
+                        }
+                        }
+                        else {
+                        continue;
+                        }
+                        } catch (ex) {
+                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment date checking ',reqId,resApp[index],ex);
+                        callback('Error in Date check : '+ex,undefined);
+                        }
+
+                        }
+
+
+                        }
+                        if(IsFound==false)
+                        {
+                        logger.error('[DVP-LimitHandler.CheckAvailables] - [%s]- Appointment is not found ',reqId);
+                        callback(new Error("No maching record found"),undefined);
+                        }
+
+                        }
+                        catch (ex) {
+                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception on checking record by record ',reqId,ex);
+                        callback("Exception : "+ex,undefined);
+                        }
+                        }
+                        */
+
+                   }
+
+               });
+
+       }
+       catch(ex)
+       {
+           logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception on method start : FindValidAppointment ',reqId,ex);
+           callback(new Error("Exception : "+ex),undefined);
+       }
 
    }
     else
@@ -275,115 +392,6 @@ function PickValidAppointment(SID,Company,Tenant,reqId,callback) {
        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - ScheduleID is Undefined');
        callback(new Error("ScheduleID is Undefined"),undefined);
    }
-    try
-    {
-        DbConn.Appointment
-            .findAll({
-                where: [{ScheduleId: SID},{CompanyId: Company} ,{TenantId: Tenant}]
-            }
-        )
-            .complete(function (errApp, resApp) {
-                if (errApp) {
-
-
-                    logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - error occurred while searching appointments  ',reqId,errApp);
-                    callback(errApp, undefined);
-
-                } else
-                {
-                    /*if (resApp.length==0) {
-
-                     logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - No appointment data found  ',reqId);
-                     callback(new Error('No record'),undefined);
-
-
-                     } else {
-                     logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data found  ',reqId,JSON.stringify(resApp));
-                     try {
-
-
-                     for (var index in resApp) {
-
-
-                     logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data  ',reqId,JSON.stringify(resApp[index]));
-                     if (resApp[index].StartDate == null || resApp[index].EndDate == null) {
-
-                     IsFound=true;
-                     callback(undefined,resApp[index]);
-                     }
-                     else {
-                     try {
-
-                     if (DateCheck(resApp[index],reqId)) {
-                     try {
-                     if (TimeCheck(resApp[index],reqId)) {
-                     try {
-                     if (DayCheck(resApp[index]),reqId) {
-
-                     logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment record found ',reqId,JSON.stringify(resApp[index]));
-
-                     IsFound=true;
-                     callback(undefined,resApp[index]);
-
-                     }
-                     else {
-                     continue;
-                     }
-                     }
-                     catch (ex) {
-
-                     logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment day validating %s',reqId,resApp[index],ex);
-                     callback('Error in Day check : '+ex,undefined);
-                     }
-                     }
-                     else {
-                     continue;
-                     }
-                     }
-                     catch (ex) {
-                     logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment time checking ',reqId,resApp[index],ex);
-                     callback('Error in Time check : '+ex,undefined);
-                     }
-                     }
-                     else {
-                     continue;
-                     }
-                     } catch (ex) {
-                     logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment date checking ',reqId,resApp[index],ex);
-                     callback('Error in Date check : '+ex,undefined);
-                     }
-
-                     }
-
-
-                     }
-                     if(IsFound==false)
-                     {
-                     logger.error('[DVP-LimitHandler.CheckAvailables] - [%s]- Appointment is not found ',reqId);
-                     callback(new Error("No maching record found"),undefined);
-                     }
-
-                     }
-                     catch (ex) {
-                     logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception on checking record by record ',reqId,ex);
-                     callback("Exception : "+ex,undefined);
-                     }
-                     }
-                     */
-                    console.log("DATAAA "+resApp[0].StartTime.toGMTString());
-                    console.log(moment(resApp[0].StartTime.toGMTString()).zone("00:00").format('HH:mm:ss'));
-
-                    callback(undefined,resApp);
-                }
-
-            });
-
-    }
-    catch(ex)
-    {
-        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception on method start : FindValidAppointment ',reqId,ex);
-        callback(new Error("Exception : "+ex),undefined);
-    }
 
 
 }
@@ -632,6 +640,7 @@ if(SID&&Dt&&Tm)
 
                             for (var index in result) {
 
+                                console.log(JSON.stringify(result[index]));
                                 if (result[index].StartDate == null || result[index].EndDate == null) {
                                     IsFound=true;
                                     callback(undefined,result[index]);
@@ -917,7 +926,7 @@ function PickScheduleAction(SID,Company,Tenant,reqId,callback)
 function PickAppointment(AID,Company,Tenant,reqId,callback)
 {
 
-    if(SID)
+    if(AID)
     {
         try {
 
@@ -1222,7 +1231,7 @@ if(SID && AID)
                     else
                     {
                         logger.debug('[DVP-LimitHandler.AssignAppointment] - [%s] - [PGSQL]  - Record found for Schedule %s ', reqId, SID);
-                        try {
+                        /*try {
                             DbConn.Appointment
                                 .update(
                                 {
@@ -1248,8 +1257,42 @@ if(SID && AID)
                         catch (ex) {
                             logger.error('[DVP-LimitHandler.AssignAppointment] - [%s] - [PGSQL]  - Exception in Updation of Schedule %s and Appointment %s', reqId, SID, AID, ex);
                             callback(ex, undefined);
-                        }
+                        }*/
 
+                        DbConn.Appointment
+                            .find({
+                                where:[ {id: AID},{CompanyId:Company},{TenantId:Tenant}]
+                            }
+                        ).complete(function(errApp,resApp)
+                            {
+                                if(errApp)
+                                {
+                                    logger.error('[DVP-LimitHandler.AssignAppointment] - [%s] - [PGSQL]  - Error in searching Appointment  %s  ', reqId, AID, errApp);
+                                    callback(errApp, undefined);
+                                }
+                                else
+                                {
+                                    if(!resApp)
+                                    {
+                                        logger.error('[DVP-LimitHandler.AssignAppointment] - [%s] - [PGSQL]  - Empty result returned for  Appointment  %s ', reqId, AID, errApp);
+                                        callback(new Error("No record for Appointment "+AID), undefined);
+                                    }
+                                    else
+                                    {
+                                        resApp.setSchedule(result).complete(function(errMap,resMap)
+                                        {
+                                            if(errMap)
+                                            {
+                                                callback(errMap,undefined);
+                                            }
+                                            else
+                                            {
+                                                callback(undefined,resMap);
+                                            }
+                                        })
+                                    }
+                                }
+                            })
                     }
                 }
 

@@ -330,7 +330,7 @@ function CreateLimit(req,reqId,callback)
         callback(ex, undefined);
     }
 
-    if(req.body)
+    if(req)
     {
         try{
 
@@ -424,7 +424,8 @@ function CreateLimit(req,reqId,callback)
     }
     else
     {
-        callback(new Error("Empty Object"),undefined);
+        logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - Empty Request',reqId);
+        callback(new Error("Empty Request"),undefined);
     }
 
 
@@ -524,9 +525,19 @@ function UpdateMaxLimit(LID,req,Company,Tenant,reqId,callback)
                 }
             ).then(function (resLimit) {
 
-                    logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,req.MaxCount,LID);
+                    if(resLimit==0)
+                    {
+                        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,req.MaxCount,LID);
 
-                    callback(undefined, resLimit);
+                        callback(new Error("No Limit to Update"), undefined);
+                    }
+                    else
+                    {
+                        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,req.MaxCount,LID);
+
+                        callback(undefined, resLimit);
+                    }
+
 
                 }).error(function (errLimit) {
 
@@ -571,9 +582,19 @@ function ActivateLimit(LID,status,Company,Tenant,reqId,callback)
                 }
             ).then(function (resLimit) {
 
-                    logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
+                    if(resLimit==0)
+                    {
+                        logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  No Limit record found to update ');
 
-                    callback(undefined, resLimit);
+                        callback(new Error("No Limit record found to update"), undefined);
+                    }
+                    else
+                    {
+                        logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
+
+                        callback(undefined, resLimit);
+                    }
+
 
                 }).error(function (errLimit) {
 

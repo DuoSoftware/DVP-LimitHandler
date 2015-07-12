@@ -58,12 +58,14 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
     {
 
     }
-var Compay=1;
+    var Compay=1;
     var Tenant=1;
     try {
 
+        var Days=SetDays(req.DaysOfWeek);
+
         logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [HTTP]  - Request received -  Data -  ',reqId,req.body);
-        schedule.CreateAppointment(req,Compay,Tenant,reqId,function(err,resz)
+        schedule.CreateAppointment(req,Days,Compay,Tenant,reqId,function(err,resz)
         {
 
             if(err)
@@ -412,19 +414,21 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next)
     }
     catch(ex)
     {
-
+        console.log("reqID error");
     }
-    try {
+    try
+    {
         logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Request received -  Data  ',reqId,req.body);
 
+        var obj=req.body;
 
-        limit.CreateLimit(req.body,reqId,function(errSave,resSave)
+        limit.CreateLimit(obj,reqId,function(errSave,resSave)
         {
             if(errSave)
             {
 
                 var jsonString = messageFormatter.FormatMessage(errSave, "ERROR/EXCEPTION", false, undefined);
-                logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - Request response : %s ',reqId,jsonString,errSave);
+                logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
             else
@@ -684,60 +688,60 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:dat
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_app_through_schedule/:cmp/:tent/:dt/:dy/:tm',function(req,res,next)
 /*RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ApplicationThroughSchedule/:dt/:tm/:sid',function(req,res,next)
 
-{
-    var reqId='';
+ {
+ var reqId='';
 
 
-    try
-    {
-        reqId = uuid.v1();
-    }
-    catch(ex)
-    {
+ try
+ {
+ reqId = uuid.v1();
+ }
+ catch(ex)
+ {
 
-    }
+ }
 
-    var cmp=1;
-    var tent=1;
+ var cmp=1;
+ var tent=1;
 
-    try {
-        logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - [HTTP]  - Request received   -  Data - Date %s  Day %s Time %s Company %s Tenant %s',reqId,req.params.dt,req.params.dy,req.params.tm,req.params.cmp,req.params.tent);
+ try {
+ logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - [HTTP]  - Request received   -  Data - Date %s  Day %s Time %s Company %s Tenant %s',reqId,req.params.dt,req.params.dy,req.params.tm,req.params.cmp,req.params.tent);
 
-        //log.info("Inputs :- CompanyID :  "+req.params.cmp+" TenentID : "+req.params.tent+" Date : "+req.params.dt+" Day : "+req.params.dy+" Time : "+req.params.tm);
-        schedule.PickAppThroughSchedule(cmp,tent,req.params.dt,req.params.tm,req.params.sid,reqId,function(err,resz)
-        {
-            if(err)
-            {
-
-
-                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
-                logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - Request response : %s ',reqId,jsonString);
-                res.end(jsonString);
-            }
-            else
-            {
-
-                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
-                logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - Request response : %s ',reqId,jsonString);
-                res.end(jsonString);
-            }
-
-        });
+ //log.info("Inputs :- CompanyID :  "+req.params.cmp+" TenentID : "+req.params.tent+" Date : "+req.params.dt+" Day : "+req.params.dy+" Time : "+req.params.tm);
+ schedule.PickAppThroughSchedule(cmp,tent,req.params.dt,req.params.tm,req.params.sid,reqId,function(err,resz)
+ {
+ if(err)
+ {
 
 
+ var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+ logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - Request response : %s ',reqId,jsonString);
+ res.end(jsonString);
+ }
+ else
+ {
 
-    }
-    catch(ex)
-    {
-        logger.error('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - [HTTP]  - Exception occurred when starting : PickAppThroughSchedule   -  Data - Date %s  Day %s Time %s Company %s Tenant %s',reqId,req.params.dt,req.params.dy,req.params.tm,req.params.cmp,req.params.tent,ex);
-        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
-        logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - Request response : %s ',reqId,jsonString);
-        res.end(jsonString);
+ var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+ logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - Request response : %s ',reqId,jsonString);
+ res.end(jsonString);
+ }
 
-    }
-    return next();
-});
-*/
+ });
+
+
+
+ }
+ catch(ex)
+ {
+ logger.error('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - [HTTP]  - Exception occurred when starting : PickAppThroughSchedule   -  Data - Date %s  Day %s Time %s Company %s Tenant %s',reqId,req.params.dt,req.params.dy,req.params.tm,req.params.cmp,req.params.tent,ex);
+ var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+ logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - Request response : %s ',reqId,jsonString);
+ res.end(jsonString);
+
+ }
+ return next();
+ });
+ */
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule/:id',function(req,res,next)
@@ -866,7 +870,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointment',function
     }
 
     var Company= 1;
-        var Tenant=1;
+    var Tenant=1;
 
     try {
         logger.debug('[DVP-LimitHandler.PickAppointmentById] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
@@ -1075,7 +1079,115 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',function(req,
 
 
 
+function SetDays(obj)
+{var WeekDays='';
+    var index=0;
+    if(obj)
+    {
+        for(var i=0;i<7;i++)
+        {
+            if(obj[0])
+            {
+                if(index==0)
+                {
+                    WeekDays=obj[i].toString()+",";
+                    index=1;
+                }else
+                {
+                    WeekDays=WeekDays+obj[i].toString();
+                }
+            }
+            if(i==6)
+            {
+                return WeekDays;
+            }
+        }
 
+        /*
+         if(obj.Sunday)
+         {
+         if(index==0)
+         {
+         WeekDays='Sunday,';
+         index=1;
+         }else
+         {
+         WeekDays=WeekDays+'Sunday';
+         }
+         }
+         if(obj.Monday)
+         {
+         if(index==0)
+         {
+         WeekDays='Monday,';
+         index=1;
+         }else
+         {
+         WeekDays=WeekDays+'Monday';
+         }
+         }
+         if(obj.Tuesday)
+         {
+         if(index==0)
+         {
+         WeekDays='Tuesday,';
+         index=1;
+         }else
+         {
+         WeekDays=WeekDays+'Tuesday';
+         }
+         }
+         if(obj.Wednesday)
+         {
+         if(index==0)
+         {
+         WeekDays='Wednesday,';
+         index=1;
+         }else
+         {
+         WeekDays=WeekDays+'Wednesday';
+         }
+         }
+         if(obj.Thursday)
+         {
+         if(index==0)
+         {
+         WeekDays='Thursday,';
+         index=1;
+         }else
+         {
+         WeekDays=WeekDays+'Thursday';
+         }
+         }
+         if(obj.Friday)
+         {
+         if(index==0)
+         {
+         WeekDays='Friday,';
+         index=1;
+         }else
+         {
+         WeekDays=WeekDays+'Friday';
+         }
+         }
+         if(obj.Saturday)
+         {
+         if(index==0)
+         {
+         WeekDays='Saturday,';
+         index=1;
+         }else
+         {
+         WeekDays=WeekDays+'Saturday';
+         }
+         }
+
+
+         */
+
+
+    }
+}
 
 
 
