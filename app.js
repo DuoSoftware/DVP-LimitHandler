@@ -25,14 +25,24 @@ fs = require('fs');
 var RestServer = restify.createServer({
     name: "myapp",
     version: '1.0.0'
-},function(req,res)
-{
-
 });
-RestServer.use(cors());
+
+//restify.CORS.ALLOW_HEADERS.push('Accept-Encoding');
+//restify.CORS.ALLOW_HEADERS.push('Accept-Language');
+restify.CORS.ALLOW_HEADERS.push('api_key');
+//restify.CORS.ALLOW_HEADERS.push('Access-Control-Request-Method');
+
+
+
+RestServer.use(restify.CORS());
+RestServer.use(restify.fullResponse());
+
 //Server listen
 RestServer.listen(port, function () {
     console.log('%s listening at %s', RestServer.name, RestServer.url);
+
+
+   // SetDays();
 
 });
 //Enable request body parsing(access)
@@ -48,6 +58,8 @@ RestServer.use(restify.queryParser());
 //RestServer.post('/dvp/'+version+'/limit_handler/schedule/add_appointment',function(req,res,next)
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(req,res,next)
 {
+
+    console.log(JSON.stringify(req.body));
     var reqId='';
 
     try
@@ -62,7 +74,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
     var Tenant=1;
     try {
 
-        var Days=SetDays(req.DaysOfWeek);
+        var Days=SetDays(req.body.DaysOfWeek);
 
         logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [HTTP]  - Request received -  Data -  ',reqId,req.body);
         schedule.CreateAppointment(req,Days,Compay,Tenant,reqId,function(err,resz)
@@ -855,7 +867,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',function(req,
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_appointment/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointment',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',function(req,res,next)
 {
     var reqId='';
 
@@ -1079,114 +1091,32 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',function(req,
 
 
 
-function SetDays(obj)
-{var WeekDays='';
-    var index=0;
-    if(obj)
+function SetDays(a)
+{
+var IsFirst=0;
+    var WeekDays='';
+
+
+
+    for(var index in a)
     {
-        for(var i=0;i<7;i++)
+
+        if(a[index]=="true")
         {
-            if(obj[0])
+            if(IsFirst==0)
             {
-                if(index==0)
-                {
-                    WeekDays=obj[i].toString()+",";
-                    index=1;
-                }else
-                {
-                    WeekDays=WeekDays+obj[i].toString();
-                }
-            }
-            if(i==6)
+                WeekDays=index;
+                IsFirst=1;
+            }else
             {
-                return WeekDays;
+                WeekDays=WeekDays+","+index;
             }
         }
 
-        /*
-         if(obj.Sunday)
-         {
-         if(index==0)
-         {
-         WeekDays='Sunday,';
-         index=1;
-         }else
-         {
-         WeekDays=WeekDays+'Sunday';
-         }
-         }
-         if(obj.Monday)
-         {
-         if(index==0)
-         {
-         WeekDays='Monday,';
-         index=1;
-         }else
-         {
-         WeekDays=WeekDays+'Monday';
-         }
-         }
-         if(obj.Tuesday)
-         {
-         if(index==0)
-         {
-         WeekDays='Tuesday,';
-         index=1;
-         }else
-         {
-         WeekDays=WeekDays+'Tuesday';
-         }
-         }
-         if(obj.Wednesday)
-         {
-         if(index==0)
-         {
-         WeekDays='Wednesday,';
-         index=1;
-         }else
-         {
-         WeekDays=WeekDays+'Wednesday';
-         }
-         }
-         if(obj.Thursday)
-         {
-         if(index==0)
-         {
-         WeekDays='Thursday,';
-         index=1;
-         }else
-         {
-         WeekDays=WeekDays+'Thursday';
-         }
-         }
-         if(obj.Friday)
-         {
-         if(index==0)
-         {
-         WeekDays='Friday,';
-         index=1;
-         }else
-         {
-         WeekDays=WeekDays+'Friday';
-         }
-         }
-         if(obj.Saturday)
-         {
-         if(index==0)
-         {
-         WeekDays='Saturday,';
-         index=1;
-         }else
-         {
-         WeekDays=WeekDays+'Saturday';
-         }
-         }
-
-
-         */
-
-
     }
+return WeekDays;
+
+
 }
 
 

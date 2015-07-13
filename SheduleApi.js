@@ -289,9 +289,21 @@ function PickValidAppointment(SID,Company,Tenant,reqId,callback) {
                            callback(new Error("No record for ScheduleID"),undefined);
                        }
                        else
-                       {
-                           console.log("DATAAA "+resApp[0].StartTime.toGMTString());
-                           console.log(moment(resApp[0].StartTime.toGMTString()).zone("00:00").format('HH:mm:ss'));
+                       {//var i=1;
+                           for(var index in resApp)
+                           {
+
+                               //console.log(i);
+                              // i++;
+                               //var dy=resApp[index].DaysOfWeek.split(",");
+
+                               var dy=resApp[index].DaysOfWeek.split(",");
+                               //console.log(dy);
+                               var d=SetDayObjects(dy);
+                               resApp[index].DaysOfWeek=d;
+                           }
+                           //console.log("DATAAA "+resApp[0].StartTime.toGMTString());
+                          // console.log(moment(resApp[0].StartTime.toGMTString()).zone("00:00").format('HH:mm:ss'));
 
                            callback(undefined,resApp);
                        }
@@ -397,6 +409,26 @@ function PickValidAppointment(SID,Company,Tenant,reqId,callback) {
 }
 
 
+
+function SetDayObjects(dy)
+{
+    if(dy)
+    {
+        var Obj={"Sunday":"false","Monday":"false","Tuesday":"false","Wednesday":"false","Thursday":"false","Friday":"false","Saturday":"false"};
+
+        for(var index in dy)
+        {
+           // Obj.dy[index].val="true";
+            //console.log(Obj[dy[index].toString()]);
+
+
+            Obj[dy[index].toString()]=true;
+        }
+
+
+        return Obj;
+    }
+}
 
 
 function DateCheck(req,reqId)
@@ -641,8 +673,11 @@ if(SID&&Dt&&Tm)
                             for (var index in result) {
 
                                 console.log(JSON.stringify(result[index]));
-                                if (result[index].StartDate == null || result[index].EndDate == null) {
+                                if ((result[index].StartDate == null || result[index].EndDate == null) && result[index].DaysOfWeek == null ) {
                                     IsFound=true;
+
+                                    var d=SetDayObjects(result[index].DaysOfWeek);
+                                    result[index].DaysOfWeek=d;
                                     callback(undefined,result[index]);
                                 }
                                 else{
@@ -658,6 +693,8 @@ if(SID&&Dt&&Tm)
                                             {
                                                 logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s]- [PGSQL] - Appointment found %s  ', reqId, result[index].id);
                                                 IsFound=true;
+                                                //var d=SetDayObjects(DbDays);
+                                                //result[index].DaysOfWeek=dy;
                                                 callback(undefined, result[index]);
                                                 break;
                                             }
@@ -949,6 +986,20 @@ function PickAppointment(AID,Company,Tenant,reqId,callback)
 
                         } else {
                             logger.debug('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - Record found appointment for %s   ',reqId,AID);
+
+                            /*for(var index in result)
+                            {
+
+                                //console.log(i);
+                                // i++;
+                                //var dy=resApp[index].DaysOfWeek.split(",");
+
+                                var dy=result[index].DaysOfWeek.split(",");
+                                //console.log(dy);
+                                var d=SetDayObjects(dy);
+                                result[index].DaysOfWeek=d;
+                            }*/
+
                             callback(undefined, result);
 
 
