@@ -1178,7 +1178,7 @@ function UpdateAppointment(AID,obj,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  UpdateAppointmentData starting  - Data %s AppId %s',reqId,JSON.stringify(obj),AID);
 
-    if(obj && !isNaN(AID) )
+    if(obj && !isNaN(AID) && AID )
     {
         try {
 

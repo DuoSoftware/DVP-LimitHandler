@@ -181,7 +181,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,ne
 
         //var ID=parseInt(req.params.id);
         logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] - [HTTP]  - Request received -  Data - id %s Other %s ',reqId,req.params.id,JSON.stringify(req.body));
-        schedule.UpdateSchedule(ID,req.body,Company,Tenant,reqId,function(err,resz)
+        schedule.UpdateSchedule(req.params.id,req.body,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
