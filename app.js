@@ -814,7 +814,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,nex
 
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule_action/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',function(req,res,next)
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action,function(req,res,next)
 {
     var reqId='';
 
