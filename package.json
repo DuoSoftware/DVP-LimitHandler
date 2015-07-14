@@ -4,19 +4,19 @@
   "description": "DVP-LimitHandler\r ================",
   "main": "app.js",
   "dependencies": {
-    "cors": "^2.6.0",
-    "config": "^1.13.0",
-    "date-utils": "^1.2.16",
-    "fs": "^0.0.2",
+    "cors": "^2.7.1",
+    "date-utils": "^1.2.17",
     "DVP-Common": "DuoSoftware/DVP-Common",
     "DVP-DBModels": "DuoSoftware/DVP-DBModels",
-    "log4js": "^0.6.24",
+    "config": "^1.14.0",
+    "fs": "^0.0.2",
+    "log4js": "^0.6.26",
+    "moment": "^2.10.3",
     "node-uuid": "^1.4.3",
-    "moment": "^2.10.2",
     "redis": "^0.12.1",
-    "stringify": "^3.1.0",
+    "restify": "^3.0.3",
     "redis-lock": "^0.1.0",
-    "restify": "^3.0.2"
+    "stringify": "^3.1.0"
   },
   "devDependencies": {},
   "scripts": {

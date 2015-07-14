@@ -14,7 +14,6 @@ var version=config.Host.version;
 var hpath=config.Host.hostpath;
 var logger = require('DVP-Common/LogHandler/CommonLogHandler.js').logger;
 var uuid = require('node-uuid');
-var cors = require('cors');
 
 
 
