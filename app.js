@@ -179,7 +179,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,ne
 
     try {
 
-        var ID=parseInt(req.params.id);
+        //var ID=parseInt(req.params.id);
         logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] - [HTTP]  - Request received -  Data - id %s Other %s ',reqId,req.params.id,JSON.stringify(req.body));
         schedule.UpdateSchedule(ID,req.body,Company,Tenant,reqId,function(err,resz)
         {
@@ -235,7 +235,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
 
     try {
         logger.debug('[DVP-LimitHandler.AssignAppointment] - [%s] - [HTTP]  - Request received -  Data - Schedule %d Appointment %d ',reqId,req.params.sid,req.params.appid);
-        schedule.AssignAppointment(parseInt(req.params.sid),parseInt(req.params.appid),Company,Tenant,reqId,function(err,resz)
+        schedule.AssignAppointment(req.params.sid,req.params.appid,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -840,7 +840,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',function(req,
             {
 
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
-                res.end(err);
+                res.end(jsonString);
             }
             else
             {

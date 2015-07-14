@@ -335,7 +335,7 @@ function CreateLimit(req,reqId,callback)
         try{
 
             logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] -  Checking record for LimitId %s'   ,reqId,rand);
-            DbConn.LimitInfo.findAll({where: [{LimitId: rand}]}).complete(function (err, LimitObject) {
+            DbConn.LimitInfo.find({where: [{LimitId: rand}]}).complete(function (err, LimitObject) {
 
                 if(err)
                 {
@@ -345,7 +345,7 @@ function CreateLimit(req,reqId,callback)
                 }
                 else
                 {
-                    if(LimitObject.length==0)
+                    if(!LimitObject)
                     {
                         logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  No record found for LimitId %s'   ,reqId,rand);
                         try {
@@ -371,13 +371,13 @@ function CreateLimit(req,reqId,callback)
                             logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  Exception occurred while creating data record of LimitId %s'   ,reqId,rand,ex);
                             callback(ex,undefined);
                         }
-                        NewLimobj.save().complete(function (err,result) {
-                            if (err) {
+                        NewLimobj.save().complete(function (errSave,resSave) {
+                            if (errSave) {
 
 
-                                logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  error occurred while saving data record of LimitId %s'   ,reqId,rand,err);
+                                logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  error occurred while saving data record of LimitId %s'   ,reqId,rand,errSave);
 
-                                callback(err, undefined);
+                                callback(errSave, undefined);
 
 
                             }
@@ -467,19 +467,19 @@ function GetMaxLimit(key,Company,Tenant,reqId,callback)
         try{
 
 
-            DbConn.LimitInfo.findAll({where: [{LimitId: key},{CompanyId:Company},{TenantId:Tenant}],attributes:['MaxCount']}).complete(function (err, LimitObject) {
+            DbConn.LimitInfo.find({where: [{LimitId: key},{CompanyId:Company},{TenantId:Tenant}],attributes:['MaxCount']}).complete(function (errLimit, resLimit) {
 
-                if(err)
+                if(errLimit)
                 {
-                    logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - Error occurred while searching LinitInfo of %s ',reqId,key,err);
-                    callback(err, undefined);
+                    logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - Error occurred while searching LinitInfo of %s ',reqId,key,errLimit);
+                    callback(errLimit, undefined);
                 }
                 else
                 {
-                    if(LimitObject.length>0)
+                    if(resLimit)
                     {
-                        logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - MaxLimit is  ',reqId,LimitObject.MaxCount);
-                        callback(undefined,LimitObject);
+                        logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - MaxLimit is  ',reqId,resLimit.MaxCount);
+                        callback(undefined,resLimit);
                     }
                     else
                     {
