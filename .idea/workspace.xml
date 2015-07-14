@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1de16c35-0761-4869-ba6c-ffe5d1056014" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="DVP-LimitHandler.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -45,9 +44,9 @@
                 <element signature="e#16920#18463#0" expanded="false" />
                 <element signature="e#18805#20314#0" expanded="false" />
                 <element signature="e#24517#25963#0" expanded="false" />
-                <element signature="e#26164#27406#0" expanded="false" />
-                <element signature="e#27731#29213#0" expanded="false" />
-                <element signature="e#29551#31044#0" expanded="false" />
+                <element signature="e#26165#27407#0" expanded="false" />
+                <element signature="e#27732#29214#0" expanded="false" />
+                <element signature="e#29552#31045#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -284,9 +283,9 @@
             <element signature="e#16920#18463#0" expanded="false" />
             <element signature="e#18805#20314#0" expanded="false" />
             <element signature="e#24517#25963#0" expanded="false" />
-            <element signature="e#26164#27406#0" expanded="false" />
-            <element signature="e#27731#29213#0" expanded="false" />
-            <element signature="e#29551#31044#0" expanded="false" />
+            <element signature="e#26165#27407#0" expanded="false" />
+            <element signature="e#27732#29214#0" expanded="false" />
+            <element signature="e#29552#31045#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -308,9 +307,9 @@
             <element signature="e#16920#18463#0" expanded="false" />
             <element signature="e#18805#20314#0" expanded="false" />
             <element signature="e#24517#25963#0" expanded="false" />
-            <element signature="e#26164#27406#0" expanded="false" />
-            <element signature="e#27731#29213#0" expanded="false" />
-            <element signature="e#29551#31044#0" expanded="false" />
+            <element signature="e#26165#27407#0" expanded="false" />
+            <element signature="e#27732#29214#0" expanded="false" />
+            <element signature="e#29552#31045#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -372,9 +371,9 @@
             <element signature="e#16920#18463#0" expanded="false" />
             <element signature="e#18805#20314#0" expanded="false" />
             <element signature="e#24517#25963#0" expanded="false" />
-            <element signature="e#26164#27406#0" expanded="false" />
-            <element signature="e#27731#29213#0" expanded="false" />
-            <element signature="e#29551#31044#0" expanded="false" />
+            <element signature="e#26165#27407#0" expanded="false" />
+            <element signature="e#27732#29214#0" expanded="false" />
+            <element signature="e#29552#31045#0" expanded="false" />
           </folding>
         </state>
       </provider>
