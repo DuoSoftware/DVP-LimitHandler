@@ -972,14 +972,14 @@ function PickAppointment(AID,Company,Tenant,reqId,callback)
                     where: [{ScheduleId: AID},{CompanyId:Company},{TenantId:Tenant}]
                 }
             )
-                .complete(function (err, result) {
-                    if (err) {
-                        logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - Error occurred while searching for appointment for %s   ',reqId,AID,err);
-                        callback(err, undefined);
+                .complete(function (errApp, resApp) {
+                    if (errApp) {
+                        logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - Error occurred while searching for appointment for %s   ',reqId,AID,errApp);
+                        callback(errApp, undefined);
 
                     } else
                     {
-                        if (result.length == 0) {
+                        if (resApp.length == 0) {
                             logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - No record found for appointment %s   ',reqId,AID);
                             callback(new Error('No record'), undefined);
 
@@ -1000,7 +1000,7 @@ function PickAppointment(AID,Company,Tenant,reqId,callback)
                                 result[index].DaysOfWeek=d;
                             }*/
 
-                            callback(undefined, result);
+                            callback(undefined, resApp);
 
 
                         }
@@ -1010,7 +1010,7 @@ function PickAppointment(AID,Company,Tenant,reqId,callback)
         }
         catch (ex)
         {
-            logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - Exception occurred when starting method :  PickAppointmentById   for %s',reqId,AID,ex);
+            logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - Exception occurred when starting method :  PickAppointmentById   for ScheduleID %s',reqId,AID,ex);
             callback(ex,undefined);
         }
     }

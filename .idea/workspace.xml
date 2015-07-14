@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1de16c35-0761-4869-ba6c-ffe5d1056014" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/Appointment.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/Appointment.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/package.json" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/package.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SheduleApi.js" afterPath="$PROJECT_DIR$/SheduleApi.js" />
     </list>
     <ignored path="DVP-LimitHandler.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -206,7 +203,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
