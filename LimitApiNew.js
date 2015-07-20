@@ -619,6 +619,44 @@ function ActivateLimit(LID,status,Company,Tenant,reqId,callback)
 
 }
 
+function GetLimitInfo(reqId,Company,Tenant,callback)
+{
+
+        try{
+
+
+            DbConn.LimitInfo.findAll({where: [{CompanyId:Company},{TenantId:Tenant}]}).complete(function (errLimit, resLimit) {
+
+                if(errLimit)
+                {
+                    logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  - Error occurred while searching LimitInfo of %s ',reqId,errLimit);
+                    callback(errLimit, undefined);
+                }
+                else
+                {
+                    if(resLimit.length>0)
+                    {
+                        logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  - LimitInfo - %s  ',reqId,JSON.stringify(resLimit));
+                        callback(undefined,resLimit);
+                    }
+                    else
+                    {
+                        logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  - No record found');
+                        callback(new Error('No limit Record'), undefined);
+                    }
+                }
+
+            });
+
+        }
+        catch(ex)
+        {
+            logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  -Exception occurred when starting : GetLimitInfo ',reqId,ex);
+            callback(ex, undefined);
+        }
+
+}
+
 module.exports.LimitIncrement = LimitIncrement;
 module.exports.LimitDecrement = LimitDecrement;
 module.exports.CreateLimit = CreateLimit;
@@ -626,4 +664,5 @@ module.exports.GetCurrentLimit = GetCurrentLimit;
 module.exports.GetMaxLimit = GetMaxLimit;
 module.exports.UpdateMaxLimit = UpdateMaxLimit;
 module.exports.ActivateLimit = ActivateLimit;
+module.exports.GetLimitInfo = GetLimitInfo;
 

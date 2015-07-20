@@ -1087,6 +1087,60 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',function(req,
 
 });
 
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',function(req,res,next)
+{
+    var reqId='';
+
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+    var Company=1;
+    var Tenant=1;
+
+    try {
+        logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.Rid);
+
+        limit.GetLimitInfo(reqId,Company,Tenant,function(err,resz)
+        {
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [HTTP]  - Exception occurred on request : MaxLimit   -  Data - Id %s',reqId,req.params.Rid,ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+
+    return next();
+
+});
 
 
 
