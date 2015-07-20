@@ -19,7 +19,7 @@ module.exports = {
     "Host":
     {
         "domain": "HOST_NAME",
-        "port": "HOST_SIPUSERENDPOINT_PORT",
+        "port": "HOST_LIMITAPI_PORT",
         "version": "HOST_VERSION",
         "logfilepath": "LOG4JS_CONFIG"
     }
