@@ -139,10 +139,9 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback)
     logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] -  New appointment adding started  ',reqId);
     if(req.body)
     {
-        try{
+        try
+        {
             var obj=req.body;
-
-
         }
         catch(ex)
         {
@@ -154,7 +153,117 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback)
         if(obj.ScheduleId && !isNaN(obj.ScheduleId))
         {
             try {
-                DbConn.Schedule.find({where: {id: obj.ScheduleId}}).complete(function (err, ScheduleObject) {
+                DbConn.Schedule.find({where: {id: obj.ScheduleId}}).then(function (resSchedule) {
+
+                    if(!resSchedule)
+                    {
+                        logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - No schedule found %s ',reqId,obj.CSDBScheduleId);
+                        callback(new Error('No record found'),undefined);
+                    }
+                    else
+                    {
+                        try {
+                            var AppObject = DbConn.Appointment
+                                .build(
+                                {
+                                    AppointmentName: obj.AppointmentName,
+                                    Action:obj.Action,
+                                    ExtraData: obj.ExtraData,
+                                    StartDate: obj.StartDate,
+                                    EndDate: obj.EndDate,
+                                    StartTime: obj.StartTime,
+                                    EndTime: obj.EndTime,
+                                    DaysOfWeek:Days,
+                                    ObjClass: "OBJCLZ",
+                                    ObjType: "OBJTYP",
+                                    ObjCategory: "OBJCAT",
+                                    CompanyId: Company,
+                                    TenantId: Tenant
+
+
+                                }
+                            );
+
+                        }
+                        catch(ex)
+                        {
+
+                            logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Exception occurred while formatting appointment data',reqId,ex);
+                            callback(ex,undefined);
+                        }
+
+                        AppObject.save().then(function (resSave) {
+
+                            logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - New Appointment %s is added successfully',reqId,JSON.stringify(resSave));
+                            resSchedule.addAppointment(AppObject).then(function (resMap) {
+
+                                logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped successfully',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject));
+                                callback(undefined,resMap);
+
+                            }).catch(function (errMap) {
+                                logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped unsuccessful',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject),errMap);
+                                callback(errMap,undefined);
+                            });
+
+                                /*complete(function (errMap, resMap) {
+
+                                if(errMap)
+                                {
+                                    logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped unsuccessful',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject),errMap);
+                                    callback(errMap,undefined);
+                                }
+                                else
+                                {
+
+                                    logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped successfully',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject));
+                                    callback(undefined,resMap);
+                                }
+                            });*/
+
+                        }).catch(function (errSave) {
+                            logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - New Appointment adding failed',reqId,errSave);
+                            callback(errSave,undefined);
+                        });
+
+
+                            /*complete(function (err,result) {
+
+                            if(err)
+                            {
+                                logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - New Appointment %s adding failed',reqId,err);
+                                callback(err,undefined);
+                            }else
+                            {
+                                logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - New Appointment %s is added successfully',reqId,JSON.stringify(result));
+                                resSchedule.addAppointment(AppObject).complete(function (errMap, resMap) {
+
+                                    if(errMap)
+                                    {
+                                        logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped unsuccessful',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject),errMap);
+                                        callback(errMap,undefined);
+                                    }
+                                    else
+                                    {
+
+                                        logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped successfully',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject));
+                                        callback(undefined,resMap);
+                                    }
+                                });
+                            }
+
+                        });*/
+                    }
+
+                }).catch(function (errSchedule) {
+
+                    logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Error occurred while searching existing schedules - ScheduleId :  %s',reqId,obj.ScheduleId,errSchedule);
+                    callback(errSchedule,undefined);
+
+                });
+
+
+
+                    /*complete(function (err, ScheduleObject) {
 
                     if(err)
                     {
@@ -165,7 +274,7 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback)
 
                     else if (ScheduleObject) {
 
-                        console.log(JSON.stringify(ScheduleObject));
+
 
                         try {
                             var AppObject = DbConn.Appointment
@@ -234,12 +343,10 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback)
 
 
 
-                });
+                });*/
             }
             catch(ex)
             {
-                //log.fatal("Exception : "+ex);
-                //var jsonString = messageFormatter.FormatMessage(ex, "Exception found in searching Schedule ", false, null);
 
                 logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Exception occurred when searching Schedule ',reqId);
                 callback(ex,undefined);
@@ -621,6 +728,11 @@ function ValidateTime(result,Time,reqId)
         var ST= moment(result.StartTime.toGMTString()).zone("00:00").format('HH:mm:ss');
         var ET= moment(result.EndTime.toGMTString()).zone("00:00").format('HH:mm:ss');
 
+        console.log("REqTime ",Tm);
+        console.log("Start ",ST);
+        console.log("End ",ET);
+
+
         if(moment(Tm).isBetween(ST,ET))
         {
             return true;
@@ -672,11 +784,12 @@ if(SID&&Dt&&Tm && !isNaN(SID))
 
                             for (var index in resApp) {
 
-                                console.log(JSON.stringify(resApp[index]));
+
                                 if ((resApp[index].StartDate == null || resApp[index].EndDate == null) && resApp[index].DaysOfWeek == null ) {
                                     IsFound=true;
 
                                     var d=SetDayObjects(resApp[index].DaysOfWeek);
+
                                     resApp[index].DaysOfWeek=d;
                                     callback(undefined,resApp[index]);
                                 }
@@ -686,6 +799,8 @@ if(SID&&Dt&&Tm && !isNaN(SID))
 
                                         var TmVal=ValidateTime(resApp[index],ReqTime,reqId);
                                         //if (ReqTime >= result[index].StartTime && ReqTime < result[index].EndTime) {
+
+                                        console.log("Time val "+ReqTime);
                                         if (TmVal) {
                                             var DbDays = resApp[index].DaysOfWeek.split(',');
 

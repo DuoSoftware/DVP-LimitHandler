@@ -74,9 +74,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
     try {
 
         var Days=SetDays(req.body.DaysOfWeek);
+        console.log("Got Days "+Days);
 
         logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [HTTP]  - Request received -  Data -  ',reqId,req.body);
-        schedule.CreateAppointment(req,Days,Compay,Tenant,reqId,function(err,resz)
+        schedule.CreateAppointment(req,Days.toString(),Compay,Tenant,reqId,function(err,resz)
         {
 
             if(err)
@@ -87,7 +88,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
                 logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
-            else if(resz)
+            else
             {
 
                 var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
@@ -96,6 +97,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
             }
 
         });
+
 
     }
     catch(ex)
@@ -1150,26 +1152,38 @@ var IsFirst=0;
     var WeekDays='';
 
 
+console.log(a);
+
 
     for(var index in a)
     {
 
-        if(a[index]=="true")
+        //if(a[index]== true)
+        if(a[index])
         {
+
             if(IsFirst==0)
             {
                 WeekDays=index;
                 IsFirst=1;
+
             }else
             {
                 WeekDays=WeekDays+","+index;
+
             }
+
+
+        }
+        else
+        {
+            continue;
         }
 
     }
-return WeekDays;
 
 
+    return WeekDays;
 }
 
 function Crossdomain(req,res,next){
