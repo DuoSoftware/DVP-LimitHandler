@@ -1023,6 +1023,50 @@ if(SID && !isNaN(SID))
 
 }
 
+
+function PickSchedules(Company,Tenant,reqId,callback)
+{
+        try {
+
+            DbConn.Schedule
+                .findAll({
+                    where: [{CompanyId:Company},{TenantId:Tenant}]
+                }
+            )
+                .complete(function (errSchedule, resSchedule) {
+                    if (errSchedule) {
+                        logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Error occurred when searching for Schedule %s ',reqId,SID,errSchedule);
+                        callback(errSchedule, undefined);
+
+                    } else
+                    {
+                        if (resSchedule.length==0) {
+
+                            logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - No record found for Schedule %s ',reqId,SID);
+                            callback(new Error('No Schedule record'), undefined);
+
+                        }
+
+                        else {
+                            logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Record found for Schedule ',reqId,SID);
+
+                            callback(undefined, resSchedule);
+                        }
+
+                    }
+
+                });
+
+        }
+        catch (ex)
+        {
+            logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - Exception occurred when starting method : PickSchedule ',reqId,SID);
+            callback(ex,undefined);
+        }
+
+
+}
+
 //get :-done
 function PickScheduleAction(SID,Company,Tenant,reqId,callback)
 {
@@ -1494,6 +1538,7 @@ module.exports.CheckAvailables = CheckAvailables;
 module.exports.UpdateAppointment = UpdateAppointment;
 module.exports.PickAppThroughSchedule = PickAppThroughSchedule;
 module.exports.PickSchedule = PickSchedule;
+module.exports.PickSchedules = PickSchedules;
 module.exports.PickScheduleAction = PickScheduleAction;
 module.exports.PickAppointmentAction = PickAppointmentAction;
 module.exports.PickAppointment = PickAppointment;

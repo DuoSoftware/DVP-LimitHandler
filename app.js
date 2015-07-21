@@ -814,6 +814,62 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,nex
     return next();
 });
 
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules',function(req,res,next)
+{
+    var reqId='';
+
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+    var Company=1;
+    var Tenant=1;
+    try {
+        logger.debug('[DVP-LimitHandler.PickAllSchedules] - [%s] - [HTTP]  - Request received ',reqId);
+
+
+
+        schedule.PickSchedules(Company,Tenant,reqId,function(err,resz)
+        {
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.PickAllSchedules] - [%s] - Request response : %s ',reqId,jsonString);
+
+                res.end(jsonString);
+            }
+            else
+            {
+
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.PickAllSchedules] - [%s] - Request response : %s ',reqId,jsonString);
+
+                res.end(jsonString);
+            }
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.PickAllSchedules] - [%s] - [HTTP]  - Error when request starts : PickAllSchedules ',reqId,ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.PickAllSchedules] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
+
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule_action/:id',function(req,res,next)
 RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',function(req,res,next)
