@@ -515,6 +515,151 @@ function PickValidAppointment(SID,Company,Tenant,reqId,callback) {
 
 }
 
+function PickUnassignedAppointments(SID,Company,Tenant,reqId,callback) {
+
+    var IsFound = false;
+    logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  New appointment adding started  ',reqId);
+    if(SID && !isNaN(SID))
+    {
+        try
+        {
+            DbConn.Appointment
+                .findAll({
+                    where: [{ScheduleId: '0'},{CompanyId: Company} ,{TenantId: Tenant}]
+                }
+            )
+                .complete(function (errApp, resApp) {
+                    if (errApp) {
+
+
+                        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - error occurred while searching appointments  ',reqId,errApp);
+                        callback(errApp, undefined);
+
+                    } else
+                    {
+                        if(resApp.length==0)
+                        {
+                            callback(new Error("No record for ScheduleID"),undefined);
+                        }
+                        else
+                        {//var i=1;
+                            for(var index in resApp)
+                            {
+
+                                //console.log(i);
+                                // i++;
+                                //var dy=resApp[index].DaysOfWeek.split(",");
+
+                                var dy=resApp[index].DaysOfWeek.split(",");
+                                //console.log(dy);
+                                var d=SetDayObjects(dy);
+                                resApp[index].DaysOfWeek=d;
+                            }
+                            //console.log("DATAAA "+resApp[0].StartTime.toGMTString());
+                            // console.log(moment(resApp[0].StartTime.toGMTString()).zone("00:00").format('HH:mm:ss'));
+
+                            callback(undefined,resApp);
+                        }
+                        /*if (resApp.length==0) {
+
+                         logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - No appointment data found  ',reqId);
+                         callback(new Error('No record'),undefined);
+
+
+                         } else {
+                         logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data found  ',reqId,JSON.stringify(resApp));
+                         try {
+
+
+                         for (var index in resApp) {
+
+
+                         logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment data  ',reqId,JSON.stringify(resApp[index]));
+                         if (resApp[index].StartDate == null || resApp[index].EndDate == null) {
+
+                         IsFound=true;
+                         callback(undefined,resApp[index]);
+                         }
+                         else {
+                         try {
+
+                         if (DateCheck(resApp[index],reqId)) {
+                         try {
+                         if (TimeCheck(resApp[index],reqId)) {
+                         try {
+                         if (DayCheck(resApp[index]),reqId) {
+
+                         logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Appointment record found ',reqId,JSON.stringify(resApp[index]));
+
+                         IsFound=true;
+                         callback(undefined,resApp[index]);
+
+                         }
+                         else {
+                         continue;
+                         }
+                         }
+                         catch (ex) {
+
+                         logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment day validating %s',reqId,resApp[index],ex);
+                         callback('Error in Day check : '+ex,undefined);
+                         }
+                         }
+                         else {
+                         continue;
+                         }
+                         }
+                         catch (ex) {
+                         logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment time checking ',reqId,resApp[index],ex);
+                         callback('Error in Time check : '+ex,undefined);
+                         }
+                         }
+                         else {
+                         continue;
+                         }
+                         } catch (ex) {
+                         logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception occurred when Appointment date checking ',reqId,resApp[index],ex);
+                         callback('Error in Date check : '+ex,undefined);
+                         }
+
+                         }
+
+
+                         }
+                         if(IsFound==false)
+                         {
+                         logger.error('[DVP-LimitHandler.CheckAvailables] - [%s]- Appointment is not found ',reqId);
+                         callback(new Error("No maching record found"),undefined);
+                         }
+
+                         }
+                         catch (ex) {
+                         logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception on checking record by record ',reqId,ex);
+                         callback("Exception : "+ex,undefined);
+                         }
+                         }
+                         */
+
+                    }
+
+                });
+
+        }
+        catch(ex)
+        {
+            logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception on method start : FindValidAppointment ',reqId,ex);
+            callback(new Error("Exception : "+ex),undefined);
+        }
+
+    }
+    else
+    {
+        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - ScheduleID is Undefined');
+        callback(new Error("ScheduleID is Undefined"),undefined);
+    }
+
+
+}
 
 
 function SetDayObjects(dy)
@@ -723,17 +868,18 @@ function ValidateTime(result,Time,reqId)
 {
     try
     {
-        var Tm= moment(Time).zone("00:00");
+        //var Tm= moment(Time).zone("00:00");
 
-        var ST= moment(result.StartTime.toGMTString()).zone("00:00").format('HH:mm:ss');
-        var ET= moment(result.EndTime.toGMTString()).zone("00:00").format('HH:mm:ss');
-
-        console.log("REqTime ",Tm);
-        console.log("Start ",ST);
-        console.log("End ",ET);
+        var Tm=moment(new Date(Time)).utcOffset("00:00").format('HH:mm:ss');
 
 
-        if(moment(Tm).isBetween(ST,ET))
+
+        var ST= moment(new Date(result.StartTime)).utcOffset("00:00").format('HH:mm:ss');
+        var ET= moment(new Date(result.EndTime)).utcOffset("00:00").format('HH:mm:ss');
+
+
+
+        if(Tm>=ST && Tm<ET)
         {
             return true;
         }
@@ -780,10 +926,13 @@ if(SID&&Dt&&Tm && !isNaN(SID))
                         callback(new Error('No record found'), undefined);
 
                     } else {
+
+                        console.log("Size "+resApp.length);
                         try {
 
                             for (var index in resApp) {
 
+                                console.log(JSON.stringify(resApp[index]));
 
                                 if ((resApp[index].StartDate == null || resApp[index].EndDate == null) && resApp[index].DaysOfWeek == null ) {
                                     IsFound=true;
@@ -797,10 +946,11 @@ if(SID&&Dt&&Tm && !isNaN(SID))
 
                                     if (moment(ReqDate).isBetween(resApp[index].StartDate, resApp[index].EndDate)) {
 
+
                                         var TmVal=ValidateTime(resApp[index],ReqTime,reqId);
                                         //if (ReqTime >= result[index].StartTime && ReqTime < result[index].EndTime) {
 
-                                        console.log("Time val "+ReqTime);
+
                                         if (TmVal) {
                                             var DbDays = resApp[index].DaysOfWeek.split(',');
 
@@ -1542,6 +1692,7 @@ module.exports.PickSchedules = PickSchedules;
 module.exports.PickScheduleAction = PickScheduleAction;
 module.exports.PickAppointmentAction = PickAppointmentAction;
 module.exports.PickAppointment = PickAppointment;
+module.exports.PickUnassignedAppointments = PickUnassignedAppointments;
 
 
 

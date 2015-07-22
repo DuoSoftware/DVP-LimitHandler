@@ -41,7 +41,7 @@ RestServer.listen(port, function () {
     console.log('%s listening at %s', RestServer.name, RestServer.url);
 
 
-   // SetDays();
+    // SetDays();
 
 });
 //Enable request body parsing(access)
@@ -58,7 +58,7 @@ RestServer.use(restify.queryParser());
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(req,res,next)
 {
 
-    console.log(JSON.stringify(req.body));
+
     var reqId='';
 
     try
@@ -156,6 +156,133 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',function(req,res,next)
         logger.error('[DVP-LimitHandler.CreateSchedule] - [%s] - [HTTP]  - Exception occurred when service started : NewSchedule -  Data - ',reqId,req.body,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
         logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
+
+
+RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,next)
+{
+    var reqId='';
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+
+    try {
+
+        logger.debug('[DVP-LimitHandler.InitialData] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
+         schedule.CreateSchedule(req.Schedule,reqId,function(err,resz)
+         {
+         if(err)
+         {
+
+         var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+         logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
+         res.end(jsonString);
+         }
+         else
+         {
+
+         var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+         logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
+         //res.end(jsonString);
+
+             if(req.body.Appointment)
+             {
+                 try {
+
+
+                     var ErrorList=[];
+                     var x=(AppBody.length-1);
+                     var AppBody=req.body.Appointment;
+
+
+                     for(var index in AppBody)
+                     {
+                         var Days=SetDays(AppBody[index].DaysOfWeek);
+
+                         AppBody[index].ScheduleId=resz.id;
+
+                         logger.debug('[DVP-LimitHandler.InitialData] - [%s] - [HTTP]  - Request received -  Data -  ',reqId,req.body);
+                         schedule.CreateAppointment(AppBody[index],Days.toString(),Compay,Tenant,reqId,function(err,resz)
+                         {
+
+                             if(err)
+                             {
+                                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                                 logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
+                                 if(index>=x)
+                                 {
+                                     ErrorList.add(AppBody[index]);
+
+
+                                     var jsonErrorList = messageFormatter.FormatMessage(ErrorList, "Operation Succeed,Error Appointments", false, undefined);
+
+                                     res.end(jsonErrorList);
+                                 }
+
+                             }
+                             else
+                             {
+                                 var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                                 logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
+
+                                 if(index>=x)
+                                 {
+
+                                     var jsonErrorList = messageFormatter.FormatMessage(ErrorList, "Operation Succeed,Error Appointments", false, undefined);
+                                     res.end(jsonErrorList);
+                                 }
+
+
+                             }
+
+                         });
+
+                     }
+
+
+
+
+
+
+                 }
+                 catch(ex)
+                 {
+
+                     logger.error('[DVP-LimitHandler.InitialData] - [%s] - [HTTP]  - Exception occurred when service started : CreateAppointment -  Data  ',reqId,JSON.stringify(req.body),ex);
+                     var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+                     logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
+                     res.end(jsonString);
+                 }
+             }
+             else
+             {
+
+             }
+
+
+         }
+
+         });
+
+
+
+    }
+    catch(ex)
+    {
+        //log.fatal("Exception found in AddSchedule : "+ex);
+        logger.error('[DVP-LimitHandler.InitialData] - [%s] - [HTTP]  - Exception occurred when service started : NewSchedule -  Data - ',reqId,req.body,ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
     return next();
@@ -638,12 +765,69 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:schedul
 
 });
 
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/UnAssignedAppointments',function(req,res,next)
+{
+    var reqId='';
+
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+    var Company=1;
+    var Tenant=1;
+
+    try {
+        logger.debug('[DVP-LimitHandler.PickUnassignedAppointment] - [%s] - [HTTP]  - Request received -   ',reqId);
+
+
+        schedule.PickUnassignedAppointments(req.params.scheduleID,Company,Tenant,reqId,function(err,resz)
+        {
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.PickUnassignedAppointment] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.PickUnassignedAppointment] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.PickUnassignedAppointment] - [%s] - [HTTP]  - Exception occurred when requesting : PickUnassignedAppointment - ',reqId,ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.PickUnassignedAppointment] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+
+});
+
+
+
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/check_availables/:dt/:dy/:tm',function(req,res,next)
 RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:date/:time',function(req,res,next)
 {
     //dt = 2015-09-09
     //dy = Friday
     //tm = 11:20 (24Hrs)
+
+
     var reqId='';
 
 
@@ -1204,11 +1388,11 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',function(req,res,next)
 
 function SetDays(a)
 {
-var IsFirst=0;
+    var IsFirst=0;
     var WeekDays='';
 
 
-console.log(a);
+    console.log(a);
 
 
     for(var index in a)
