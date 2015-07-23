@@ -178,7 +178,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,nex
     var Company=1;
     var Tenant=1;
 
-    console.log(JSON.stringify());
+
 
     try {
 
@@ -195,11 +195,13 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,nex
          else
          {
 
+             var Apps=req.body.Appointment;
+
          var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resSchedule);
          logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
          //res.end(jsonString);
 
-             if(req.body.Appointment)
+             if(req.body.Appointment && Apps.length>0)
              {
 
                  console.log('\n');
@@ -287,7 +289,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,nex
              }
              else
              {
-res.end("EMPTY APPOINTMENTS");
+                 var jsonString = messageFormatter.FormatMessage(undefined, "Scedule Adding Succeeded, No Appointment details received.", true, resSchedule);
+                 logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
+                  res.end(jsonString);
              }
 
 
