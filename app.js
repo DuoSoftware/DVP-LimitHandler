@@ -129,7 +129,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',function(req,res,next)
     try {
 
         logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
-        schedule.CreateSchedule(req,reqId,function(err,resz)
+        schedule.CreateSchedule(req.body,reqId,function(err,resz)
         {
             if(err)
             {
@@ -175,53 +175,61 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,nex
 
     }
 
+    var Company=1;
+    var Tenant=1;
+
+    console.log(JSON.stringify());
 
     try {
 
         logger.debug('[DVP-LimitHandler.InitialData] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
-         schedule.CreateSchedule(req.Schedule,reqId,function(err,resz)
+       schedule.CreateSchedule(req.body.Schedule,reqId,function(errScedule,resSchedule)
          {
-         if(err)
+         if(errScedule)
          {
 
-         var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+         var jsonString = messageFormatter.FormatMessage(errScedule, "ERROR/EXCEPTION", false, undefined);
          logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
          res.end(jsonString);
          }
          else
          {
 
-         var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+         var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resSchedule);
          logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
          //res.end(jsonString);
 
              if(req.body.Appointment)
              {
+
+                 console.log('\n');
+                 console.log(JSON.stringify(req.body.Appointment));
+                 console.log('\n');
                  try {
 
 
                      var ErrorList=[];
-                     var x=(AppBody.length-1);
-                     var AppBody=req.body.Appointment;
 
+                     var AppBody=req.body.Appointment;
+                     var x=(AppBody.length-1);
 
                      for(var index in AppBody)
                      {
                          var Days=SetDays(AppBody[index].DaysOfWeek);
 
-                         AppBody[index].ScheduleId=resz.id;
+                         AppBody[index].ScheduleId=resSchedule.id;
 
                          logger.debug('[DVP-LimitHandler.InitialData] - [%s] - [HTTP]  - Request received -  Data -  ',reqId,req.body);
-                         schedule.CreateAppointment(AppBody[index],Days.toString(),Compay,Tenant,reqId,function(err,resz)
+                         schedule.CreateAppointment(AppBody[index],Days.toString(),Company,Tenant,reqId,function(errApp,resApp)
                          {
 
-                             if(err)
+                             if(errApp)
                              {
-                                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                                 var jsonString = messageFormatter.FormatMessage(errApp, "ERROR/EXCEPTION", false, undefined);
                                  logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
                                  if(index>=x)
                                  {
-                                     ErrorList.add(AppBody[index]);
+                                     ErrorList.push(AppBody[index]);
 
 
                                      var jsonErrorList = messageFormatter.FormatMessage(ErrorList, "Operation Succeed,Error Appointments", false, undefined);
@@ -232,14 +240,27 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,nex
                              }
                              else
                              {
-                                 var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                                 var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resApp);
                                  logger.debug('[DVP-LimitHandler.InitialData] - [%s] - Request response : %s ',reqId,jsonString);
 
                                  if(index>=x)
                                  {
 
-                                     var jsonErrorList = messageFormatter.FormatMessage(ErrorList, "Operation Succeed,Error Appointments", false, undefined);
-                                     res.end(jsonErrorList);
+                                     if(ErrorList.length>0)
+                                     {
+                                         var jsonErrorList = messageFormatter.FormatMessage(ErrorList, "Operation Succeed,Error Appointments found ", true, undefined);
+                                         res.write(jsonErrorList);
+                                         var jsonScheduleList = messageFormatter.FormatMessage(undefined, "Operation Succeed ", true, resSchedule);
+                                         res.end(jsonScheduleList);
+                                     }
+                                     else
+                                     {
+                                         var jsonScheduleList = messageFormatter.FormatMessage(undefined, "Operation Succeed", true, resSchedule);
+                                         res.end(jsonScheduleList);
+                                     }
+
+
+
                                  }
 
 
@@ -266,7 +287,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,nex
              }
              else
              {
-
+res.end("EMPTY APPOINTMENTS");
              }
 
 

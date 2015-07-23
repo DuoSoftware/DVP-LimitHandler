@@ -26,11 +26,11 @@ function CreateSchedule(req,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] -  New Schedule adding started  ',reqId);
 
-    if(req.body)
+    if(req)
     {
         try{
 
-            var obj=req.body;
+            var obj=req;
 
 
             if(obj.ScheduleName)
@@ -137,11 +137,11 @@ function CreateSchedule(req,reqId,callback)
 function CreateAppointment(req,Days,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] -  New appointment adding started  ',reqId);
-    if(req.body)
+    if(req)
     {
         try
         {
-            var obj=req.body;
+            var obj=req;
         }
         catch(ex)
         {
