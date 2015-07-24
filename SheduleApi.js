@@ -150,6 +150,8 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback)
             callback(ex,undefined);
         }
 
+
+       // if(obj.ScheduleId && !isNaN(obj.ScheduleId))
         if(obj.ScheduleId && !isNaN(obj.ScheduleId))
         {
             try {

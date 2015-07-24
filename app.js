@@ -77,7 +77,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
         console.log("Got Days "+Days);
 
         logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [HTTP]  - Request received -  Data -  ',reqId,req.body);
-        schedule.CreateAppointment(req,Days.toString(),Compay,Tenant,reqId,function(err,resz)
+        schedule.CreateAppointment(req.body,Days.toString(),Compay,Tenant,reqId,function(err,resz)
         {
 
             if(err)
