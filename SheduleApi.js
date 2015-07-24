@@ -1185,20 +1185,20 @@ function PickSchedules(Company,Tenant,reqId,callback)
             )
                 .complete(function (errSchedule, resSchedule) {
                     if (errSchedule) {
-                        logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Error occurred when searching for Schedule %s ',reqId,SID,errSchedule);
+                        logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Error occurred when searching for Schedules ',reqId,errSchedule);
                         callback(errSchedule, undefined);
 
                     } else
                     {
                         if (resSchedule.length==0) {
 
-                            logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - No record found for Schedule %s ',reqId,SID);
+                            logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - No record found for Schedule',reqId);
                             callback(new Error('No Schedule record'), undefined);
 
                         }
 
                         else {
-                            logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Record found for Schedule ',reqId,SID);
+                            logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - Records found ',reqId);
 
                             callback(undefined, resSchedule);
                         }
@@ -1210,7 +1210,7 @@ function PickSchedules(Company,Tenant,reqId,callback)
         }
         catch (ex)
         {
-            logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - Exception occurred when starting method : PickSchedule ',reqId,SID);
+            logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - Exception occurred when starting method : PickSchedule ',reqId);
             callback(ex,undefined);
         }
 
