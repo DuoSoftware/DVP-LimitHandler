@@ -204,9 +204,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,nex
              if(req.body.Appointment && Apps.length>0)
              {
 
-                 console.log('\n');
-                 console.log(JSON.stringify(req.body.Appointment));
-                 console.log('\n');
+
                  try {
 
 
