@@ -69,15 +69,29 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
     {
 
     }
-    var Compay=1;
+    var Company=1;
     var Tenant=1;
+
+    try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
+
     try {
 
         var Days=SetDays(req.body.DaysOfWeek);
         console.log("Got Days "+Days);
 
         logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [HTTP]  - Request received -  Data -  ',reqId,req.body);
-        schedule.CreateAppointment(req.body,Days.toString(),Compay,Tenant,reqId,function(err,resz)
+        schedule.CreateAppointment(req.body,Days.toString(),Company,Tenant,reqId,function(err,resz)
         {
 
             if(err)
@@ -359,6 +373,18 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,ne
 
     var Company=1;
     var Tenant=1;
+    try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
 
 
 
@@ -417,6 +443,19 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
     var Company=1;
     var Tenant=1;
 
+    try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
+
 
     try {
         logger.debug('[DVP-LimitHandler.AssignAppointment] - [%s] - [HTTP]  - Request received -  Data - Schedule %d Appointment %d ',reqId,req.params.sid,req.params.appid);
@@ -466,6 +505,20 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',functio
 
     var Company=1;
     var Tenant=1;
+
+    try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
+
 
     try {
         logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - [HTTP]  - Request received -  Appointment %s Data %s',reqId,req.params.id,JSON.stringify(req.body));
@@ -786,6 +839,20 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:schedul
     var Tenant=1;
 
     try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
+
+
+    try {
         logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.scheduleID);
 
 
@@ -837,6 +904,19 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/UnAssignedAppointments',f
 
     var Company=1;
     var Tenant=1;
+
+    try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
 
     try {
         logger.debug('[DVP-LimitHandler.PickUnassignedAppointment] - [%s] - [HTTP]  - Request received -   ',reqId);
@@ -1014,6 +1094,21 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,nex
 
     var Company=1;
     var Tenant=1;
+
+    try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
+
+
     try {
         logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
@@ -1182,6 +1277,19 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',functio
     var Tenant=1;
 
     try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
+
+    try {
         logger.debug('[DVP-LimitHandler.PickAppointmentById] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
 
@@ -1236,6 +1344,20 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',f
     }
     var Company=1;
     var Tenant=1;
+
+    try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
+
     try {
         logger.debug('[DVP-LimitHandler.PickAppointmentAction] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
@@ -1348,6 +1470,19 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',function(req,
     var Tenant=1;
 
     try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
+
+    try {
         logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.Rid);
 
         limit.GetMaxLimit(req.params.Rid,Company,Tenant,reqId,function(err,resz)
@@ -1401,6 +1536,19 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',function(req,res,next)
 
     var Company=1;
     var Tenant=1;
+
+    try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
 
     try {
         logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.Rid);
