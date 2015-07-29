@@ -22,7 +22,7 @@ var log = log4js.getLogger("shdlapi");
 
 
 
-function CreateSchedule(req,reqId,callback)
+function CreateSchedule(req,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] -  New Schedule adding started  ',reqId);
 
@@ -58,8 +58,8 @@ function CreateSchedule(req,reqId,callback)
                                             ObjClass: "OBJCLZ",
                                             ObjType: "OBJTYP",
                                             ObjCategory: "OBJCAT",
-                                            CompanyId: 1,
-                                            TenantId: 1,
+                                            CompanyId: Company,
+                                            TenantId: Tenant,
                                             Availability:obj.Availability
 
 

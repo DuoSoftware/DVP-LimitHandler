@@ -125,11 +125,27 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',function(req,res,next)
 
     }
 
+    var Company=1;
+    var Tenant=1;
+
+
+    try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.CreateSchedule] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
 
     try {
 
         logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
-        schedule.CreateSchedule(req.body,reqId,function(err,resz)
+        schedule.CreateSchedule(req.body,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -175,15 +191,30 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,nex
 
     }
 
+
+
     var Company=1;
     var Tenant=1;
 
+
+    try {
+        var auth = req.header('authorization');
+        var authInfo = auth.split("#");
+
+        if (authInfo.length >= 2) {
+            Tenant = authInfo[0];
+            Company = authInfo[1];
+        }
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
 
 
     try {
 
         logger.debug('[DVP-LimitHandler.InitialData] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
-       schedule.CreateSchedule(req.body.Schedule,reqId,function(errScedule,resSchedule)
+       schedule.CreateSchedule(req.body.Schedule,Company,Tenant,reqId,function(errScedule,resSchedule)
          {
          if(errScedule)
          {
@@ -328,6 +359,8 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,ne
 
     var Company=1;
     var Tenant=1;
+
+
 
     try {
 
