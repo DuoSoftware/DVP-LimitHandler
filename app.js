@@ -28,7 +28,7 @@ var RestServer = restify.createServer({
 
 //restify.CORS.ALLOW_HEADERS.push('Accept-Encoding');
 //restify.CORS.ALLOW_HEADERS.push('Accept-Language');
-restify.CORS.ALLOW_HEADERS.push('api_key');
+restify.CORS.ALLOW_HEADERS.push('authorization');
 //restify.CORS.ALLOW_HEADERS.push('Access-Control-Request-Method');
 
 
