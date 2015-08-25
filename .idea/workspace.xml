@@ -1,26 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1de16c35-0761-4869-ba6c-ffe5d1056014" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/CallRule.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/CallRule.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampCallbackInfo.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampCallbackInfo.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampCampaignInfo.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampCampaignInfo.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampConfigurations.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampConfigurations.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampContactInfo.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampContactInfo.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampContactSchedule.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampContactSchedule.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampScheduleInfo.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/CampScheduleInfo.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/LimitApiNew.js" afterPath="$PROJECT_DIR$/LimitApiNew.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/PBXUser.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/PBXUser.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/PBXUserTemplate.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/PBXUserTemplate.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/SipUACEndpoint.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/SipUACEndpoint.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/TrunkPhoneNumber.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/TrunkPhoneNumber.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/node_modules/config/lib/config.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/node_modules/config/lib/config.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/config/custom-environment-variables.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/config/custom-environment-variables.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/index.js" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/DVP-DBModels/package.json" afterPath="$PROJECT_DIR$/node_modules/DVP-DBModels/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="1de16c35-0761-4869-ba6c-ffe5d1056014" name="Default" comment="" />
     <ignored path="DVP-LimitHandler.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -335,7 +316,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32899022" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
