@@ -4,7 +4,7 @@
 
 var restify = require('restify');
 var schedule=require('./SheduleApi.js');
-var limit=require('./LimitApiNew.js');
+var limit = require('./LimitApiNew.js');
 var messageFormatter = require('DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var log4js=require('log4js');
 var config = require('config');
@@ -870,7 +870,57 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',func
     return next();
 });
 
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Restore',function(req,res,next)
+{
 
+
+    var reqId='';
+
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+    var Company=1;
+    var Tenant=1;
+
+    try {
+        logger.debug('[DVP-LimitHandler.RestoreLimit] - [%s] - [HTTP]  - Request received - ',reqId);
+        limit.ReloadRedis(reqId,function(err,resz)
+        {
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.RestoreLimit] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "SUCCESS/Error List", true, resz);
+                logger.debug('[DVP-LimitHandler.RestoreLimit] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+        });
+
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.RestoreLimit] - [%s] - [HTTP]  - Exception occurred when starting request : RestoreLimit ',reqId);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.RestoreLimit] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
 
 //.......................................get.............................................................................
 
@@ -1740,7 +1790,7 @@ function SetDays(a)
         }
         else
         {
-            continue;
+           // continue;
         }
 
     }
