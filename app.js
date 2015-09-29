@@ -721,7 +721,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next)
     }
     try
     {
-        logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Request received -  Data  ',reqId,req.body);
+        logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Request received -  Data  ',reqId);
 
         var obj=req.body;
 

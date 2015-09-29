@@ -43,7 +43,7 @@ function LimitIncrement(req,reqId,callback)
 
             try {
 
-                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [PGSQL] -  Record found for LimitID %s  ',reqId,req,err);
+                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [PGSQL] -  Record found for LimitID %s  ',reqId,req);
                 client.get(req, function (err, reply) {
                     if (err) {
 
@@ -345,6 +345,7 @@ function CreateLimit(req,reqId,callback)
         var rand = "number" + uuid.v4().toString();
         var randMax=rand+"_max";
         var maxCnt=parseInt(req.MaxCount);
+        console.log(req.MaxCount);
     }
 
     catch(ex)
