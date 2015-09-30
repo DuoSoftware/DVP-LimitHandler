@@ -5,14 +5,14 @@
 var restify = require('restify');
 var schedule=require('./SheduleApi.js');
 var limit = require('./LimitApiNew.js');
-var messageFormatter = require('DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
+var messageFormatter = require('dvp-common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var log4js=require('log4js');
 var config = require('config');
 
 var port = config.Host.port || 3000;
 var version=config.Host.version;
 var hpath=config.Host.hostpath;
-var logger = require('DVP-Common/LogHandler/CommonLogHandler.js').logger;
+var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
 var uuid = require('node-uuid');
 
 

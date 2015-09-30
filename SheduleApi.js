@@ -4,15 +4,15 @@
  */
 
 
-var DbConn = require('DVP-DBModels');
+var DbConn = require('dvp-dbmodels');
 var restify = require('restify');
 var stringify=require('stringify');
 var moment=require('moment');
-var messageFormatter = require('DVP-Common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
+var messageFormatter = require('dvp-common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var log4js=require('log4js');
 var config = require('config');
 var hpath=config.Host.hostpath;
-var logger = require('DVP-Common/LogHandler/CommonLogHandler.js').logger;
+var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
 
 
 log4js.configure(config.Host.logfilepath, { cwd: hpath });
