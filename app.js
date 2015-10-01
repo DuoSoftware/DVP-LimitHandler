@@ -611,7 +611,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',functio
 
 
 //RestServer.get('/dvp/'+version+'/limit_handler/limitapi/limit_increment/:key',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Increment/:key',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',function(req,res,next)
 {
 
     var reqId='';
@@ -657,7 +657,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Increment/:key',function
 });
 
 //RestServer.get('/dvp/'+version+'/limit_handler/limitapi/limit_decrement/:key',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Decrement/:key',function(req,res,next)
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',function(req,res,next)
 {
     var reqId='';
 
