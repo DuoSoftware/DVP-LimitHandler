@@ -1433,19 +1433,25 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',functio
     var Tenant=1;
 
     try {
-        var auth = req.header('authorization');
-        var authInfo = auth.split("#");
+        if(req.header('authorization'))
+        {
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        if (authInfo.length >= 2) {
-            Tenant = authInfo[0];
-            Company = authInfo[1];
-
-            console.log(Company);
-            console.log(Tenant);
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
         }
+        else
+        {
+            Tenant = 1;
+            Company = 1;
+        }
+
     }
     catch (ex) {
-        logger.error('[DVP-LimitHandler.InitialData] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+        logger.error('[DVP-LimitHandler.PickAppointmentById] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
     }
 
     try {

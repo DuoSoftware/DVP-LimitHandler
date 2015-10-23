@@ -1393,11 +1393,7 @@ function PickAppointment(AID,Company,Tenant,reqId,callback)
                 }
             ).then(function(result)
                 {
-                    logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - Error occurred while searching for appointment for %s   ',reqId,AID,err);
-                    callback(err, undefined);
-                }
-            ).catch(function(err)
-                {
+
                     if (result.length == 0) {
                         logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - No record found for appointment %s   ',reqId,AID);
                         callback(new Error('No record'), undefined);
@@ -1412,6 +1408,13 @@ function PickAppointment(AID,Company,Tenant,reqId,callback)
 
 
                     }
+
+
+                }
+            ).catch(function(err)
+                {
+                    logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - Error occurred while searching for appointment for %s   ',reqId,AID,err);
+                    callback(err, undefined);
                 });
 
 
