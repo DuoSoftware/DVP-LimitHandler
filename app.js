@@ -760,7 +760,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next)
     return next();
 });
 
-//RestServer.post('/dvp/'+version+'/limit_handler/limitapi/update_maxlimit',function(req,res,next)
+
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Max/:lid',function(req,res,next)
 {
     var reqId='';
@@ -816,7 +816,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Max/:lid',function(req,res,
 });
 
 
-//RestServer.post('/dvp/'+version+'/limit_handler/limitapi/Update_EnableState',function(req,res,next)
+
 
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',function(req,res,next)
 {
@@ -924,7 +924,6 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Restore',function(req,res,n
 
 //.......................................get.............................................................................
 
-//RestServer.get('/dvp/'+version+'/limit_handler/schedule/Pick_valid_Appointment',function(req,res,next)
 RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:scheduleID',function(req,res,next)
 {
     var reqId='';
@@ -1140,63 +1139,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:dat
 });
 //.......................................................................................................................
 
-//RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_app_through_schedule/:cmp/:tent/:dt/:dy/:tm',function(req,res,next)
-/*RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ApplicationThroughSchedule/:dt/:tm/:sid',function(req,res,next)
 
- {
- var reqId='';
-
-
- try
- {
- reqId = uuid.v1();
- }
- catch(ex)
- {
-
- }
-
- var cmp=1;
- var tent=1;
-
- try {
- logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - [HTTP]  - Request received   -  Data - Date %s  Day %s Time %s Company %s Tenant %s',reqId,req.params.dt,req.params.dy,req.params.tm,req.params.cmp,req.params.tent);
-
- //log.info("Inputs :- CompanyID :  "+req.params.cmp+" TenentID : "+req.params.tent+" Date : "+req.params.dt+" Day : "+req.params.dy+" Time : "+req.params.tm);
- schedule.PickAppThroughSchedule(cmp,tent,req.params.dt,req.params.tm,req.params.sid,reqId,function(err,resz)
- {
- if(err)
- {
-
-
- var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
- logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - Request response : %s ',reqId,jsonString);
- res.end(jsonString);
- }
- else
- {
-
- var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
- logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - Request response : %s ',reqId,jsonString);
- res.end(jsonString);
- }
-
- });
-
-
-
- }
- catch(ex)
- {
- logger.error('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - [HTTP]  - Exception occurred when starting : PickAppThroughSchedule   -  Data - Date %s  Day %s Time %s Company %s Tenant %s',reqId,req.params.dt,req.params.dy,req.params.tm,req.params.cmp,req.params.tent,ex);
- var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
- logger.debug('[DVP-LimitHandler.PickApplicationThroughSchedule] - [%s] - Request response : %s ',reqId,jsonString);
- res.end(jsonString);
-
- }
- return next();
- });
- */
 //.......................................................................................................................
 
 //RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule/:id',function(req,res,next)

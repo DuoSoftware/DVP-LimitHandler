@@ -416,40 +416,7 @@ function CreateLimit(req,reqId,callback)
                         //a
                     });
 
-                        /*complete(function (errSave,resSave) {
-                        if (errSave) {
 
-
-                            logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  error occurred while saving data record of LimitId %s'   ,reqId,rand,errSave);
-
-                            callback(errSave, undefined);
-
-
-                        }
-                        else {
-
-
-                            logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Setting redis key of LimitId %s'   ,reqId,rand);
-
-
-
-                            client.mset(rand,0,randMax,maxCnt,function(errSet,resSet)
-                            {
-                                if(errSet)
-                                {
-                                    logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Error in setting redis keys of LimitId %s'   ,reqId,rand,errSet);
-                                    callback(errSet,undefined);
-                                }
-                                else
-                                {
-                                    logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Setting redis keys of LimitId %s is succeeded'   ,reqId,rand);
-                                    callback(undefined,rand);
-                                }
-                            });
-                        }
-
-
-                    });*/
                 }
                 else
                 {
@@ -462,85 +429,7 @@ function CreateLimit(req,reqId,callback)
                 callback(err,undefined);
             });
 
-               /* complete(function (err, LimitObject) {
 
-                if(err)
-                {
-
-                    logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  Error occurred while searching for LimitId %s',reqId,rand,err);
-                    callback(err,undefined);
-                }
-                else
-                {
-                    if(!LimitObject)
-                    {
-                        logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  No record found for LimitId %s'   ,reqId,rand);
-                        try {
-                            var NewLimobj = DbConn.LimitInfo
-                                .build(
-                                {
-                                    LimitId: rand,
-                                    LimitDescription: req.LimitDescription,
-                                    ObjClass: "OBJCLZ",
-                                    ObjType: "OBJTYP",
-                                    ObjCategory: "OBJCAT",
-                                    CompanyId: 1,
-                                    TenantId: 1,
-                                    MaxCount: req.MaxCount,
-                                    Enable: req.Enable
-
-
-                                }
-                            )
-                        }
-                        catch(ex)
-                        {
-                            logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  Exception occurred while creating data record of LimitId %s'   ,reqId,rand,ex);
-                            callback(ex,undefined);
-                        }
-                        NewLimobj.save().complete(function (errSave,resSave) {
-                            if (errSave) {
-
-
-                                logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  error occurred while saving data record of LimitId %s'   ,reqId,rand,errSave);
-
-                                callback(errSave, undefined);
-
-
-                            }
-                            else {
-
-
-                                logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Setting redis key of LimitId %s'   ,reqId,rand);
-
-
-                                client.mset(rand,0,randMax,maxCnt,function(errSet,resSet)
-                                {
-                                    if(errSet)
-                                    {
-                                        logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Error in setting redis keys of LimitId %s'   ,reqId,rand,errSet);
-                                        callback(errSet,undefined);
-                                    }
-                                    else
-                                    {
-                                        logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Setting redis keys of LimitId %s is succeeded'   ,reqId,rand);
-                                        callback(undefined,rand);
-                                    }
-                                });
-                            }
-
-
-                        });
-                    }
-                    else
-                    {
-                        logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  Records are already in db of LimitId %s'   ,reqId,rand);
-                        callback(new Error("Already in DB"), undefined);
-                    }
-                }
-
-
-            });*/
         }
         catch(ex)
         {
@@ -723,7 +612,7 @@ function UpdateMaxLimit(LID,req,Company,Tenant,reqId,callback)
         catch (ex)
         {
             logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Exception occurred when updating Maximum limit of %s to %s  ',reqId,LID,req.MaxCount,ex);
-            //var jsonString = messageFormatter.FormatMessage(err, "ERROR", false, obj);
+
             callback(ex,undefined);
         }
     }
@@ -816,28 +705,7 @@ function GetLimitInfo(reqId,Company,Tenant,callback)
             callback(errLimit, undefined);
         });
 
-            /*complete(function (errLimit, resLimit) {
 
-            if(errLimit)
-            {
-                logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  - Error occurred while searching LimitInfo of %s ',reqId,errLimit);
-                callback(errLimit, undefined);
-            }
-            else
-            {
-                if(resLimit.length>0)
-                {
-                    logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  - LimitInfo - %s  ',reqId,JSON.stringify(resLimit));
-                    callback(undefined,resLimit);
-                }
-                else
-                {
-                    logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  - No record found');
-                    callback(new Error('No limit Record'), undefined);
-                }
-            }
-
-        });*/
 
     }
     catch(ex)
