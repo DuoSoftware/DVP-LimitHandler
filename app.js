@@ -4,7 +4,7 @@
 
 var restify = require('restify');
 var schedule=require('./SheduleApi.js');
-var limit = require('./LimitApiNew.js');
+var limit = require('./LimitApi.js');
 var messageFormatter = require('dvp-common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var log4js=require('log4js');
 var config = require('config');
@@ -41,7 +41,7 @@ RestServer.listen(port, function () {
     console.log('%s listening at %s', RestServer.name, RestServer.url);
 
 
-    // SetDays();
+
 
 });
 //Enable request body parsing(access)
@@ -54,9 +54,8 @@ RestServer.use(restify.queryParser());
 
 //.......................................post............................................................................
 
-//RestServer.post('/dvp/'+version+'/limit_handler/schedule/add_appointment',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(req,res,next)
-{
+
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(req,res,next) {
 
 
     var reqId='';
@@ -134,9 +133,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(re
     return next();
 });
 
-//RestServer.post('/dvp/'+version+'/limit_handler/schedule/add_schedule',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',function(req,res,next)
-{
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',function(req,res,next) {
     var reqId='';
 
     try
@@ -209,9 +206,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',function(req,res,next)
     return next();
 });
 
-
-RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,next)
-{
+RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,next) {
     var reqId='';
 
     try
@@ -383,10 +378,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,nex
     return next();
 });
 
-//RestServer.post('/dvp/'+version+'/limit_handler/schedule/Update_Schedule',function(req,res,next)
-
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,next)
-{
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,next) {
     var reqId='';
 
     try
@@ -460,10 +452,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,ne
     return next();
 });
 
-//RestServer.post('/dvp/'+version+'/limit_handler/schedule/update_scheduleID',function(req,res,next)
-
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:appid',function(req,res,next)
-{
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:appid',function(req,res,next) {
 
     var reqId='';
 
@@ -534,9 +523,8 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
     }
     next();
 });
-//RestServer.post('/dvp/'+version+'/limit_handler/schedule/update_appoinment_data',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',function(req,res,next)
-{
+
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',function(req,res,next) {
     var reqId='';
 
     try
@@ -609,10 +597,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',functio
     return next();
 });
 
-
-//RestServer.get('/dvp/'+version+'/limit_handler/limitapi/limit_increment/:key',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',function(req,res,next)
-{
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',function(req,res,next) {
 
     var reqId='';
 
@@ -656,9 +641,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',function(re
     return next();
 });
 
-//RestServer.get('/dvp/'+version+'/limit_handler/limitapi/limit_decrement/:key',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',function(req,res,next)
-{
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',function(req,res,next) {
     var reqId='';
 
     try
@@ -706,9 +689,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',function(re
     return next();
 });
 
-//RestServer.post('/dvp/'+version+'/limit_handler/limitapi/add_new_limit_record',function(req,res,next)
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next)
-{
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next) {
     var reqId='';
 
     try
@@ -760,9 +741,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next)
     return next();
 });
 
-
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Max/:lid',function(req,res,next)
-{
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Max/:lid',function(req,res,next) {
     var reqId='';
 
     try
@@ -815,11 +794,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Max/:lid',function(req,res,
     return next();
 });
 
-
-
-
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',function(req,res,next)
-{
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',function(req,res,next) {
 
 
     var reqId='';
@@ -870,8 +845,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',func
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Restore',function(req,res,next)
-{
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Restore',function(req,res,next) {
 
 
     var reqId='';
@@ -924,8 +898,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Restore',function(req,res,n
 
 //.......................................get.............................................................................
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:scheduleID',function(req,res,next)
-{
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:scheduleID',function(req,res,next) {
     var reqId='';
 
 
@@ -1000,8 +973,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:schedul
 
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/UnAssignedAppointments',function(req,res,next)
-{
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/UnAssignedAppointments',function(req,res,next) {
     var reqId='';
 
 
@@ -1075,11 +1047,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/UnAssignedAppointments',f
 
 });
 
-
-
-//RestServer.get('/dvp/'+version+'/limit_handler/schedule/check_availables/:dt/:dy/:tm',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:date/:time',function(req,res,next)
-{
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:date/:time',function(req,res,next) {
     //dt = 2015-09-09
     //dy = Friday
     //tm = 11:20 (24Hrs)
@@ -1139,12 +1107,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:dat
 });
 //.......................................................................................................................
 
-
-//.......................................................................................................................
-
-//RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,next)
-{
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,next) {
     var reqId='';
 
 
@@ -1223,8 +1186,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,nex
     return next();
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules',function(req,res,next)
-{
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules',function(req,res,next) {
     var reqId='';
 
 
@@ -1304,10 +1266,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules',function(req,res,next)
     return next();
 });
 
-
-//RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_schedule_action/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',function(req,res,next)
-{
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',function(req,res,next) {
     var reqId='';
 
 
@@ -1357,9 +1316,8 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',function(req,
 });
 //.......................................................................................................................
 
-//RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_appointment/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',function(req,res,next)
-{
+
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',function(req,res,next) {
     var reqId='';
 
 
@@ -1434,11 +1392,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',functio
 
 });
 
-//.......................................................................................................................
-
-//RestServer.get('/dvp/'+version+'/limit_handler/schedule/pick_apointment_action/:id',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',function(req,res,next)
-{
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',function(req,res,next) {
     var reqId='';
 
 
@@ -1512,10 +1466,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',f
     return next();
 });
 
-
-//RestServer.get('/dvp/'+version+'/limit_handler/limitapi/get_current_limit/:Rid',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Current/:Rid',function(req,res,next)
-{
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Current/:Rid',function(req,res,next) {
     var reqId='';
 
 
@@ -1567,11 +1518,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Current/:Rid',function(req,r
 
 });
 
-
-
-//RestServer.get('/dvp/'+version+'/limit_handler/limitapi/get_max_limit/:Rid',function(req,res,next)
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',function(req,res,next)
-{
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',function(req,res,next) {
     var reqId='';
 
 
@@ -1638,8 +1585,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',function(req,
 
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',function(req,res,next)
-{
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',function(req,res,next) {
     var reqId='';
 
 
