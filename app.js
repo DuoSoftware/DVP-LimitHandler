@@ -54,6 +54,12 @@ RestServer.use(restify.queryParser());
 
 //.......................................post............................................................................
 
+RestServer.get('/DVP/API',function(req,res,next) {
+
+    res.end("HIT");
+    return next();
+});
+
 
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(req,res,next) {
 
