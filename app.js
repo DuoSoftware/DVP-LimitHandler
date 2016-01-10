@@ -1658,6 +1658,86 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',function(req,res,next)
 
 });
 
+//.......................................................................................................................
+
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/byCompany',function(req,res,next) {
+    var reqId='';
+
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+    var Company=1;
+    var Tenant=1;
+
+    try {
+        if(req.header('authorization'))
+        {
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
+
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
+        else
+        {
+            Tenant = 1;
+            Company = 1;
+        }
+
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.PickSchedulesByCompany] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
+
+
+    try {
+        logger.debug('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - [HTTP]  - Request received   -  Data - Company %s',reqId,Company);
+
+
+
+        schedule.PickSchedulesByCompany(Company,Tenant,reqId,function(err,resz)
+        {
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - ',reqId);
+
+                res.end(jsonString);
+            }
+            else
+            {
+
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - Request response : %s ',reqId,jsonString);
+
+                res.end(jsonString);
+            }
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [HTTP]  - Error when request starts : PickSchedulesByCompany  Company  %s',reqId,Company,ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
 
 
 function SetDays(a)

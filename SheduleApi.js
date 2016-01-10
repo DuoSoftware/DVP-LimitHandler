@@ -579,6 +579,45 @@ function PickScheduleAction(SID,Company,Tenant,reqId,callback) {
 
 }
 
+function PickSchedulesByCompany(Company,Tenant,reqId,callback) {
+
+        try {
+
+            DbConn.Schedule
+                .findAll({
+                    where: [{CompanyId:Company},{TenantId:Tenant}]
+                }
+            ).then(function(resSchedule){
+                    if (resSchedule.length==0) {
+
+                        logger.error('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - [PGSQL] - No Schedule record found for Company  %s ',reqId,Schedule);
+                        callback(new Error('No Schedule record'), undefined);
+
+                    }
+
+                    else {
+                        logger.debug('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - [PGSQL] - Record found for Schedules of Company %s',reqId,Company);
+
+                        callback(undefined, resSchedule);
+                    }
+                }).catch(function(errSchedule)
+                {
+                    logger.error('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - [PGSQL] - Error occurred when searching for Schedule of Company %s ',reqId,Company,errSchedule);
+                    callback(errSchedule, undefined);
+                });
+
+
+
+        }
+        catch (ex)
+        {
+            logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - Exception occurred when starting method : PickSchedulesByCompany ',reqId);
+            callback(ex,undefined);
+        }
+
+
+}
+
 function PickAppointment(AID,Company,Tenant,reqId,callback) {
 
     if(AID && !isNaN(AID))
@@ -1090,6 +1129,7 @@ module.exports.PickScheduleAction = PickScheduleAction;
 module.exports.PickAppointmentAction = PickAppointmentAction;
 module.exports.PickAppointment = PickAppointment;
 module.exports.PickUnassignedAppointments = PickUnassignedAppointments;
+module.exports.PickSchedulesByCompany = PickSchedulesByCompany;
 
 
 
