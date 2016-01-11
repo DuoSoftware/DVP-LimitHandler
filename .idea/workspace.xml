@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1de16c35-0761-4869-ba6c-ffe5d1056014" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SheduleApi.js" afterPath="$PROJECT_DIR$/SheduleApi.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -30,10 +31,9 @@
       <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.14731368" vertical-offset="901" max-vertical-offset="2635">
-              <caret line="58" column="19" selection-start-line="58" selection-start-column="19" selection-end-line="58" selection-end-column="19" />
+            <state vertical-scroll-proportion="7.4363637" vertical-offset="810" max-vertical-offset="3604">
+              <caret line="1662" column="55" selection-start-line="1662" selection-start-column="55" selection-end-line="1662" selection-end-column="55" />
               <folding>
-                <element signature="e#1658#3759#0" expanded="false" />
                 <element signature="e#3843#5881#0" expanded="false" />
                 <element signature="e#5968#11902#0" expanded="false" />
                 <element signature="e#11990#14104#0" expanded="false" />
@@ -48,26 +48,19 @@
                 <element signature="e#27943#29986#0" expanded="false" />
                 <element signature="e#30092#32106#0" expanded="false" />
                 <element signature="e#32222#33851#0" expanded="false" />
-                <element signature="e#34060#36046#0" expanded="false" />
-                <element signature="e#36130#38051#0" expanded="false" />
-                <element signature="e#38145#39394#0" expanded="false" />
-                <element signature="e#39617#41640#0" expanded="false" />
-                <element signature="e#41746#43772#0" expanded="false" />
-                <element signature="e#43865#45250#0" expanded="false" />
-                <element signature="e#45344#47119#0" expanded="false" />
-                <element signature="e#47204#48970#0" expanded="false" />
+                <element signature="e#34060#36078#0" expanded="false" />
+                <element signature="e#36162#38083#0" expanded="false" />
+                <element signature="e#38177#39426#0" expanded="false" />
+                <element signature="e#39649#41672#0" expanded="false" />
+                <element signature="e#41778#43804#0" expanded="false" />
+                <element signature="e#43897#45282#0" expanded="false" />
+                <element signature="e#45376#47151#0" expanded="false" />
+                <element signature="e#47236#49002#0" expanded="false" />
+                <element signature="e#49219#51207#0" expanded="false" />
                 <element signature="n#!!block;n#SetDays#0" expanded="false" />
+                <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+                <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/package.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="697">
-              <caret line="10" column="5" selection-start-line="10" selection-start-column="5" selection-end-line="10" selection-end-column="17" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -75,29 +68,27 @@
       <file leaf-file-name="SheduleApi.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SheduleApi.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="9928" max-vertical-offset="18717">
-              <caret line="584" column="5" selection-start-line="584" selection-start-column="5" selection-end-line="584" selection-end-column="5" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="default.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/default.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="51" max-vertical-offset="510">
-              <caret line="7" column="19" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="custom-environment-variables.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/custom-environment-variables.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
+            <state vertical-scroll-proportion="-40.12" vertical-offset="102" max-vertical-offset="1275">
+              <caret line="1135" column="62" selection-start-line="1135" selection-start-column="62" selection-end-line="1135" selection-end-column="62" />
+              <folding>
+                <element signature="n#!!block;n#CreateSchedule#0" expanded="false" />
+                <element signature="n#!!block;n#CreateAppointment#0" expanded="false" />
+                <element signature="n#!!block;n#PickValidAppointment#0" expanded="false" />
+                <element signature="n#!!block;n#PickUnassignedAppointments#0" expanded="false" />
+                <element signature="n#!!block;n#PickAppThroughSchedule#0" expanded="false" />
+                <element signature="n#!!block;n#PickSchedule#0" expanded="false" />
+                <element signature="n#!!block;n#PickSchedules#0" expanded="false" />
+                <element signature="n#!!block;n#PickScheduleAction#0" expanded="false" />
+                <element signature="n#!!block;n#PickSchedulesByCompany#0" expanded="false" />
+                <element signature="n#!!block;n#PickAppointment#0" expanded="false" />
+                <element signature="n#!!block;n#PickAppointmentAction#0" expanded="false" />
+                <element signature="n#!!block;n#UpdateSchedule#0" expanded="false" />
+                <element signature="n#!!block;n#UpdateAppointment#0" expanded="false" />
+                <element signature="n#!!block;n#AssignAppointment#0" expanded="false" />
+                <element signature="n#!!block;n#SetDayObjects#0" expanded="false" />
+                <element signature="n#!!block;n#ValidateTime#0" expanded="false" />
+                <element signature="n#!!block;n#CheckAvailables#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -111,9 +102,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/package.json" />
-        <option value="$PROJECT_DIR$/SheduleApi.js" />
         <option value="$PROJECT_DIR$/config/default.js" />
         <option value="$PROJECT_DIR$/LimitApiNew.js" />
+        <option value="$PROJECT_DIR$/SheduleApi.js" />
         <option value="$PROJECT_DIR$/app.js" />
       </list>
     </option>
@@ -122,9 +113,10 @@
     <detection-done>true</detection-done>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
-    <option name="width" value="1377" />
-    <option name="height" value="744" />
+    <option name="x" value="1" />
+    <option name="y" value="1" />
+    <option name="width" value="1364" />
+    <option name="height" value="726" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -149,6 +141,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -159,12 +152,11 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../DVP-Conference" />
     <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="editorconfig.notification" value="Applied .editorconfig settings" />
@@ -184,14 +176,10 @@
       <ConfigurationWrapper RunnerId="Basic" />
       <method />
     </configuration>
-    <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
-      <method />
-    </configuration>
     <configuration default="true" type="DartUnitRunConfigurationType" factoryName="DartUnit">
       <method />
     </configuration>
-    <configuration default="true" type="JavaScriptTestRunnerKarma" factoryName="Karma" config-file="">
-      <envs />
+    <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
       <method />
     </configuration>
     <configuration default="true" type="JSTestDriver:ConfigurationType" factoryName="JsTestDriver">
@@ -199,6 +187,10 @@
       <setting name="settingsFile" value="" />
       <setting name="serverType" value="INTERNAL" />
       <setting name="preferredDebugBrowser" value="Chrome" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerKarma" factoryName="Karma" config-file="">
+      <envs />
       <method />
     </configuration>
     <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
@@ -246,23 +238,23 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="0" width="1377" height="744" extended-state="0" />
+    <frame x="1" y="1" width="1364" height="726" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32736155" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32715008" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24981412" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14477612" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14619443" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3990228" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33713356" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33558178" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32899022" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -284,9 +276,9 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24981412" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32899022" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32899022" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -316,11 +308,6 @@
           <url>file://$PROJECT_DIR$/app.js</url>
           <line>1088</line>
           <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/SheduleApi.js</url>
-          <line>1350</line>
-          <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app.js</url>
@@ -503,7 +490,7 @@
           <option name="timeStamp" value="46" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="47" />
+      <option name="time" value="48" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -513,7 +500,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="10183">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -528,15 +514,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -545,7 +534,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="697">
           <caret line="10" column="5" selection-start-line="10" selection-start-column="5" selection-end-line="10" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -553,7 +541,25 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="9928" max-vertical-offset="18717">
           <caret line="584" column="5" selection-start-line="584" selection-start-column="5" selection-end-line="584" selection-end-column="5" />
-          <folding />
+          <folding>
+            <element signature="n#!!block;n#CreateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#CreateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickValidAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickUnassignedAppointments#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppThroughSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedules#0" expanded="false" />
+            <element signature="n#!!block;n#PickScheduleAction#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedulesByCompany#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointmentAction#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#AssignAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#SetDayObjects#0" expanded="false" />
+            <element signature="n#!!block;n#ValidateTime#0" expanded="false" />
+            <element signature="n#!!block;n#CheckAvailables#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -569,7 +575,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -578,7 +583,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="28815">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -593,15 +597,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -610,7 +617,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="697">
           <caret line="10" column="5" selection-start-line="10" selection-start-column="5" selection-end-line="10" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -618,7 +624,25 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="9928" max-vertical-offset="18717">
           <caret line="584" column="5" selection-start-line="584" selection-start-column="5" selection-end-line="584" selection-end-column="5" />
-          <folding />
+          <folding>
+            <element signature="n#!!block;n#CreateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#CreateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickValidAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickUnassignedAppointments#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppThroughSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedules#0" expanded="false" />
+            <element signature="n#!!block;n#PickScheduleAction#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedulesByCompany#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointmentAction#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#AssignAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#SetDayObjects#0" expanded="false" />
+            <element signature="n#!!block;n#ValidateTime#0" expanded="false" />
+            <element signature="n#!!block;n#CheckAvailables#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -634,7 +658,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -642,7 +665,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="697">
           <caret line="10" column="5" selection-start-line="10" selection-start-column="5" selection-end-line="10" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -650,7 +672,25 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="33864">
           <caret line="6" column="34" selection-start-line="6" selection-start-column="34" selection-end-line="6" selection-end-column="34" />
-          <folding />
+          <folding>
+            <element signature="n#!!block;n#CreateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#CreateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickValidAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickUnassignedAppointments#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppThroughSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedules#0" expanded="false" />
+            <element signature="n#!!block;n#PickScheduleAction#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedulesByCompany#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointmentAction#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#AssignAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#SetDayObjects#0" expanded="false" />
+            <element signature="n#!!block;n#ValidateTime#0" expanded="false" />
+            <element signature="n#!!block;n#CheckAvailables#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -666,7 +706,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -675,7 +714,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="30090">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -690,15 +728,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -724,7 +765,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3485">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -739,15 +779,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -765,7 +808,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="1484" max-vertical-offset="7021">
           <caret line="179" column="24" selection-start-line="179" selection-start-column="17" selection-end-line="179" selection-end-column="31" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -780,15 +822,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -812,7 +857,25 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1008" max-vertical-offset="26010">
           <caret line="24" column="9" selection-start-line="24" selection-start-column="9" selection-end-line="24" selection-end-column="9" />
-          <folding />
+          <folding>
+            <element signature="n#!!block;n#CreateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#CreateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickValidAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickUnassignedAppointments#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppThroughSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedules#0" expanded="false" />
+            <element signature="n#!!block;n#PickScheduleAction#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedulesByCompany#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointmentAction#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#AssignAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#SetDayObjects#0" expanded="false" />
+            <element signature="n#!!block;n#ValidateTime#0" expanded="false" />
+            <element signature="n#!!block;n#CheckAvailables#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -821,7 +884,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="1484" max-vertical-offset="7021">
           <caret line="179" column="24" selection-start-line="179" selection-start-column="17" selection-end-line="179" selection-end-column="31" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -836,15 +898,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -868,7 +933,25 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1008" max-vertical-offset="26010">
           <caret line="24" column="9" selection-start-line="24" selection-start-column="9" selection-end-line="24" selection-end-column="9" />
-          <folding />
+          <folding>
+            <element signature="n#!!block;n#CreateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#CreateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickValidAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickUnassignedAppointments#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppThroughSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedules#0" expanded="false" />
+            <element signature="n#!!block;n#PickScheduleAction#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedulesByCompany#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointmentAction#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#AssignAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#SetDayObjects#0" expanded="false" />
+            <element signature="n#!!block;n#ValidateTime#0" expanded="false" />
+            <element signature="n#!!block;n#CheckAvailables#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -877,7 +960,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="2550" max-vertical-offset="19873">
           <caret line="772" column="5" selection-start-line="772" selection-start-column="5" selection-end-line="772" selection-end-column="5" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -892,15 +974,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -917,7 +1002,25 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="10577" max-vertical-offset="26010">
           <caret line="633" column="50" selection-start-line="633" selection-start-column="49" selection-end-line="633" selection-end-column="50" />
-          <folding />
+          <folding>
+            <element signature="n#!!block;n#CreateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#CreateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickValidAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickUnassignedAppointments#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppThroughSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedules#0" expanded="false" />
+            <element signature="n#!!block;n#PickScheduleAction#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedulesByCompany#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointmentAction#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#AssignAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#SetDayObjects#0" expanded="false" />
+            <element signature="n#!!block;n#ValidateTime#0" expanded="false" />
+            <element signature="n#!!block;n#CheckAvailables#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -926,7 +1029,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="30379">
           <caret line="31" column="23" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -941,15 +1043,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -958,39 +1063,24 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="10577" max-vertical-offset="26010">
           <caret line="633" column="50" selection-start-line="633" selection-start-column="49" selection-end-line="633" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="30379">
-          <caret line="31" column="23" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
-            <element signature="e#3843#5881#0" expanded="false" />
-            <element signature="e#5968#11902#0" expanded="false" />
-            <element signature="e#11990#14104#0" expanded="false" />
-            <element signature="e#14215#16315#0" expanded="false" />
-            <element signature="e#16415#18532#0" expanded="false" />
-            <element signature="e#18628#20005#0" expanded="false" />
-            <element signature="e#20101#21487#0" expanded="false" />
-            <element signature="e#21568#23002#0" expanded="false" />
-            <element signature="e#23092#24622#0" expanded="false" />
-            <element signature="e#24725#26268#0" expanded="false" />
-            <element signature="e#26357#27708#0" expanded="false" />
-            <element signature="e#27943#29986#0" expanded="false" />
-            <element signature="e#30092#32106#0" expanded="false" />
-            <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
-            <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#CreateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#CreateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickValidAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickUnassignedAppointments#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppThroughSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedules#0" expanded="false" />
+            <element signature="n#!!block;n#PickScheduleAction#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedulesByCompany#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointmentAction#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#AssignAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#SetDayObjects#0" expanded="false" />
+            <element signature="n#!!block;n#ValidateTime#0" expanded="false" />
+            <element signature="n#!!block;n#CheckAvailables#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1000,7 +1090,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="30379">
           <caret line="31" column="23" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -1015,15 +1104,53 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="527" max-vertical-offset="30379">
+          <caret line="31" column="23" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
+          <folding>
+            <element signature="e#3843#5881#0" expanded="false" />
+            <element signature="e#5968#11902#0" expanded="false" />
+            <element signature="e#11990#14104#0" expanded="false" />
+            <element signature="e#14215#16315#0" expanded="false" />
+            <element signature="e#16415#18532#0" expanded="false" />
+            <element signature="e#18628#20005#0" expanded="false" />
+            <element signature="e#20101#21487#0" expanded="false" />
+            <element signature="e#21568#23002#0" expanded="false" />
+            <element signature="e#23092#24622#0" expanded="false" />
+            <element signature="e#24725#26268#0" expanded="false" />
+            <element signature="e#26357#27708#0" expanded="false" />
+            <element signature="e#27943#29986#0" expanded="false" />
+            <element signature="e#30092#32106#0" expanded="false" />
+            <element signature="e#32222#33851#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
+            <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1032,7 +1159,25 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="10577" max-vertical-offset="26010">
           <caret line="633" column="50" selection-start-line="633" selection-start-column="49" selection-end-line="633" selection-end-column="50" />
-          <folding />
+          <folding>
+            <element signature="n#!!block;n#CreateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#CreateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickValidAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickUnassignedAppointments#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppThroughSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedules#0" expanded="false" />
+            <element signature="n#!!block;n#PickScheduleAction#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedulesByCompany#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointmentAction#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#AssignAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#SetDayObjects#0" expanded="false" />
+            <element signature="n#!!block;n#ValidateTime#0" expanded="false" />
+            <element signature="n#!!block;n#CheckAvailables#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1041,7 +1186,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="30379">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -1056,15 +1200,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1074,7 +1221,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="6800">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -1089,15 +1235,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1107,7 +1256,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="6800">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -1122,15 +1270,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1140,7 +1291,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="6800">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -1155,15 +1305,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1173,7 +1326,6 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="2034" max-vertical-offset="6817">
           <caret line="666" column="25" selection-start-line="666" selection-start-column="17" selection-end-line="666" selection-end-column="32" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -1188,15 +1340,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1205,7 +1360,25 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="19244">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="n#!!block;n#CreateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#CreateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickValidAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickUnassignedAppointments#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppThroughSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedules#0" expanded="false" />
+            <element signature="n#!!block;n#PickScheduleAction#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedulesByCompany#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointmentAction#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#AssignAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#SetDayObjects#0" expanded="false" />
+            <element signature="n#!!block;n#ValidateTime#0" expanded="false" />
+            <element signature="n#!!block;n#CheckAvailables#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1227,7 +1400,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="697">
           <caret line="10" column="5" selection-start-line="10" selection-start-column="5" selection-end-line="10" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1235,7 +1407,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1270,18 +1441,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/SheduleApi.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="9928" max-vertical-offset="18717">
-          <caret line="584" column="5" selection-start-line="584" selection-start-column="5" selection-end-line="584" selection-end-column="5" />
-          <folding />
+        <state vertical-scroll-proportion="-40.12" vertical-offset="102" max-vertical-offset="1275">
+          <caret line="1135" column="62" selection-start-line="1135" selection-start-column="62" selection-end-line="1135" selection-end-column="62" />
+          <folding>
+            <element signature="n#!!block;n#CreateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#CreateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickValidAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickUnassignedAppointments#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppThroughSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedules#0" expanded="false" />
+            <element signature="n#!!block;n#PickScheduleAction#0" expanded="false" />
+            <element signature="n#!!block;n#PickSchedulesByCompany#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#PickAppointmentAction#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateSchedule#0" expanded="false" />
+            <element signature="n#!!block;n#UpdateAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#AssignAppointment#0" expanded="false" />
+            <element signature="n#!!block;n#SetDayObjects#0" expanded="false" />
+            <element signature="n#!!block;n#ValidateTime#0" expanded="false" />
+            <element signature="n#!!block;n#CheckAvailables#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.14731368" vertical-offset="901" max-vertical-offset="2635">
-          <caret line="58" column="19" selection-start-line="58" selection-start-column="19" selection-end-line="58" selection-end-column="19" />
+        <state vertical-scroll-proportion="7.4363637" vertical-offset="810" max-vertical-offset="3604">
+          <caret line="1662" column="55" selection-start-line="1662" selection-start-column="55" selection-end-line="1662" selection-end-column="55" />
           <folding>
-            <element signature="e#1658#3759#0" expanded="false" />
             <element signature="e#3843#5881#0" expanded="false" />
             <element signature="e#5968#11902#0" expanded="false" />
             <element signature="e#11990#14104#0" expanded="false" />
@@ -1296,15 +1484,18 @@
             <element signature="e#27943#29986#0" expanded="false" />
             <element signature="e#30092#32106#0" expanded="false" />
             <element signature="e#32222#33851#0" expanded="false" />
-            <element signature="e#34060#36046#0" expanded="false" />
-            <element signature="e#36130#38051#0" expanded="false" />
-            <element signature="e#38145#39394#0" expanded="false" />
-            <element signature="e#39617#41640#0" expanded="false" />
-            <element signature="e#41746#43772#0" expanded="false" />
-            <element signature="e#43865#45250#0" expanded="false" />
-            <element signature="e#45344#47119#0" expanded="false" />
-            <element signature="e#47204#48970#0" expanded="false" />
+            <element signature="e#34060#36078#0" expanded="false" />
+            <element signature="e#36162#38083#0" expanded="false" />
+            <element signature="e#38177#39426#0" expanded="false" />
+            <element signature="e#39649#41672#0" expanded="false" />
+            <element signature="e#41778#43804#0" expanded="false" />
+            <element signature="e#43897#45282#0" expanded="false" />
+            <element signature="e#45376#47151#0" expanded="false" />
+            <element signature="e#47236#49002#0" expanded="false" />
+            <element signature="e#49219#51207#0" expanded="false" />
             <element signature="n#!!block;n#SetDays#0" expanded="false" />
+            <element signature="n#!!block;n#Crossdomain#0" expanded="false" />
+            <element signature="n#!!block;n#Clientaccesspolicy#0" expanded="false" />
           </folding>
         </state>
       </provider>
