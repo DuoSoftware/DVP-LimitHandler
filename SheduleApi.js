@@ -446,6 +446,7 @@ function PickAppThroughSchedule(cmp,tent,dt,tm,SID,reqId,callback) {
 }
 
 function PickSchedule(SID,Company,Tenant,reqId,callback) {
+
     if(SID && !isNaN(SID))
     {
         try {
@@ -581,6 +582,7 @@ function PickScheduleAction(SID,Company,Tenant,reqId,callback) {
 
 function PickSchedulesByCompany(Company,Tenant,reqId,callback) {
 
+    console.log(Company);
         try {
 
             DbConn.Schedule
@@ -590,7 +592,8 @@ function PickSchedulesByCompany(Company,Tenant,reqId,callback) {
             ).then(function(resSchedule){
                     if (resSchedule.length==0) {
 
-                        logger.error('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - [PGSQL] - No Schedule record found for Company  %s ',reqId,Schedule);
+                        logger.error('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - [PGSQL] - No Schedule record found for Company  %s ',reqId,Company);
+
                         callback(new Error('No Schedule record'), undefined);
 
                     }
@@ -611,7 +614,7 @@ function PickSchedulesByCompany(Company,Tenant,reqId,callback) {
         }
         catch (ex)
         {
-            logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - Exception occurred when starting method : PickSchedulesByCompany ',reqId);
+            logger.error('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - Exception occurred when starting method : PickSchedulesByCompany ',reqId);
             callback(ex,undefined);
         }
 
@@ -1001,6 +1004,7 @@ function ValidateTime(result,Time,reqId) {
 }
 
 function CheckAvailables(SID,Dt,Tm,cmp,ten,reqId,callback) {
+
     logger.debug('[DVP-LimitHandler.CheckAvailablesFor] - [%s]  - CheckAvailables starting  ',reqId);
     var ReqDate = Dt;
     var ReqDay = moment(Dt).format('dddd');

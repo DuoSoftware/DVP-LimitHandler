@@ -1115,7 +1115,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:dat
 
 RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,next) {
     var reqId='';
-
+console.log("ERRRRRRRRRRRRRRR");
 
     try
     {
@@ -1163,7 +1163,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,nex
             {
 
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
-                logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - Request response : %s ',reqId,"APS");
+                logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - Request response : %s ',reqId,"Got");
 
                 res.end(jsonString);
             }
@@ -1660,10 +1660,10 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',function(req,res,next)
 
 //.......................................................................................................................
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/byCompany',function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules/byCompany',function(req,res,next) {
+
+
     var reqId='';
-
-
     try
     {
         reqId = uuid.v1();
@@ -1731,9 +1731,9 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/byCompany',function(req,r
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.PickScheduleById] - [%s] - [HTTP]  - Error when request starts : PickSchedulesByCompany  Company  %s',reqId,Company,ex);
+        logger.error('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - [HTTP]  - Error when request starts : PickSchedulesByCompany  Company  %s',reqId,Company,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
-        logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - Request response : %s ',reqId,jsonString);
+        logger.debug('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
     return next();
