@@ -746,8 +746,8 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next) {
     }
     return next();
 });
-
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Max/:lid',function(req,res,next) {
+// update swagger
+RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max',function(req,res,next) {
     var reqId='';
 
     try
@@ -763,10 +763,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Max/:lid',function(req,res,
     var Tenant=1;
 
     try {
-        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - [HTTP]  - Request received -  Data - LimitId %s others %s ',reqId,req.params.lid,JSON.stringify(req.body));
+        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - [HTTP]  - Request received -  Data - LimitId %s others %s ',reqId,req.params.lid,req.params.max);
 
 
-        limit.UpdateMaxLimit(req.params.lid,req.body,Company,Tenant,reqId,function(err,resz)
+        limit.UpdateMaxLimit(req.params.lid,req.params.max,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -792,15 +792,15 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Max/:lid',function(req,res,
     catch(ex)
     {
 
-        logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Exception occurred while requesting method : UpdateMaxLimit  -  Data - LimitId %s others  ',reqId,req.params.lid,req.body,ex);
+        logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Exception occurred while requesting method : UpdateMaxLimit  -  Data - LimitId %s others  ',reqId,req.params.lid,req.params.max,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
         logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
     return next();
 });
-
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',function(req,res,next) {
+//update swagger
+RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',function(req,res,next) {
 
 
     var reqId='';

@@ -552,18 +552,19 @@ function GetMaxLimit(key,Company,Tenant,reqId,callback)
 
 }
 
-function UpdateMaxLimit(LID,req,Company,Tenant,reqId,callback)
+function UpdateMaxLimit(LID,max,Company,Tenant,reqId,callback)
 {
-    logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  UpdateMaxLimit starting  - Data %s',reqId,JSON.stringify(req));
+    logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  UpdateMaxLimit starting  - Data :-  ID : %s Max : $s',reqId,LID,max);
 
-    if(req && LID)
+    if(max && LID)
     {
+        var maxLim = parseInt(max);
         try {
 
             DbConn.LimitInfo
                 .update(
                 {
-                    MaxCount: req.MaxCount
+                    MaxCount: maxLim
 
 
                 },
@@ -574,16 +575,16 @@ function UpdateMaxLimit(LID,req,Company,Tenant,reqId,callback)
 
                     if(resLimit==0)
                     {
-                        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,req.MaxCount,LID);
+                        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,max,LID);
 
                         callback(new Error("No Limit to Update"), undefined);
                     }
                     else
                     {
-                        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,req.MaxCount,LID);
+                        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,max,LID);
 
 
-                        client.set(LID,req.MaxCount,function(errSet,resSet)
+                        client.set(LID,maxLim,function(errSet,resSet)
                         {
                             if(errSet)
                             {
@@ -599,7 +600,7 @@ function UpdateMaxLimit(LID,req,Company,Tenant,reqId,callback)
 
                 }).catch(function (errLimit) {
 
-                    logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit of %s is unsuccessful when updating to %s   ',reqId,LID,req.MaxCount,errLimit);
+                    logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit of %s is unsuccessful when updating to %s   ',reqId,LID,max,errLimit);
                     callback(errLimit, undefined);
 
                 });
@@ -607,7 +608,7 @@ function UpdateMaxLimit(LID,req,Company,Tenant,reqId,callback)
         }
         catch (ex)
         {
-            logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Exception occurred when updating Maximum limit of %s to %s  ',reqId,LID,req.MaxCount,ex);
+            logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Exception occurred when updating Maximum limit of %s to %s  ',reqId,LID,max,ex);
 
             callback(ex,undefined);
         }
