@@ -442,6 +442,9 @@ function CreateLimit(req,reqId,callback)
                                 {
                                     logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Error in setting redis keys of LimitId %s'   ,reqId,rand,errSet);
                                     /* callback(errSet,undefined);*/
+                                    RoleBackData(rand,reqId, function (err,res) {
+                                        callback(err,res);
+                                    });
                                 }
                                 else
                                 {
@@ -857,6 +860,18 @@ function RedisSetter(resLim,reqId,callback)
     }
 }
 
+function RoleBackData(LimID,reqId,callback)
+{
+    DbConn.LimitInfo.destroy({where:[{LimitId:LimID}]}).then(function (resDel) {
+
+        callback(undefined,resDel);
+    }).catch(function (errDel) {
+        callback(errDel,undefined);
+    });
+
+
+}
+
 module.exports.LimitIncrement = LimitIncrement;
 module.exports.LimitDecrement = LimitDecrement;
 module.exports.CreateLimit = CreateLimit;
@@ -866,4 +881,5 @@ module.exports.UpdateMaxLimit = UpdateMaxLimit;
 module.exports.ActivateLimit = ActivateLimit;
 module.exports.GetLimitInfo = GetLimitInfo;
 module.exports.ReloadRedis = ReloadRedis;
+module.exports.RoleBackData = RoleBackData;
 
