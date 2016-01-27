@@ -1621,7 +1621,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',function(req,res,next)
     }
 
     try {
-        logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.Rid);
+        logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - [HTTP]  - Request received   ',reqId);
 
         limit.GetLimitInfo(reqId,Company,Tenant,function(err,resz)
         {
@@ -1648,7 +1648,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',function(req,res,next)
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [HTTP]  - Exception occurred on request : MaxLimit   -  Data - Id %s',reqId,req.params.Rid,ex);
+        logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [HTTP]  - Exception occurred on request : ',reqId,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
         logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
@@ -1813,6 +1813,84 @@ RestServer.del('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,nex
         logger.error('[DVP-LimitHandler.DeleteSchedule] - [%s] - [HTTP]  - Error when request starts : DeleteSchedule %s  Company  %s',reqId,req.params.id,Company,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
         logger.debug('[DVP-LimitHandler.DeleteSchedule] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
+
+RestServer.del('/DVP/API/'+version+'/LimitAPI/Appointment/:id',function(req,res,next) {
+
+
+    var reqId='';
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+    var Company=1;
+    var Tenant=1;
+
+    try {
+        if(req.header('authorization'))
+        {
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
+
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
+        else
+        {
+            Tenant = 1;
+            Company = 1;
+        }
+
+    }
+    catch (ex) {
+        logger.error('[DVP-LimitHandler.DeleteAppointment] - [HTTP]  - Exception occurred -  Data - %s ', "authorization", ex);
+    }
+
+    try {
+
+
+
+        logger.debug('[DVP-LimitHandler.DeleteAppointment] - [%s] - [HTTP]  - Request received -  Data -  AppointmentID %s',reqId,req.params.id);
+
+        schedule.DeleteAppointment(req.params.id,reqId,function(err,resz)
+        {
+
+            if(err)
+            {
+
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.DeleteAppointment] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.DeleteAppointment] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+        });
+
+
+    }
+    catch(ex)
+    {
+
+        logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [HTTP]  - Exception occurred when service started : DeleteAppointment -  Data  ',reqId,req.params.id,ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.DeleteAppointment] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
     return next();

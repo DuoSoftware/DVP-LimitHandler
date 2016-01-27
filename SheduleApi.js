@@ -1154,6 +1154,42 @@ function DeleteSchedule(sID,Company,Tenant,reqId,callback) {
 
 }
 
+function DeleteAppointment(aID,reqId,callback) {
+
+
+            try {
+                DbConn.Appointment.destroy({where: {id: aID}}).then(function (resSchedule) {
+
+
+                        logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [PGSQL] - Appointment deleted %s ',reqId,aID);
+                        callback(undefined,resSchedule);
+
+
+                }).catch(function (errSchedule) {
+
+                    logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [PGSQL] - Error occurred while deleting appointment - AppointmentID :  %s',reqId,aID,errSchedule);
+                    callback(errSchedule,undefined);
+
+                });
+
+
+
+
+            }
+            catch(ex)
+            {
+
+                logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [PGSQL] - Exception occurred when DeleteAppointment ',reqId);
+                callback(ex,undefined);
+            }
+
+
+
+
+
+
+}
+
 
 
 module.exports.CreateSchedule = CreateSchedule;
@@ -1172,6 +1208,7 @@ module.exports.PickAppointment = PickAppointment;
 module.exports.PickUnassignedAppointments = PickUnassignedAppointments;
 module.exports.PickSchedulesByCompany = PickSchedulesByCompany;
 module.exports.DeleteSchedule = DeleteSchedule;
+module.exports.DeleteAppointment = DeleteAppointment;
 
 
 
