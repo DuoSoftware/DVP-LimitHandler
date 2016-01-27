@@ -1119,6 +1119,43 @@ function CheckAvailables(SID,Dt,Tm,cmp,ten,reqId,callback) {
 }
 
 
+// application stage
+
+function DeleteSchedule(sID,Company,Tenant,reqId,callback) {
+
+    console.log(Company);
+    try {
+
+        DbConn.Schedule
+            .destroy({
+                where: [{CompanyId:Company},{TenantId:Tenant},{id:sID}]
+            }
+        ).then(function(resSchedule){
+
+                    logger.debug('[DVP-LimitHandler.DeleteSchedule] - [%s] - [PGSQL] - Record found for Schedules of Company %s',reqId,Company);
+
+                    callback(undefined, resSchedule);
+
+            }).catch(function(errSchedule)
+            {
+                logger.error('[DVP-LimitHandler.DeleteSchedule] - [%s] - [PGSQL] - Error occurred when searching for Schedule of Company %s ',reqId,Company,errSchedule);
+                callback(errSchedule, undefined);
+            });
+
+
+
+    }
+    catch (ex)
+    {
+        logger.error('[DVP-LimitHandler.DeleteSchedule] - [%s] - Exception occurred when starting method : DeleteSchedule ',reqId);
+        callback(ex,undefined);
+    }
+
+
+}
+
+
+
 module.exports.CreateSchedule = CreateSchedule;
 module.exports.CreateAppointment = CreateAppointment;
 module.exports.UpdateSchedule = UpdateSchedule;
@@ -1134,6 +1171,7 @@ module.exports.PickAppointmentAction = PickAppointmentAction;
 module.exports.PickAppointment = PickAppointment;
 module.exports.PickUnassignedAppointments = PickUnassignedAppointments;
 module.exports.PickSchedulesByCompany = PickSchedulesByCompany;
+module.exports.DeleteSchedule = DeleteSchedule;
 
 
 
