@@ -167,7 +167,8 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback) {
                                     ObjType: "OBJTYP",
                                     ObjCategory: "OBJCAT",
                                     CompanyId: Company,
-                                    TenantId: Tenant
+                                    TenantId: Tenant,
+                                    RecurrencePattern: obj.RecurrencePattern
 
 
                                 }
@@ -636,7 +637,7 @@ function PickAppointment(AID,Company,Tenant,reqId,callback) {
 
                     if (result.length == 0) {
                         logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentById] - [%s] - [PGSQL]  - No record found for appointment %s   ',reqId,AID);
-                        callback(new Error('No record'), undefined);
+                        callback(undefined, result);
 
 
                     } else {
@@ -837,7 +838,8 @@ function UpdateAppointment(AID,obj,Company,Tenant,reqId,callback) {
                                     ObjType: "OBJTYP",
                                     ObjCategory: "OBJCAT",
                                     CompanyId: 1,
-                                    TenantId: 1
+                                    TenantId: 1,
+                                    RecurrencePattern: obj.RecurrencePattern
 
 
                                 },
