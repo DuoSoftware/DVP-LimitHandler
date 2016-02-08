@@ -293,11 +293,10 @@ function PickValidAppointment(SID,Company,Tenant,reqId,callback) {
 
 }
 
-function PickUnassignedAppointments(SID,Company,Tenant,reqId,callback) {
+function PickUnassignedAppointments(Company,Tenant,reqId,callback) {
 
     logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] -  New appointment adding started  ',reqId);
-    if(SID && !isNaN(SID))
-    {
+
         try
         {
             DbConn.Appointment
@@ -334,13 +333,6 @@ function PickUnassignedAppointments(SID,Company,Tenant,reqId,callback) {
             logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - [PGSQL] - Exception on method start : FindValidAppointment ',reqId,ex);
             callback(new Error("Exception : "+ex),undefined);
         }
-
-    }
-    else
-    {
-        logger.error('[DVP-LimitHandler.PickValidAppointment] - [%s] - ScheduleID is Undefined');
-        callback(new Error("ScheduleID is Undefined"),undefined);
-    }
 
 
 }
@@ -1192,7 +1184,51 @@ function DeleteAppointment(aID,reqId,callback) {
 
 }
 
+function PickAppointment(SID,Company,Tenant,reqId,callback) {
 
+    if(SID && !isNaN(SID))
+    {
+        try {
+
+            DbConn.Appointment
+                .findAll({
+                    where: [{id: SID},{CompanyId:Company},{TenantId:Tenant}]
+                }
+            ).then(function(resAppointment){
+                    if (resAppointment.length==0) {
+
+                        logger.error('[DVP-LimitHandler.PickAppointmentById] - [%s] - [PGSQL] - No record found for Appointment %s ',reqId,SID);
+                        callback(new Error('No Schedule record'), undefined);
+
+                    }
+
+                    else {
+                        logger.debug('[DVP-LimitHandler.PickAppointmentById] - [%s] - [PGSQL] - Record found for Appointment ',reqId,SID);
+
+                        callback(undefined, resAppointment);
+                    }
+                }).catch(function(errSchedule)
+                {
+                    logger.error('[DVP-LimitHandler.PickAppointmentById] - [%s] - [PGSQL] - Error occurred when searching for Appointment %s ',reqId,SID,errSchedule);
+                    callback(errSchedule, undefined);
+                });
+
+
+
+        }
+        catch (ex)
+        {
+            logger.error('[DVP-LimitHandler.PickAppointmentById] - [%s] - Exception occurred when starting method : PickAppointmentById ',reqId,SID);
+            callback(ex,undefined);
+        }
+    }
+    else
+    {
+        logger.error('[DVP-LimitHandler.PickAppointmentById] - [%s] - Appointment is Undefined');
+        callback(new Error("Appointment is Undefined"),undefined);
+    }
+
+}
 
 module.exports.CreateSchedule = CreateSchedule;
 module.exports.CreateAppointment = CreateAppointment;
@@ -1211,6 +1247,7 @@ module.exports.PickUnassignedAppointments = PickUnassignedAppointments;
 module.exports.PickSchedulesByCompany = PickSchedulesByCompany;
 module.exports.DeleteSchedule = DeleteSchedule;
 module.exports.DeleteAppointment = DeleteAppointment;
+module.exports.PickAppointment = PickAppointment;
 
 
 
