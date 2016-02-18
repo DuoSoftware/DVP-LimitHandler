@@ -27,7 +27,7 @@ function CreateSchedule(req,Company,Tenant,reqId,callback) {
             if(obj.ScheduleName)
             {
                 try {
-                    DbConn.Schedule.find({where: [{ScheduleName: obj.ScheduleName}]}).then(function(resSchedule)
+                    DbConn.Schedule.find({where: [{ScheduleName: obj.ScheduleName},{CompanyId:Company},{TenantId:Tenant}]}).then(function(resSchedule)
                     {
                         if (!resSchedule) {
 
@@ -142,7 +142,7 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback) {
         if(obj.ScheduleId && !isNaN(obj.ScheduleId))
         {
             try {
-                DbConn.Schedule.find({where: {id: obj.ScheduleId}}).then(function (resSchedule) {
+                DbConn.Schedule.find({where: [{id: obj.ScheduleId},{CompanyId:Company},{TenantId:Tenant}]}).then(function (resSchedule) {
 
                     if(!resSchedule)
                     {
@@ -614,7 +614,7 @@ function PickSchedulesByCompany(Company,Tenant,reqId,callback) {
 
 }
 
-function PickAppointment(AID,Company,Tenant,reqId,callback) {
+/*function PickAppointment(AID,Company,Tenant,reqId,callback) {
 
     if(AID && !isNaN(AID))
     {
@@ -662,7 +662,7 @@ function PickAppointment(AID,Company,Tenant,reqId,callback) {
 
 
 
-}
+}*/
 
 function PickAppointmentAction(AID,Company,Tenant,reqId,callback) {
     if(AID && !isNaN(AID))
@@ -733,8 +733,8 @@ function UpdateSchedule(SID,obj,Company,Tenant,reqId,callback) {
                                     ObjClass: "OBJCLZ",
                                     ObjType: "OBJTYP",
                                     ObjCategory: "OBJCAT",
-                                    CompanyId: 1,
-                                    TenantId: 1
+                                    CompanyId: Company,
+                                    TenantId: Tenant
 
 
                                 },
@@ -787,10 +787,6 @@ function UpdateSchedule(SID,obj,Company,Tenant,reqId,callback) {
     {
         callback(new Error("Empty Request or Undefined ScheduleID"),undefined);
     }
-
-
-
-
 
 
 
@@ -1051,8 +1047,7 @@ function CheckAvailables(SID,Dt,Tm,cmp,ten,reqId,callback) {
                                             {
                                                 logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s]- [PGSQL] - Appointment found %s  ', reqId, resApp[index].id);
                                                 IsFound=true;
-                                                //var d=SetDayObjects(DbDays);
-                                                //result[index].DaysOfWeek=dy;
+
                                                 callback(undefined, resApp[index]);
                                                 break;
                                             }

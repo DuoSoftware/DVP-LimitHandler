@@ -377,7 +377,7 @@ function LimitDecrement(req,reqId,callback)
     }
 }
 
-function CreateLimit(req,reqId,callback)
+function CreateLimit(req,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] -  UpdateEnability starting ',reqId);
     try
@@ -400,7 +400,7 @@ function CreateLimit(req,reqId,callback)
         try{
 
             logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] -  Checking record for LimitId %s'   ,reqId,rand);
-            DbConn.LimitInfo.find({where: [{LimitId: rand}]}).then(function(LimitObject)
+            DbConn.LimitInfo.find({where: [{LimitId: rand},{CompanyId:Company},{TenantId:Tenant}]}).then(function(LimitObject)
             {
 
                 if(!LimitObject)
@@ -415,8 +415,8 @@ function CreateLimit(req,reqId,callback)
                                 ObjClass: "OBJCLZ",
                                 ObjType: "OBJTYP",
                                 ObjCategory: "OBJCAT",
-                                CompanyId: 1,
-                                TenantId: 1,
+                                CompanyId: Company,
+                                TenantId: Tenant,
                                 MaxCount: req.MaxCount,
                                 Enable: req.Enable
 
@@ -441,13 +441,11 @@ function CreateLimit(req,reqId,callback)
                                 if(errSet)
                                 {
                                     logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Error in setting redis keys of LimitId %s'   ,reqId,rand,errSet);
-                                    /* callback(errSet,undefined);*/
 
                                 }
                                 else
                                 {
                                     logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Setting redis keys of LimitId %s is succeeded'   ,reqId,rand);
-                                    /*callback(undefined,rand);*/
                                 }
                             });
 
@@ -466,7 +464,7 @@ function CreateLimit(req,reqId,callback)
                         logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  error occurred while saving data record of LimitId %s'   ,reqId,rand,errSave);
 
                         callback(errSave, undefined);
-                        //a
+
                     });
 
 
@@ -544,7 +542,7 @@ function GetCurrentLimit(key,reqId,callback)
     }
 }
 
-function GetMaxLimit(key,Company,Tenant,reqId,callback)
+function GetMaxLimit(key,reqId,callback)
 {
     if(key)
     {
@@ -793,11 +791,11 @@ function GetLimitInfo(reqId,Company,Tenant,callback)
 
 }
 
-function ReloadRedis(reqId,callback)
+function ReloadRedis(Company,Tenant,reqId,callback)
 {
 
 
-    DbConn.LimitInfo.findAll({where:[{Enable:true}]}).then(function(resLim)
+    DbConn.LimitInfo.findAll({where:[{Enable:true},{CompanyId:Company},{TenantId:Tenant}]}).then(function(resLim)
     {
 
         if(resLim.length>0)
