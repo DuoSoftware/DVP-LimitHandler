@@ -93,9 +93,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',authorization({resource
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.CreateSchedule] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -157,9 +155,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',authorizati
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.CreateAppointment] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -219,9 +215,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',authorization({resou
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.InitialData] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -366,9 +360,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({reso
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.UpdateSchedule] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -425,9 +417,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.AssignAppointment] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -482,9 +472,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',authori
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.UpdateAppointmentData] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -540,9 +528,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',authorization({resource:"l
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.UpdateAppointmentData] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -607,9 +593,7 @@ RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',autho
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.ActivateLimit] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -665,9 +649,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',authorizati
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.LimitIncrement] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
 
@@ -717,9 +699,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',authorizati
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.LimitDecrement] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
 
@@ -777,9 +757,7 @@ RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max',authorization
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.UpdateMaxLimit] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -842,9 +820,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Restore',authorization({res
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.RestoreLimit] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -905,9 +881,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:schedul
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.PickValidAppointment] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -964,9 +938,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/UnAssignedAppointments',a
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.PickUnassignedAppointment] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -1027,9 +999,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:dat
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.CheckAvailables] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Cmp=req.user.company;
@@ -1091,9 +1061,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({resou
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.PickScheduleById] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -1152,9 +1120,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules',authorization({resource
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.PickAllSchedules] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -1214,9 +1180,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',authorization
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.PickScheduleActionById] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -1273,9 +1237,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',authori
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.PickAppointmentById] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -1332,9 +1294,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',a
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.PickAppointmentAction] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -1390,9 +1350,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Current/:Rid',authorization(
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.CurrentLimit] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
 
@@ -1449,9 +1407,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',authorization
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.CurrentLimit] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         limit.GetMaxLimit(req.params.Rid,reqId,function(err,resz)
@@ -1508,9 +1464,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',authorization({resourc
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.CurrentLimit] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -1574,9 +1528,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules/byCompany',authorization
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.PickSchedulesByCompany] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -1637,9 +1589,7 @@ RestServer.del('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({resou
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.DeleteSchedule] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
@@ -1701,9 +1651,7 @@ RestServer.del('/DVP/API/'+version+'/LimitAPI/Appointment/:id',authorization({re
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.DeleteAppointment] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
 
@@ -1761,9 +1709,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Appointment/:id',authorization({re
 
         if(!req.user.company || !req.user.tenant)
         {
-            var jsonString = messageFormatter.FormatMessage(new Error("Invalid Authorization details found "), "ERROR/EXCEPTION", false, undefined);
-            logger.debug('[DVP-APPRegistry.PickAppointmentById] - [%s] - Request response : %s ', reqId, jsonString);
-            res.end(jsonString);
+            throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
