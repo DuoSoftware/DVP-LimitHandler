@@ -274,7 +274,7 @@ function LimitDecrement(req,reqId,callback)
                             if (parseInt(reply) > 0) {
 
                                 try{
-                                    log.info("Current value > 0");
+
                                     logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  current value of %s > 0  ',reqId,req);
 
                                     if(client)
@@ -295,7 +295,7 @@ function LimitDecrement(req,reqId,callback)
 
                                             }
                                             else {
-                                                log.info('Decrementing succeeded');
+
 
                                                 logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Decrement succeeded of   ',reqId,req);
                                                 //setTimeout(function () {     // Simulate some task

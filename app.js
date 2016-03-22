@@ -43,7 +43,7 @@ RestServer.use(restify.fullResponse());
 
 // Security...............................................................................................................................................
 
-RestServer.use(jwt({secret: secret.Secret}));
+//RestServer.use(jwt({secret: secret.Secret}));
 //.............................................................................................
 //Server listen
 RestServer.listen(port, function () {
@@ -511,7 +511,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',authori
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit'/*,authorization({resource:"limit", action:"write"})*/,function(req,res,next) {
     var reqId='';
 
     try
@@ -526,14 +526,16 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',authorization({resource:"l
     {
         logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Request received -  Data  ',reqId);
 
-        if(!req.user.company || !req.user.tenant)
+        /*if(!req.user.company || !req.user.tenant)
         {
             throw new Error("Invalid company or tenant");
         }
 
         var Company=req.user.company;
-        var Tenant=req.user.tenant;
+        var Tenant=req.user.tenant;*/
 
+        var Company=1;
+        var Tenant=1;
         var obj=req.body;
 
         limit.CreateLimit(obj,Company,Tenant,reqId,function(errSave,resSave)
@@ -632,7 +634,7 @@ RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',autho
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key'/*,authorization({resource:"limit", action:"write"})*/,function(req,res,next) {
 
     var reqId='';
 
@@ -647,10 +649,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',authorizati
     try {
         logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.key);
 
-        if(!req.user.company || !req.user.tenant)
+        /*if(!req.user.company || !req.user.tenant)
         {
             throw new Error("Invalid company or tenant");
-        }
+        }*/
 
 
         limit.LimitIncrement(req.params.key,reqId,function(err,resz)
@@ -683,7 +685,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',authorizati
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key'/*,authorization({resource:"limit", action:"write"})*/,function(req,res,next) {
     var reqId='';
 
     try
@@ -697,10 +699,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',authorizati
     try {
         logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.key);
 
-        if(!req.user.company || !req.user.tenant)
+       /* if(!req.user.company || !req.user.tenant)
         {
             throw new Error("Invalid company or tenant");
-        }
+        }*/
 
 
         limit.LimitDecrement(req.params.key,reqId,function(err,resz)
