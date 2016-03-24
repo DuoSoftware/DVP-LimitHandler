@@ -15,8 +15,8 @@ var hpath=config.Host.hostpath;
 var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
 var uuid = require('node-uuid');
 
-var jwt = require('restify-jwt');
-var secret = require('dvp-common/Authentication/Secret.js');
+//var jwt = require('restify-jwt');
+//var secret = require('dvp-common/Authentication/Secret.js');
 var authorization = require('dvp-common/Authentication/Authorization.js');
 
 
