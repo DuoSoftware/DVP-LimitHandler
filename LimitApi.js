@@ -1012,7 +1012,7 @@ function IncrementMultipleKeys(LimIDs,Condition,reqId,callback)
 
 function MultiKeyIncrementer (limIDs,condition,reqId,callback)
 {
-    var lockData=[];
+   /* var lockData=[];
 
     var keyData = limIDs;
     console.log(keyData);
@@ -1057,7 +1057,7 @@ function MultiKeyIncrementer (limIDs,condition,reqId,callback)
 
 
 
-    }
+    }*/
 
 }
 
