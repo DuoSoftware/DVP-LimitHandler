@@ -6,7 +6,6 @@ var restify = require('restify');
 var schedule=require('./SheduleApi.js');
 var limit = require('./LimitApi.js');
 var messageFormatter = require('dvp-common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
-var log4js=require('log4js');
 var config = require('config');
 
 var port = config.Host.port || 3000;
@@ -19,11 +18,6 @@ var uuid = require('node-uuid');
 //var secret = require('dvp-common/Authentication/Secret.js');
 var authorization = require('dvp-common/Authentication/Authorization.js');
 
-
-
-log4js.configure(config.Host.logfilepath, { cwd: hpath });
-var log = log4js.getLogger("app");
-fs = require('fs');
 
 var RestServer = restify.createServer({
     name: "myapp",

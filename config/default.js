@@ -10,7 +10,8 @@ module.exports = {
   "Redis":
   {
     "ip": "104.131.67.21",
-    "port": 6389
+    "port": 6389,
+    "password":"DuoS123"
 
   },
 

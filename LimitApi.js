@@ -1,8 +1,7 @@
 /**
  * Created by pawan on 3/12/2015.
  */
-var restify = require('restify');
-var stringify=require('stringify');
+
 var redis=require('redis');
 var messageFormatter = require('dvp-common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var uuid = require('node-uuid');
@@ -10,16 +9,22 @@ var DbConn = require('dvp-dbmodels');
 var config = require('config');
 var port = config.Redis.port;
 var ip = config.Redis.ip;
+var password = config.Redis.password;
 
 var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
 
 
 var client = redis.createClient(port,ip);
+
+client.auth(password, function (error) {
+    console.log("Redis Auth Error : "+error);
+});
 client.on("error", function (err) {
     console.log("Error " + err);
     client=null;
 
 });
+
 var lock = require("redis-lock")(client);
 
 
