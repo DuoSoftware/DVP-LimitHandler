@@ -868,407 +868,210 @@ function RoleBackData(LimID,reqId,callback)
 
 }
 
+
+
 function IncrementMultipleKeys(LimIDs,Condition,reqId,callback)
 {
+    var releaseArray=[];
+    var IncLimits =[];
+    var incStatus=false;
+
+    console.log(LimIDs);
+    console.log(LimIDs.length);
+    console.log(LimIDs[0]);
+    console.log('\n');
 
     for(var i=0;i<LimIDs.length;i++)
     {
+        var LimCode=LimIDs[i];
+        console.log(LimIDs[i]);
         var reqMax=LimIDs[i]+"_max";
+        console.log(reqMax);
         lock(LimIDs[i], 1000, function (done) {
 
-            logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [PGSQL] -  Lock started for %s ',reqId,LimIDs[i]);
+            logger.debug('[DVP-LimitHandler.MultipleLimitIncrement] - [%s] - [PGSQL] -  Lock started for %s ',reqId,LimCode);
+            releaseArray.push(done);
+            console.log("In "+LimCode);
+            if(client)
+            {
+                console.log("Client In ");
+                console.log("Lim "+LimCode);
+                console.log("Max "+reqMax);
+                client.get(LimCode, function (err,reply) {
 
-            try {
-
-                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [PGSQL] -  Record found for LimitID %s  ',reqId,LimIDs[i]);
-                if(client)
-                {
-                    client.get(LimIDs[i], function (err, reply) {
-                        if (err) {
-
-                            logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in searching LimitID %s  ',reqId,req,err);
-                            //setTimeout(function () {
-                            callback(err, undefined);
-                            done(function () {
-
-                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId);
-
-                            });
-                            // }, 1000);
-
-
+                    if(err)
+                    {
+                        logger.error('[DVP-LimitHandler.MultipleLimitIncrement] - [%s] - [REDIS] -  Error in searching LimitID %s  ',reqId,LimIDs[i],err);
+                        callback(err,undefined);
+                    }
+                    else
+                    {
+                        console.log(reply);
+                        if(!reply)
+                        {
+                            logger.error('[DVP-LimitHandler.MultipleLimitIncrement] - [%s] - [REDIS] -  Redis has no records for  LimitID %s  - Data %s',reqId,LimIDs[i]);
+                            //callback(new Error("No records for  LimitID"+req),undefined);
+                            callback(new Error("Empty"),undefined);
                         }
-                        else {
-
-
-                            if(!reply)
+                        else
+                        {
+                            console.log("Got result");
+                            if(reply[0] && reply[1])
                             {
-                                logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis has no records for  LimitID %s  - Data %s',reqId,req);
-                                callback(new Error("No records for  LimitID"+req),undefined);
-                            }
-                            else
-                            {
-                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Data %s',reqId,req,JSON.stringify(reply));
-
-                                if(client)
+                                if(Condition=="AND")
                                 {
-                                    client.get(reqMax,function(errMax,resMax)
+                                    if(reply[0]<reply[1])
                                     {
-                                        if(errMax)
+                                        if(i==(LimIDs.length-1))
                                         {
-                                            logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in searching Limit_max %s  ',reqId,reqMax,errMax);
-                                            callback(errMax, undefined);
-                                            done(function () {
 
-                                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId);
+                                            for(var j=0;j<releaseArray.length;j++)
+                                            {
+                                                releaseArray[j](function()
+                                                {
 
-                                            });
+                                                });
+                                                if(j==(releaseArray.length-1))
+                                                {
+                                                    callback(undefined,true);
+                                                }
+                                            }
 
                                         }
                                         else
                                         {
-
-
-                                            if(!resMax)
-                                            {
-                                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis has no records for  LimitID %s  - Max count %s',reqId,req);
-                                                callback(new Error("No MaxLimit found for Limit "+req),undefined);
-                                            }
-                                            else
-                                            {
-                                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Max count %s',reqId,req,reqMax);
-                                                if (parseInt(resMax) > parseInt(reply)) {
-
-
-                                                    logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s]  -  Redis record"s Max count %s >  Current count %s   ',reqId,resMax,reply);
-
-                                                    console.log('true in checking');
-                                                    console.log('max ' + resMax);
-                                                    console.log('now current ' + reply);
-
-                                                    try {
-
-                                                        logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s]  -  Going to increase current count of ',reqId,req);
-
-                                                        if(client)
-                                                        {
-                                                            client.incr(req, function (errIncr, resIncr) {
-                                                                if (errIncr) {
-
-                                                                    logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in incrementing count of LimitID %s ',reqId,req,errIncr);
-                                                                    //setTimeout(function () { log.info('Lock is releasing');
-
-                                                                    logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
-                                                                    callback(errIncr, undefined);
-                                                                    done(function () {
-
-                                                                        logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId)
-
-                                                                    });
-                                                                    //}, 1000);
-
-                                                                }
-                                                                else {
-
-                                                                    logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Count increment is succeeded of LimitId %s current count : %s  ',reqId,req,resIncr);
-                                                                    // setTimeout(function () {
-                                                                    callback(undefined, resIncr);
-                                                                    done(function () {
-
-                                                                        logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId)
-
-                                                                    });
-                                                                    //  }, 1000);
-
-                                                                }
-                                                            });
-                                                        }
-                                                        else
-                                                        {
-                                                            callback(new Error("no Redis connection"),undefined);
-                                                        }
-
-                                                    }
-                                                    catch (ex) {
-
-                                                        logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] -  Exception occurred while count increment starting   ',reqId,ex);
-                                                        callback(ex, undefined);
-                                                    }
-
-                                                }
-                                                else {
-
-                                                    logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s]  -  Redis record"s Max count %s <  Current count %s  - Maximum limit reached ',reqId,resMax,reply);
-
-                                                    //setTimeout(function () {     // Simulate some task
-                                                    callback(new Error("Maxcount <=Redis value"), false);
-                                                    done(function () {
-                                                        logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId);
-
-                                                    });
-                                                    // }, 1000);
-
-
-                                                }
-                                            }
-
+                                            //continue;
                                         }
-
-
-
-                                    });
+                                    }
+                                    else
+                                    {
+                                        callback(new Error("Invalid"),undefined);
+                                    }
                                 }
                                 else
                                 {
-                                    callback(new Error("no Redis connection"),undefined);
-                                }
-
-
-                            }
-
-
-
-
-
-
-
-                        }
-                    })
-                }
-                else
-                {
-                    callback(new Error("No redis Connection"),undefined);
-                }
-
-            }
-
-            catch (ex) {
-
-
-
-                logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Exception occurred when getting current limit  ',reqId,ex);
-                callback(ex, undefined);
-
-                done(function () {
-
-                    logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] -  Exception  ',reqId,ex);
-
-                });
-            }
-
-
-
-
-
-
-        });
-
-
-    }
-
-    var reqMax=req+"_max";
-
-    logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  LimitIncrement starting  - Data %s',reqId,req);
-    try {
-
-        lock(req, 1000, function (done) {
-
-            logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [PGSQL] -  Lock started for %s ',reqId,req);
-
-
-            try {
-
-                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [PGSQL] -  Record found for LimitID %s  ',reqId,req);
-                if(client)
-                {
-                    client.get(req, function (err, reply) {
-                        if (err) {
-
-                            logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in searching LimitID %s  ',reqId,req,err);
-
-                            //setTimeout(function () {
-
-                            callback(err, undefined);
-                            done(function () {
-
-                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId);
-
-                            });
-                            // }, 1000);
-
-
-                        }
-                        else {
-
-
-                            if(!reply)
-                            {
-                                logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis has no records for  LimitID %s  - Data %s',reqId,req);
-                                callback(new Error("No records for  LimitID"+req),undefined);
-                            }
-                            else
-                            {
-                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Data %s',reqId,req,JSON.stringify(reply));
-
-                                if(client)
-                                {
-                                    client.get(reqMax,function(errMax,resMax)
+                                    if(reply[0]<reply[1])
                                     {
-                                        if(errMax)
+                                        for(var i=0;i<LimIDs.length;i++)
                                         {
-                                            logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in searching Limit_max %s  ',reqId,reqMax,errMax);
-                                            callback(errMax, undefined);
-                                            done(function () {
-
-                                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId);
+                                            var incLims=LimIDs[i];
+                                            client.incr(incLims, function (errInc,resInc) {
 
                                             });
 
-                                        }
-                                        else
-                                        {
-
-
-                                            if(!resMax)
+                                            if(i==(LimIDs.length-1))
                                             {
-                                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis has no records for  LimitID %s  - Max count %s',reqId,req);
-                                                callback(new Error("No MaxLimit found for Limit "+req),undefined);
-                                            }
-                                            else
-                                            {
-                                                logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Max count %s',reqId,req,reqMax);
-                                                if (parseInt(resMax) > parseInt(reply)) {
-
-
-                                                    logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s]  -  Redis record"s Max count %s >  Current count %s   ',reqId,resMax,reply);
-
-                                                    console.log('true in checking');
-                                                    console.log('max ' + resMax);
-                                                    console.log('now current ' + reply);
-
-                                                    try {
-
-                                                        logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s]  -  Going to increase current count of ',reqId,req);
-
-                                                        if(client)
-                                                        {
-                                                            client.incr(req, function (errIncr, resIncr) {
-                                                                if (errIncr) {
-
-                                                                    logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in incrementing count of LimitID %s ',reqId,req,errIncr);
-                                                                    //setTimeout(function () { log.info('Lock is releasing');
-
-                                                                    logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is releasing  ',reqId);
-                                                                    callback(errIncr, undefined);
-                                                                    done(function () {
-
-                                                                        logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId)
-
-                                                                    });
-                                                                    //}, 1000);
-
-                                                                }
-                                                                else {
-
-                                                                    logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Count increment is succeeded of LimitId %s current count : %s  ',reqId,req,resIncr);
-                                                                    // setTimeout(function () {
-                                                                    callback(undefined, resIncr);
-                                                                    done(function () {
-
-                                                                        logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId)
-
-                                                                    });
-                                                                    //  }, 1000);
-
-                                                                }
-                                                            });
-                                                        }
-                                                        else
-                                                        {
-                                                            callback(new Error("no Redis connection"),undefined);
-                                                        }
-
-                                                    }
-                                                    catch (ex) {
-
-                                                        logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] -  Exception occurred while count increment starting   ',reqId,ex);
-                                                        callback(ex, undefined);
-                                                    }
-
-                                                }
-                                                else {
-
-                                                    logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s]  -  Redis record"s Max count %s <  Current count %s  - Maximum limit reached ',reqId,resMax,reply);
-
-                                                    //setTimeout(function () {     // Simulate some task
-                                                    callback(new Error("Maxcount <=Redis value"), false);
-                                                    done(function () {
-                                                        logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  Lock is released  ',reqId);
+                                                for(var j=0;j<releaseArray.length;j++)
+                                                {
+                                                    releaseArray[j](function()
+                                                    {
 
                                                     });
-                                                    // }, 1000);
 
-
+                                                    if(j==(releaseArray.length-1))
+                                                    {
+                                                        callback(undefined,true);
+                                                    }
                                                 }
                                             }
-
                                         }
+                                    }
+                                    else
+                                    {
+                                        // continue;
+                                    }
 
 
-
-                                    });
                                 }
-                                else
-                                {
-                                    callback(new Error("no Redis connection"),undefined);
-                                }
 
-
+                            }
+                            else
+                            {
+                                console.log("Null result");
                             }
 
 
-
-
-
-
-
                         }
-                    })
-                }
-                else
-                {
-                    callback(new Error("No redis Connection"),undefined);
-                }
+                    }
 
+                })
             }
-
-            catch (ex) {
-
-
-
-                logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Exception occurred when getting current limit  ',reqId,ex);
-                callback(ex, undefined);
-
-                done(function () {
-
-                    logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] -  Exception  ',reqId,ex);
-
-                });
-            }
-
-
-
-
-
 
         });
+
     }
-    catch(ex)
+
+
+
+}
+
+function MultiKeyIncrementer (limIDs,condition,reqId,callback)
+{
+    var lockData=[];
+
+    var keyData = limIDs;
+    console.log(keyData);
+    var keyCount=keyData.length;
+
+    for(var i=0;i<keyCount;i++)
     {
+        lockData.push(KeyLocker(keyData[i]));
+        KeyValueChecker(keyData[i], function (e,r) {
 
-        logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Exception occurred when starting method :LimitIncrement',reqId,ex);
-        callback(ex,undefined);
+            if(e)
+            {
+                console.log("Error "+e);
+                //callback(e,undefined);
+            }
+            else
+            {
+                console.log("res "+r);
+                if(r[0]<r[1])
+                {
+                    if(condition=="OR")
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+
+                }
+                // callback(undefined,r);
+
+            }
+
+            if(i==(keyCount-1))
+            {
+                callback(e,r);
+                lockData[0](function () {
+                    console.log("released");
+                })
+            }
+        });
+
+
+
     }
+
+}
+
+function KeyLocker(key)
+{
+    lock(key, 1000, function (done) {
+
+        return done;
+
+
+    });
+}
+
+function KeyValueChecker (key,callback)
+{
+    client.mget(key,key+"_max", function (err,res) {
+
+        callback(err,res);
+    });
 }
 
 
@@ -1283,4 +1086,6 @@ module.exports.ActivateLimit = ActivateLimit;
 module.exports.GetLimitInfo = GetLimitInfo;
 module.exports.ReloadRedis = ReloadRedis;
 module.exports.RoleBackData = RoleBackData;
+module.exports.IncrementMultipleKeys = IncrementMultipleKeys;
+module.exports.MultiKeyIncrementer = MultiKeyIncrementer;
 
