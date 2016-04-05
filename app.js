@@ -16,7 +16,10 @@ var uuid = require('node-uuid');
 
 //var jwt = require('restify-jwt');
 //var secret = require('dvp-common/Authentication/Secret.js');
+var jwt = require('restify-jwt');
+var secret = require('dvp-common/Authentication/Secret.js');
 var authorization = require('dvp-common/Authentication/Authorization.js');
+
 
 
 var RestServer = restify.createServer({
@@ -33,6 +36,7 @@ restify.CORS.ALLOW_HEADERS.push('authorization');
 
 RestServer.use(restify.CORS());
 RestServer.use(restify.fullResponse());
+RestServer.use(jwt({secret: secret.Secret}));
 
 
 // Security...............................................................................................................................................
