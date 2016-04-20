@@ -4,6 +4,7 @@
   "description": "DVP-LimitHandler\r ================",
   "main": "app.js",
   "dependencies": {
+    "async": "^2.0.0-rc.3",
     "config": "^1.15.0",
     "cors": "^2.7.1",
     "date-utils": "^1.2.17",
@@ -17,7 +18,8 @@
     "redis-lock": "^0.1.0",
     "restify": "^4.0.4",
     "restify-jwt": "^0.4.0",
-    "stringify": "^3.1.0"
+    "stringify": "^3.1.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {},
   "scripts": {
