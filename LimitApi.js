@@ -958,7 +958,9 @@ function LimitIncrement(req,reqId,callback)
 
 function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
 {
-    var keyIds = keyString.split("@");
+    var keyIds = keyString;
+    console.log(keyIds[0]);
+    console.log(keyIds[1]);
     var checkArray=[];
 
     keyIds.forEach(function (key) {
