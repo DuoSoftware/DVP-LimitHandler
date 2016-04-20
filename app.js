@@ -36,7 +36,7 @@ restify.CORS.ALLOW_HEADERS.push('authorization');
 
 RestServer.use(restify.CORS());
 RestServer.use(restify.fullResponse());
-//RestServer.use(jwt({secret: secret.Secret}));
+RestServer.use(jwt({secret: secret.Secret}));
 
 
 // Security...............................................................................................................................................
@@ -66,7 +66,7 @@ RestServer.get('/DVP/API',function(req,res,next) {
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',authorization({resource:"schedule", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule'/*,authorization({resource:"schedule", action:"write"})*/,function(req,res,next) {
     var reqId='';
 
     try
@@ -87,13 +87,17 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',authorization({resource
 
         logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
 
-        if(!req.user.company || !req.user.tenant)
+        /*if(!req.user.company || !req.user.tenant)
         {
             throw new Error("Invalid company or tenant");
         }
+         */
+         req.user.company=1;
+         req.user.tenant=1;
 
         var Company=req.user.company;
         var Tenant=req.user.tenant;
+
 
 
         schedule.CreateSchedule(req.body,Company,Tenant,reqId,function(err,resz)

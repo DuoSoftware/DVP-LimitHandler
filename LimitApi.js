@@ -965,7 +965,6 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
         if (key) {
             checkArray.push(function createContact(callback) {
 
-                console.log("Keyyyyyyyyyyy  "+key);
                 var max_key=key+"_max";
 
                 client.get(max_key,function (errKey,resKey) {
@@ -977,7 +976,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                             rvtSt:false,
                             Availability:false
                         };
-                        callback(new Error("Error"),obj);
+                        callback(new Error("max getting error of "+max_key),obj);
                     }
                     else
                     {
