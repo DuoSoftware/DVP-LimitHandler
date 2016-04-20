@@ -519,12 +519,12 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',authorization({resource:"l
         logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Request received -  Data  ',reqId);
 
         if(!req.user.company || !req.user.tenant)
-         {
-         throw new Error("Invalid company or tenant");
-         }
+        {
+            throw new Error("Invalid company or tenant");
+        }
 
-         var Company=req.user.company;
-         var Tenant=req.user.tenant;
+        var Company=req.user.company;
+        var Tenant=req.user.tenant;
 
 
         var obj=req.body;
@@ -641,9 +641,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',authorizati
         logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.key);
 
         if(!req.user.company || !req.user.tenant)
-         {
-         throw new Error("Invalid company or tenant");
-         }
+        {
+            throw new Error("Invalid company or tenant");
+        }
 
         limit.LimitIncrement(req.params.key,reqId,function(err,resz)
         {
@@ -688,12 +688,12 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
 
     }
     try {
-        logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - [HTTP]  - Request received -  Data - %s %s',reqId,req.body.keys,req.body.condition);
+        logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - [HTTP]  - Request received -  Data - %s',reqId,JSON.stringify(req.body));
 
         if(!req.user.company || !req.user.tenant)
-         {
-         throw new Error("Invalid company or tenant");
-         }
+        {
+            throw new Error("Invalid company or tenant");
+        }
 
         limit.MultiKeyIncrementer(req.body.keys,req.body.condition,reqId,function(err,resz)
         {
@@ -717,9 +717,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - [HTTP]  - Exception occurred when starting : LimitIncrement -  Data - %s ',reqId,req.body.keys,ex);
+        logger.error('[DVP-LimitHandler.MultiKeyIncrement] - [%s] - [HTTP]  - Exception occurred when starting : MultiKeyIncrement -  Data - %s ',reqId,req.body.keys,ex);
         var jsonString = messageFormatter.FormatMessage(undefined, "EXCEPTION", false, undefined);
-        logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - Request response : %s ',reqId,jsonString);
+        logger.debug('[DVP-LimitHandler.MultiKeyIncrement] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
     return next();
@@ -739,10 +739,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',authorizati
     try {
         logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.key);
 
-         if(!req.user.company || !req.user.tenant)
-         {
-         throw new Error("Invalid company or tenant");
-         }
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
 
 
         limit.LimitDecrement(req.params.key,reqId,function(err,resz)
@@ -777,6 +777,59 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',authorizati
     }
     return next();
 });
+
+
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+
+    var reqId='';
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+    try {
+        logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - [HTTP]  - Request received -  Data - %s %s',reqId,req.body.keys,req.body.condition);
+
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
+
+        limit.MultiKeyDecrementer(req.body.keys,req.body.condition,reqId,function(err,resz)
+        {
+
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }else
+            {
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+        });
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - [HTTP]  - Exception occurred when starting : LimitIncrement -  Data - %s ',reqId,req.body.keys,ex);
+        var jsonString = messageFormatter.FormatMessage(undefined, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
+
+
 
 // update swagger
 RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max',authorization({resource:"limit", action:"write"}),function(req,res,next) {
@@ -1387,10 +1440,10 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Current/:Rid',authorization(
 
     try {
         logger.debug('[DVP-LimitHandler.CurrentLimit] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.Rid);
-         if(!req.user.company || !req.user.tenant)
-         {
-         throw new Error("Invalid company or tenant");
-         }
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
 
 
 

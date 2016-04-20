@@ -1141,8 +1141,193 @@ function MultipleDecrementer(keys,reqId,callback)
 
     });
 
+};
+
+function MultiKeyDecrementer(keys,condition,reqId,callbackData)
+{
+    var keyIds = keys;
+    var checkArray=[];
+
+    keyIds.forEach(function (key) {
+        if (key) {
+            checkArray.push(function createContact(callback) {
+
+                client.get(key,function (errKey,resKey) {
+                    if(errKey || (!resKey&&resKey!=0))
+                    {
+                        console.log("Key getting error "+errKey+" of "+key);
+                        var obj = {
+                            key:key,
+                            rvtSt:false,
+                            Availability:false
+                        };
+                        callback(new Error("Key getting error "+errKey+" of "+key),obj);
+                    }
+                    else
+                    {
+                        client.decr(key, function (errDecr,resDecr) {
+                            if(errDecr || (resDecr!=0&&resDecr!=-1) )
+                            {
+                                console.log("resp decr "+resDecr+" "+key);
+                                console.log("Decrementing error "+errDecr+" of "+key);
+                                var obj = {
+                                    key:key,
+                                    rvtSt:false,
+                                    Availability:false
+                                };
+                                callback(new Error("Decrementing error "+errDecr+" of "+key),obj);
+                            }
+                            else
+                            {
+                                if(resDecr>=0)
+                                {
+                                    console.log("Decrement suites "+key);
+                                    var obj = {
+                                        key:key,
+                                        rvtSt:false,
+                                        Availability:true
+                                    };
+                                    callback(null,obj);
+                                }
+                                else
+                                {
+                                    console.log("Decrement not suites "+key);
+                                    client.incr(key, function (errIncr,resIncr) {
+
+                                        if(errIncr || (!resIncr && resIncr!=0))
+                                        {
+                                            console.log("resp incr "+resIncr+" "+key);
+                                            console.log("Increment error "+errIncr+" of "+key);
+                                            var obj = {
+                                                key:key,
+                                                rvtSt:true,
+                                                Availability:false
+                                            };
+                                            callback(new Error("Increment error "+errIncr+" of "+key),obj);
+                                        }
+                                        else
+                                        {
+                                            console.log("Increment Done "+key);
+                                            var obj = {
+                                                key:key,
+                                                rvtSt:false,
+                                                Availability:false
+                                            };
+                                            callback(null,obj);
+                                        }
+
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+
+
+            });
+        }
+    });
+
+    async.parallel(checkArray, function (err,res) {
+        // console.log("e "+err);
+
+
+        if(err)
+        {
+            console.log("e "+err);
+            callbackData(new Error("Errors In operation"),undefined);
+        }
+        else
+        {
+            console.log("r "+JSON.stringify(res));
+            var incrKeys=[];
+            var avblStArr=[];
+            if(condition=="AND")
+            {
+
+                res.forEach(function (item) {
+                    avblStArr.push(item.Availability);
+                    if(item.rvtSt)
+                    {
+                        console.log("Going to decr "+item.key);
+                        incrKeys.push(item.key);
+
+                    }
+                });
+
+                if(incrKeys.length>0)
+                {
+                    MultipleIncrementer(incrKeys,reqId, function (errDecr,resDecr) {
+                        console.log("Err arr "+JSON.stringify(errDecr));
+                        console.log("Res arr "+JSON.stringify(resDecr));
+
+                        //callbackData(errDecr,resDecr);
+                        if(errDecr.length>0)
+                        {
+                            callbackData(new Error("Errors In operation"),undefined);
+                        }
+                        else
+                        {
+                            callbackData(new Error("Not available"),undefined);
+                        }
+
+
+                    });
+                }
+                else
+
+                {
+                    console.log(avblStArr);
+                    if(avblStArr.indexOf(false)==-1)
+                    {
+                        console.log("Nothing to Increment, Success");
+                        callbackData(undefined,"Success");
+                    }
+                    else
+                    {
+                        console.log("Keys not available");
+                        callbackData(new Error('Unavailable keys'),undefined);
+                    }
+
+                }
+
+
+            }
+            else
+            {
+                callbackData(new Error("Errors In Condition"),undefined);
+            }
+        }
+    });
+
 }
 
+function MultipleIncrementer(keys,reqId,callback)
+{
+    var errArr=[];
+    var resArr=[];
+    var i=0;
+    keys.forEach(function (item) {
+        i++;
+        LimitIncrement(item,reqId, function (e,r) {
+            if(e)
+            {
+                errArr.push(item);
+            }
+            else
+            {
+                resArr.push(item);
+            }
+
+            if(i==keys.length)
+            {
+                callback(errArr,resArr);
+            }
+        });
+
+    });
+
+};
 function KeyChecker (key,callback)
 {
     console.log("Keyyyyyyyyyyy  "+key);
@@ -1229,5 +1414,6 @@ module.exports.GetLimitInfo = GetLimitInfo;
 module.exports.ReloadRedis = ReloadRedis;
 module.exports.RoleBackData = RoleBackData;
 module.exports.MultiKeyIncrementer = MultiKeyIncrementer;
+module.exports.MultiKeyDecrementer = MultiKeyDecrementer;
 
 
