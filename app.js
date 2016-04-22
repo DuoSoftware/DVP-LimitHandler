@@ -36,7 +36,7 @@ restify.CORS.ALLOW_HEADERS.push('authorization');
 
 RestServer.use(restify.CORS());
 RestServer.use(restify.fullResponse());
-RestServer.use(jwt({secret: secret.Secret}));
+//RestServer.use(jwt({secret: secret.Secret}));
 
 
 // Security...............................................................................................................................................
@@ -828,7 +828,6 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',authorizati
     return next();
 });
 
-
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',authorization({resource:"limit", action:"write"}),function(req,res,next) {
 
     var reqId='';
@@ -879,8 +878,55 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',aut
     return next();
 });
 
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement/test',function(req,res,next) {
 
+    var reqId='';
 
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+    try {
+        logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - [HTTP]  - Request received -  Data - %s %s',reqId,req.body.keys,req.body.condition);
+
+        /*if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }*/
+
+        limit.MultiKeyDecrementer(req.body.keys,req.body.condition,reqId,function(err,resz)
+        {
+
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }else
+            {
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+        });
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - [HTTP]  - Exception occurred when starting : LimitIncrement -  Data - %s ',reqId,req.body.keys,ex);
+        var jsonString = messageFormatter.FormatMessage(undefined, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
 // update swagger
 RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max',authorization({resource:"limit", action:"write"}),function(req,res,next) {
     var reqId='';
@@ -1359,7 +1405,6 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',authorization
     return next();
 });
 //.......................................................................................................................
-
 
 RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',authorization({resource:"schedule", action:"read"}),function(req,res,next) {
     var reqId='';
@@ -1891,6 +1936,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Appointment/:id',authorization({re
     }
     return next();
 });
+
 
 
 function SetDays(a)
