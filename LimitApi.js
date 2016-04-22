@@ -1055,17 +1055,27 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
         {
             console.log("r "+JSON.stringify(res));
             var descKeys=[];
-            var avblStArr=[];
+            var avblSt=false;
+            var avblKeys=[];
             if(condition=="AND")
             {
 
                 res.forEach(function (item) {
-                    avblStArr.push(item.Availability);
+
                     if(item.rvtSt)
                     {
                         console.log("Going to decr "+item.key);
                         descKeys.push(item.key);
 
+                    }
+                    if(item.Availability)
+                    {
+                        avblSt=true;
+                        avblKeys.push(item.key);
+                    }
+                    else
+                    {
+                        avblSt=false;
                     }
                 });
 
@@ -1091,17 +1101,34 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                 else
 
                 {
-                    console.log(avblStArr);
-                    if(avblStArr.indexOf(false)==-1)
+                    if(avblKeys.length>0)
                     {
-                        console.log("Nothing to decrement, Success");
-                        callbackData(undefined,"Success");
+                        MultipleDecrementer(avblKeys,reqId, function (errAvblDecr,resAvblDecr)
+                        {
+                            if(errAvblDecr.length>0)
+                            {
+                                callbackData(new Error("Errors In operation"),undefined);
+                            }
+                            else
+                            {
+                                console.log(avblSt);
+                                if(!avblSt)
+                                {
+                                    console.log("Nothing to decrement, Success");
+                                    callbackData(undefined,"Success");
+                                }
+                                else
+                                {
+                                    console.log("Keys not available");
+
+                                    callbackData(new Error('Unavailable keys'),undefined);
+
+                                }
+                            }
+                        });
+
                     }
-                    else
-                    {
-                        console.log("Keys not available");
-                        callbackData(new Error('Unavailable keys'),undefined);
-                    }
+
 
                 }
 
@@ -1153,7 +1180,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
             checkArray.push(function createContact(callback) {
 
                 client.get(key,function (errKey,resKey) {
-                    if(errKey || (!resKey&&resKey!=0))
+                    if(errKey || !resKey || resKey>=0)
                     {
                         console.log("Key getting error "+errKey+" of "+key);
                         var obj = {
@@ -1166,7 +1193,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
                     else
                     {
                         client.decr(key, function (errDecr,resDecr) {
-                            if(errDecr || (resDecr!=0&&resDecr!=-1) )
+                            if(errDecr )
                             {
                                 console.log("resp decr "+resDecr+" "+key);
                                 console.log("Decrementing error "+errDecr+" of "+key);
@@ -1194,7 +1221,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
                                     console.log("Decrement not suites "+key);
                                     client.incr(key, function (errIncr,resIncr) {
 
-                                        if(errIncr || (!resIncr && resIncr!=0))
+                                        if(errIncr)
                                         {
                                             console.log("resp incr "+resIncr+" "+key);
                                             console.log("Increment error "+errIncr+" of "+key);
@@ -1241,17 +1268,27 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
         {
             console.log("r "+JSON.stringify(res));
             var incrKeys=[];
-            var avblStArr=[];
+            var avblSt=false;
+            var avblKeys=[];
             if(condition=="AND")
             {
 
                 res.forEach(function (item) {
-                    avblStArr.push(item.Availability);
+
                     if(item.rvtSt)
                     {
                         console.log("Going to decr "+item.key);
                         incrKeys.push(item.key);
 
+                    }
+                    if(item.Availability)
+                    {
+                        avblSt=true;
+                        avblKeys.push(item.key);
+                    }
+                    else
+                    {
+                        avblSt=false;
                     }
                 });
 
@@ -1277,16 +1314,34 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
                 else
 
                 {
-                    console.log(avblStArr);
-                    if(avblStArr.indexOf(false)==-1)
+
+
+                    if(avblKeys.length>0)
                     {
-                        console.log("Nothing to Increment, Success");
-                        callbackData(undefined,"Success");
-                    }
-                    else
-                    {
-                        console.log("Keys not available");
-                        callbackData(new Error('Unavailable keys'),undefined);
+                        MultipleIncrementer(avblKeys,reqId, function (errAvblIncr,resAvblIncr)
+                        {
+                            if(errAvblIncr.length>0)
+                            {
+                                callbackData(new Error("Errors In operation"),undefined);
+                            }
+                            else
+                            {
+                                console.log(avblSt);
+                                if(!avblSt)
+                                {
+                                    console.log("Nothing to decrement, Success");
+                                    callbackData(undefined,"Success");
+                                }
+                                else
+                                {
+                                    console.log("Keys not available");
+
+                                    callbackData(new Error('Unavailable keys'),undefined);
+
+                                }
+                            }
+                        });
+
                     }
 
                 }
