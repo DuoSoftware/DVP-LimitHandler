@@ -47,7 +47,6 @@ RestServer.use(restify.fullResponse());
 RestServer.listen(port, function () {
     console.log('%s listening at %s', RestServer.name, RestServer.url);
 
-
 });
 //Enable request body parsing(access)
 RestServer.use(restify.bodyParser());
@@ -83,9 +82,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',authorization({resource
         logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
 
         if(!req.user.company || !req.user.tenant)
-         {
-         throw new Error("Invalid company or tenant");
-         }
+        {
+            throw new Error("Invalid company or tenant");
+        }
 
         var Company=req.user.company;
         var Tenant=req.user.tenant;
@@ -678,6 +677,8 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',authorizati
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',authorization({resource:"limit", action:"write"}),function(req,res,next) {
 
     var reqId='';
+    var bodyData;
+    var keyList;
 
     try
     {
@@ -695,7 +696,18 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
             throw new Error("Invalid company or tenant");
         }
 
-        limit.MultiKeyIncrementer(req.body.keys,req.body.condition,reqId,function(err,resz)
+        if(typeof(req.body)=="string")
+        {
+            bodyData=JSON.parse(req.body);
+            keyList=bodyData.keys;
+        }
+        else
+        {
+            bodyData=req.body;
+            keyList=bodyData.keys;
+        }
+
+        limit.MultiKeyIncrementer(keyList,bodyData.condition,reqId,function(err,resz)
         {
 
             if(err)
@@ -741,9 +753,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment/test
         logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - [HTTP]  - Request received -  Data - %s',reqId,JSON.stringify(req.body));
 
         /*if(!req.user.company || !req.user.tenant)
-        {
-            throw new Error("Invalid company or tenant");
-        }*/
+         {
+         throw new Error("Invalid company or tenant");
+         }*/
 
         limit.MultiKeyIncrementer(req.body.keys,req.body.condition,reqId,function(err,resz)
         {
@@ -831,6 +843,8 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',authorizati
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',authorization({resource:"limit", action:"write"}),function(req,res,next) {
 
     var reqId='';
+    var bodyData;
+    var keyList;
 
     try
     {
@@ -847,8 +861,18 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',aut
         {
             throw new Error("Invalid company or tenant");
         }
+        if(typeof(req.body)=="string")
+        {
+            bodyData=JSON.parse(req.body);
+            keyList=bodyData.keys;
+        }
+        else
+        {
+            bodyData=req.body;
+            keyList=bodyData.keys;
+        }
 
-        limit.MultiKeyDecrementer(req.body.keys,req.body.condition,reqId,function(err,resz)
+        limit.MultiKeyDecrementer(keyList,bodyData.condition,reqId,function(err,resz)
         {
 
             if(err)
@@ -894,9 +918,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement/test
         logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - [HTTP]  - Request received -  Data - %s %s',reqId,req.body.keys,req.body.condition);
 
         /*if(!req.user.company || !req.user.tenant)
-        {
-            throw new Error("Invalid company or tenant");
-        }*/
+         {
+         throw new Error("Invalid company or tenant");
+         }*/
 
         limit.MultiKeyDecrementer(req.body.keys,req.body.condition,reqId,function(err,resz)
         {
