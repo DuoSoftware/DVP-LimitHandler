@@ -701,9 +701,19 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
         if(typeof(req.body)=="string")
         {
             logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [HTTP]  - Request received as String -  Data - %s',req.body);
+
             var reqObj=JSON.parse(req.body);
-            bodyData=JSON.parse(reqObj);
-            keyList=bodyData.keys;
+            if(typeof (reqObj)=="object")
+            {
+                bodyData=reqObj;
+                keyList=reqObj.keys;
+            }
+            else
+            {
+                bodyData=JSON.parse(reqObj);
+                keyList=bodyData.keys;
+            }
+
         }
         else
         {
@@ -711,6 +721,8 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
             bodyData=req.body;
             keyList=bodyData.keys;
         }
+
+
 
         limit.MultiKeyIncrementer(keyList,bodyData.condition,reqId,function(err,resz)
         {
@@ -734,9 +746,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
     }
     catch(ex)
     {
-        logger.error('[DVP-LimitHandler.MultiKeyIncrement] - [%s] - [HTTP]  - Exception occurred when starting : MultiKeyIncrement -  Data - %s ',reqId,req.body.keys,ex);
+        logger.error('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - [HTTP]  - Exception occurred when starting : MultiKeyIncrement -  Data - %s ',reqId,req.body.keys,ex);
         var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
-        logger.debug('[DVP-LimitHandler.MultiKeyIncrement] - [%s] - Request response : %s ',reqId,jsonString);
+        logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
     return next();
@@ -862,10 +874,20 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',aut
         }
         if(typeof(req.body)=="string")
         {
+
             logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - [HTTP]  - Request received as string -  Data - %s ',reqId,req.body);
             var reqObj=JSON.parse(req.body);
-            bodyData=JSON.parse(reqObj);
-            keyList=bodyData.keys;
+
+            if(typeof (reqObj)=="object")
+            {
+                bodyData=reqObj;
+                keyList=reqObj.keys;
+            }
+            else
+            {
+                bodyData=JSON.parse(reqObj);
+                keyList=bodyData.keys;
+            }
         }
         else
         {
