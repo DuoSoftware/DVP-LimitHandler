@@ -36,7 +36,7 @@ restify.CORS.ALLOW_HEADERS.push('authorization');
 
 RestServer.use(restify.CORS());
 RestServer.use(restify.fullResponse());
-//RestServer.use(jwt({secret: secret.Secret}));
+RestServer.use(jwt({secret: secret.Secret}));
 
 
 // Security...............................................................................................................................................
@@ -680,6 +680,8 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
     var bodyData;
     var keyList;
 
+    //console.log(req.body);
+    console.log("Hit "+typeof (req.body));
     try
     {
         reqId = uuid.v1();
@@ -689,7 +691,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
 
     }
     try {
-        logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - [HTTP]  - Request received -  Data - %s',reqId,JSON.stringify(req.body));
+
 
         if(!req.user.company || !req.user.tenant)
         {
@@ -698,11 +700,14 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
 
         if(typeof(req.body)=="string")
         {
-            bodyData=JSON.parse(req.body);
+            logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [HTTP]  - Request received as String -  Data - %s',req.body);
+            var reqObj=JSON.parse(req.body);
+            bodyData=JSON.parse(reqObj);
             keyList=bodyData.keys;
         }
         else
         {
+            logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - [HTTP]  - Request received as Object  -  Data - %s',JSON.stringify(req.body));
             bodyData=req.body;
             keyList=bodyData.keys;
         }
@@ -730,7 +735,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
     catch(ex)
     {
         logger.error('[DVP-LimitHandler.MultiKeyIncrement] - [%s] - [HTTP]  - Exception occurred when starting : MultiKeyIncrement -  Data - %s ',reqId,req.body.keys,ex);
-        var jsonString = messageFormatter.FormatMessage(undefined, "EXCEPTION", false, undefined);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
         logger.debug('[DVP-LimitHandler.MultiKeyIncrement] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }
@@ -751,11 +756,6 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment/test
     }
     try {
         logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - [HTTP]  - Request received -  Data - %s',reqId,JSON.stringify(req.body));
-
-        /*if(!req.user.company || !req.user.tenant)
-         {
-         throw new Error("Invalid company or tenant");
-         }*/
 
         limit.MultiKeyIncrementer(req.body.keys,req.body.condition,reqId,function(err,resz)
         {
@@ -855,7 +855,6 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',aut
 
     }
     try {
-        logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - [HTTP]  - Request received -  Data - %s %s',reqId,req.body.keys,req.body.condition);
 
         if(!req.user.company || !req.user.tenant)
         {
@@ -863,11 +862,15 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',aut
         }
         if(typeof(req.body)=="string")
         {
-            bodyData=JSON.parse(req.body);
+            logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - [HTTP]  - Request received as string -  Data - %s ',reqId,req.body);
+            var reqObj=JSON.parse(req.body);
+            bodyData=JSON.parse(reqObj);
             keyList=bodyData.keys;
         }
         else
         {
+            logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - [HTTP]  - Request received as Object -  Data - %s %s',reqId,req.body.keys,req.body.condition);
+
             bodyData=req.body;
             keyList=bodyData.keys;
         }
@@ -895,7 +898,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',aut
     catch(ex)
     {
         logger.error('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - [HTTP]  - Exception occurred when starting : LimitIncrement -  Data - %s ',reqId,req.body.keys,ex);
-        var jsonString = messageFormatter.FormatMessage(undefined, "EXCEPTION", false, undefined);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
         logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - Request response : %s ',reqId,jsonString);
         res.end(jsonString);
     }

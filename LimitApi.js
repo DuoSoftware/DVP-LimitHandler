@@ -958,6 +958,7 @@ function LimitIncrement(req,reqId,callback)
 
 function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
 {
+    console.log(keyString);
     var keyIds = keyString;
     var checkArray=[];
 
@@ -974,7 +975,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                         var obj = {
                             key:key,
                             rvtSt:false,
-                            Availability:false,
+                            Availability:false
                         };
                         callback(new Error("max getting error of "+max_key),obj);
                     }
@@ -1026,7 +1027,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                                                 rvtSt:false,
                                                 Availability:false
                                             };
-                                            callback(null,obj);
+                                            callback(undefined,obj);
                                         }
 
                                     });
@@ -1102,9 +1103,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                         console.log("Err arr "+JSON.stringify(errDecr));
                         console.log("Res arr "+JSON.stringify(resDecr));
 
-                        //callbackData(errDecr,resDecr);
-
-                            callbackData(new Error("Not available"),undefined);
+                        callbackData(new Error("Not available"),undefined);
 
 
 
@@ -1149,6 +1148,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
             }
             else
             {
+                console.log("Not AND condition");
                 callbackData(new Error("Errors In Condition"),undefined);
             }
         }
@@ -1339,28 +1339,28 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
                 else
 
                 {
-                        MultipleIncrementer(avblKeys,reqId, function (errAvblIncr,resAvblIncr)
+                    MultipleIncrementer(avblKeys,reqId, function (errAvblIncr,resAvblIncr)
+                    {
+                        if(errAvblIncr.length>0)
                         {
-                            if(errAvblIncr.length>0)
+                            callbackData(new Error("Errors In operation"),undefined);
+                        }
+                        else
+                        {
+                            console.log(avblSt);
+                            if(!avblSt)
                             {
-                                callbackData(new Error("Errors In operation"),undefined);
+                                console.log("Keys not available");
+                                callbackData(new Error('Unavailable keys'),undefined);
                             }
                             else
                             {
-                                console.log(avblSt);
-                                if(!avblSt)
-                                {
-                                    console.log("Keys not available");
-                                    callbackData(new Error('Unavailable keys'),undefined);
-                                }
-                                else
-                                {
-                                    console.log("Available Keys,Success");
-                                    callbackData(undefined,"Success");
+                                console.log("Available Keys,Success");
+                                callbackData(undefined,"Success");
 
-                                }
                             }
-                        });
+                        }
+                    });
 
 
                 }
