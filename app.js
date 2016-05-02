@@ -14,29 +14,21 @@ var hpath=config.Host.hostpath;
 var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
 var uuid = require('node-uuid');
 
-//var jwt = require('restify-jwt');
-//var secret = require('dvp-common/Authentication/Secret.js');
-var jwt = require('restify-jwt');
-var secret = require('dvp-common/Authentication/Secret.js');
-var authorization = require('dvp-common/Authentication/Authorization.js');
-
-
 
 var RestServer = restify.createServer({
     name: "myapp",
     version: '1.0.0'
 });
 
-//restify.CORS.ALLOW_HEADERS.push('Accept-Encoding');
-//restify.CORS.ALLOW_HEADERS.push('Accept-Language');
+
 restify.CORS.ALLOW_HEADERS.push('authorization');
-//restify.CORS.ALLOW_HEADERS.push('Access-Control-Request-Method');
+
 
 
 
 RestServer.use(restify.CORS());
 RestServer.use(restify.fullResponse());
-RestServer.use(jwt({secret: secret.Secret}));
+
 
 
 // Security...............................................................................................................................................
@@ -54,9 +46,6 @@ RestServer.use(restify.acceptParser(RestServer.acceptable));
 RestServer.use(restify.queryParser());
 
 
-
-
-
 //.......................................post............................................................................
 
 RestServer.get('/DVP/API',function(req,res,next) {
@@ -65,8 +54,10 @@ RestServer.get('/DVP/API',function(req,res,next) {
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',authorization({resource:"schedule", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -81,15 +72,16 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',authorization({resource
 
         logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
+
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
         }
-
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
-
-
 
         schedule.CreateSchedule(req.body,Company,Tenant,reqId,function(err,resz)
         {
@@ -123,10 +115,12 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule',authorization({resource
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',authorization({resource:"appointment", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',function(req,res,next) {
 
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -144,13 +138,16 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',authorizati
 
         logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [HTTP]  - Request received -  Data -  ',reqId,req.body);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         var Days=SetDays(req.body.DaysOfWeek);
         schedule.CreateAppointment(req.body,Days.toString(),Company,Tenant,reqId,function(err,resz)
@@ -187,8 +184,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',authorizati
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',authorization({resource:"schedule", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -204,13 +203,16 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',authorization({resou
 
         logger.debug('[DVP-LimitHandler.InitialData] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,JSON.stringify(req.body));
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.CreateSchedule(req.body.Schedule,Company,Tenant,reqId,function(errScedule,resSchedule)
         {
@@ -333,8 +335,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/InitialData',authorization({resou
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({resource:"schedule", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -349,13 +353,16 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({reso
 
         logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] - [HTTP]  - Request received -  Data - id %s Other %s ',reqId,req.params.id,JSON.stringify(req.body));
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.UpdateSchedule(req.params.id,req.body,Company,Tenant,reqId,function(err,resz)
         {
@@ -389,9 +396,11 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({reso
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:appid',authorization({resource:"schedule", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:appid',function(req,res,next) {
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -406,13 +415,16 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
     try {
         logger.debug('[DVP-LimitHandler.AssignAppointment] - [%s] - [HTTP]  - Request received -  Data - Schedule %d Appointment %d ',reqId,req.params.sid,req.params.appid);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.AssignAppointment(req.params.sid,req.params.appid,Company,Tenant,reqId,function(err,resz)
         {
@@ -445,8 +457,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
     next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',authorization({resource:"appointment", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -461,13 +475,16 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',authori
     try {
         logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - [HTTP]  - Request received -  Appointment %s Data %s',reqId,req.params.id,JSON.stringify(req.body));
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.UpdateAppointment(req.params.id,req.body,Company,Tenant,reqId,function(err,resz)
         {
@@ -502,8 +519,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',authori
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -517,13 +536,16 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',authorization({resource:"l
     {
         logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Request received -  Data  ',reqId);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
 
         var obj=req.body;
@@ -563,10 +585,12 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',authorization({resource:"l
     return next();
 });
 
-RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',function(req,res,next) {
 
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
 
     try
@@ -583,13 +607,16 @@ RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',autho
     try {
         logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [HTTP]  - Request received -  Data - Limit ID %s others %s',reqId,req.params.LID,JSON.stringify(req.body));
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
 
 
@@ -624,9 +651,11 @@ RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',autho
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',function(req,res,next) {
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -639,9 +668,15 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',authorizati
     try {
         logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.key);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
+
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
         }
 
         limit.LimitIncrement(req.params.key,reqId,function(err,resz)
@@ -674,9 +709,11 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',authorizati
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',function(req,res,next) {
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
     var bodyData;
     var keyList;
 
@@ -693,9 +730,15 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
     try {
 
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
+
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
         }
 
         if(typeof(req.body)=="string")
@@ -757,6 +800,8 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment/test',function(req,res,next) {
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -768,7 +813,16 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment/test
     }
     try {
         logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - [HTTP]  - Request received -  Data - %s',reqId,JSON.stringify(req.body));
+        if(req.header('authorization'))
+        {
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
         limit.MultiKeyIncrementer(req.body.keys,req.body.condition,reqId,function(err,resz)
         {
 
@@ -799,8 +853,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment/test
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -813,9 +869,15 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',authorizati
     try {
         logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.key);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
+
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
         }
 
 
@@ -852,11 +914,13 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Decrement/:key',authorizati
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',function(req,res,next) {
 
     var reqId='';
     var bodyData;
     var keyList;
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -868,10 +932,17 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',aut
     }
     try {
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
+
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
         }
+
         if(typeof(req.body)=="string")
         {
 
@@ -930,6 +1001,8 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',aut
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement/test',function(req,res,next) {
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -942,10 +1015,16 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement/test
     try {
         logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - [HTTP]  - Request received -  Data - %s %s',reqId,req.body.keys,req.body.condition);
 
-        /*if(!req.user.company || !req.user.tenant)
-         {
-         throw new Error("Invalid company or tenant");
-         }*/
+        if(req.header('authorization'))
+        {
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
+
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         limit.MultiKeyDecrementer(req.body.keys,req.body.condition,reqId,function(err,resz)
         {
@@ -977,8 +1056,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement/test
     return next();
 });
 // update swagger
-RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -994,13 +1075,16 @@ RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max',authorization
     try {
         logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - [HTTP]  - Request received -  Data - LimitId %s others %s ',reqId,req.params.lid,req.params.max);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         limit.UpdateMaxLimit(req.params.lid,req.params.max,Company,Tenant,reqId,function(err,resz)
         {
@@ -1036,10 +1120,12 @@ RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max',authorization
     return next();
 });
 
-RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Restore',authorization({resource:"limit", action:"write"}),function(req,res,next) {
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Restore',function(req,res,next) {
 
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
 
     try
@@ -1056,13 +1142,16 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Restore',authorization({res
     try {
         logger.debug('[DVP-LimitHandler.RestoreLimit] - [%s] - [HTTP]  - Request received - ',reqId);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         limit.ReloadRedis(Company,Tenant,reqId,function(err,resz)
         {
@@ -1097,8 +1186,10 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Restore',authorization({res
 
 //.......................................get.............................................................................
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:scheduleID',authorization({resource:"schedule", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:scheduleID',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
 
     try
@@ -1110,20 +1201,19 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:schedul
 
     }
 
-
-
-
-
     try {
         logger.debug('[DVP-LimitHandler.PickValidAppointment] - [%s] - [HTTP]  - Request received -  Data - %s ',reqId,req.params.scheduleID);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
 
         schedule.PickValidAppointment(req.params.scheduleID,Company,Tenant,reqId,function(err,resz)
@@ -1158,8 +1248,10 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/ValidAppointment/:schedul
 
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/UnAssignedAppointments',authorization({resource:"appointment", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/UnAssignedAppointments',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
 
     try
@@ -1174,13 +1266,16 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/UnAssignedAppointments',a
     try {
         logger.debug('[DVP-LimitHandler.PickUnassignedAppointment] - [%s] - [HTTP]  - Request received -   ',reqId);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.PickUnassignedAppointments(Company,Tenant,reqId,function(err,resz)
         {
@@ -1214,13 +1309,15 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/UnAssignedAppointments',a
 
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:date/:time',authorization({resource:"appointment", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:date/:time',function(req,res,next) {
     //dt = 2015-09-09
     //dy = Friday
     //tm = 11:20 (24Hrs)
 
 
     var reqId='';
+    var Cmp=1;
+    var Ten=1;
 
 
     try
@@ -1235,13 +1332,16 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:dat
     try {
         logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s] - [HTTP]  - Request received   -  Data - Date %s Time %s',reqId,req.params.date,req.params.time);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Cmp=req.user.company;
-        var Ten=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Ten = authInfo[0];
+                Cmp = authInfo[1];
+            }
+        }
         var Dt=req.params.date;
         var Tm=req.params.time;
 
@@ -1279,8 +1379,10 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/ValidAppointment/:dat
 });
 //.......................................................................................................................
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({resource:"schedule", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
 
     try
@@ -1297,13 +1399,16 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({resou
     try {
         logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.PickSchedule(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
@@ -1340,8 +1445,10 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({resou
     return next();
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules',authorization({resource:"schedule", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
 
     try
@@ -1356,13 +1463,16 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules',authorization({resource
     try {
         logger.debug('[DVP-LimitHandler.PickAllSchedules] - [%s] - [HTTP]  - Request received ',reqId);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.PickSchedules(Company,Tenant,reqId,function(err,resz)
         {
@@ -1399,8 +1509,10 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules',authorization({resource
     return next();
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',authorization({resource:"schedule", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
 
     try
@@ -1416,13 +1528,16 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',authorization
     try {
         logger.debug('[DVP-LimitHandler.PickScheduleActionById] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.PickScheduleAction(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
@@ -1455,9 +1570,10 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Action',authorization
 });
 //.......................................................................................................................
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',authorization({resource:"schedule", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',function(req,res,next) {
     var reqId='';
-
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -1472,13 +1588,16 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',authori
     try {
         logger.debug('[DVP-LimitHandler.PickAppointmentById] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.PickAppointment(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
@@ -1513,8 +1632,10 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',authori
 
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',authorization({resource:"appointment", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
 
     try
@@ -1529,13 +1650,16 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',a
     try {
         logger.debug('[DVP-LimitHandler.PickAppointmentAction] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.PickAppointmentAction(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
@@ -1569,8 +1693,10 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',a
     return next();
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Current/:Rid',authorization({resource:"limit", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Current/:Rid',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
 
     try
@@ -1584,9 +1710,15 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Current/:Rid',authorization(
 
     try {
         logger.debug('[DVP-LimitHandler.CurrentLimit] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.Rid);
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
+
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
         }
 
 
@@ -1625,8 +1757,10 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Current/:Rid',authorization(
 
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',authorization({resource:"limit", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',function(req,res,next) {
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
 
     try
@@ -1642,9 +1776,15 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',authorization
     try {
         logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.Rid);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
+
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
         }
 
         limit.GetMaxLimit(req.params.Rid,reqId,function(err,resz)
@@ -1682,9 +1822,12 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/MaxLimit/:Rid',authorization
 
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',authorization({resource:"limit", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',function(req,res,next) {
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
+
     try
     {
         reqId = uuid.v1();
@@ -1698,13 +1841,16 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',authorization({resourc
     try {
         logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - [HTTP]  - Request received   ',reqId);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
 
         limit.GetLimitInfo(reqId,Company,Tenant,function(err,resz)
@@ -1744,10 +1890,13 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',authorization({resourc
 
 //.......................................................................................................................
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules/byCompany',authorization({resource:"schedule", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules/byCompany',function(req,res,next) {
 
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
+
     try
     {
         reqId = uuid.v1();
@@ -1762,13 +1911,16 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules/byCompany',authorization
     try {
         logger.debug('[DVP-LimitHandler.PickSchedulesByCompany] - [%s] - [HTTP]  - Request received   -  Data - Company %s',reqId,Company);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
 
         schedule.PickSchedulesByCompany(Company,Tenant,reqId,function(err,resz)
@@ -1806,10 +1958,13 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules/byCompany',authorization
     return next();
 });
 
-RestServer.del('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({resource:"schedule", action:"write"}),function(req,res,next) {
+RestServer.del('/DVP/API/'+version+'/LimitAPI/Schedule/:id',function(req,res,next) {
 
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
+
     try
     {
         reqId = uuid.v1();
@@ -1823,13 +1978,16 @@ RestServer.del('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({resou
     try {
         logger.debug('[DVP-LimitHandler.DeleteSchedule] - [%s] - [HTTP]  - Request received   -  Data - Company %s ID %s',reqId,Company,req.params.id);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.DeleteSchedule(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
@@ -1866,10 +2024,12 @@ RestServer.del('/DVP/API/'+version+'/LimitAPI/Schedule/:id',authorization({resou
     return next();
 });
 
-RestServer.del('/DVP/API/'+version+'/LimitAPI/Appointment/:id',authorization({resource:"appointment", action:"write"}),function(req,res,next) {
+RestServer.del('/DVP/API/'+version+'/LimitAPI/Appointment/:id',function(req,res,next) {
 
 
     var reqId='';
+    var Company=1;
+    var Tenant=1;
 
     try
     {
@@ -1885,11 +2045,16 @@ RestServer.del('/DVP/API/'+version+'/LimitAPI/Appointment/:id',authorization({re
 
         logger.debug('[DVP-LimitHandler.DeleteAppointment] - [%s] - [HTTP]  - Request received -  Data -  AppointmentID %s',reqId,req.params.id);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.DeleteAppointment(req.params.id,reqId,function(err,resz)
         {
@@ -1925,8 +2090,12 @@ RestServer.del('/DVP/API/'+version+'/LimitAPI/Appointment/:id',authorization({re
     return next();
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Appointment/:id',authorization({resource:"appointment", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Appointment/:id',function(req,res,next) {
+
     var reqId='';
+    var Company=1;
+    var Tenant=1;
+
 
 
     try
@@ -1943,13 +2112,16 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Appointment/:id',authorization({re
     try {
         logger.debug('[DVP-LimitHandler.PickAppointmentById] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
 
-        if(!req.user.company || !req.user.tenant)
+        if(req.header('authorization'))
         {
-            throw new Error("Invalid company or tenant");
-        }
+            var auth = req.header('authorization');
+            var authInfo = auth.split("#");
 
-        var Company=req.user.company;
-        var Tenant=req.user.tenant;
+            if (authInfo.length >= 2) {
+                Tenant = authInfo[0];
+                Company = authInfo[1];
+            }
+        }
 
         schedule.PickAppointment(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
