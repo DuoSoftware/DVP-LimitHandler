@@ -1009,7 +1009,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                                     console.log("Increment not suites "+key);
                                     client.decr(key, function (errDecr,resDecr) {
 
-                                        if(errDecr || !resDecr)
+                                        if(errDecr )
                                         {
                                             console.log("Decrement error "+key);
                                             var obj = {
@@ -1018,6 +1018,16 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                                                 Availability:false
                                             };
                                             callback(new Error("Error"),obj);
+                                        }
+                                        else if(resDecr==0)
+                                        {
+                                            console.log("Decrement done Value =0  "+key);
+                                            var obj = {
+                                                key:key,
+                                                rvtSt:false,
+                                                Availability:false
+                                            };
+                                            callback(undefined,obj);
                                         }
                                         else
                                         {
