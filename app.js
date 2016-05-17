@@ -1480,7 +1480,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',authori
         var Company=req.user.company;
         var Tenant=req.user.tenant;
 
-        schedule.PickAppointment(req.params.id,Company,Tenant,reqId,function(err,resz)
+        schedule.PickAppointmentsWithSchedules(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
