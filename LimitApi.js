@@ -977,7 +977,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                             rvtSt:false,
                             Availability:false
                         };
-                        callback(new Error("max getting error of "+max_key),obj);
+                        callback(new Error("Error in Getting Max limit of key : "+key),obj);
                     }
                     else
                     {
@@ -990,7 +990,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                                     rvtSt:false,
                                     Availability:false
                                 };
-                                callback(new Error("Error"),obj);
+                                callback(new Error("Error in value incrementing of key : "+key),obj);
                             }
                             else
                             {
@@ -1017,7 +1017,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                                                 rvtSt:true,
                                                 Availability:false
                                             };
-                                            callback(new Error("Error"),obj);
+                                            callback(new Error("Error in reverting key record : "+key),obj);
                                         }
                                         else if(resDecr==0)
                                         {
@@ -1060,7 +1060,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
         if(err)
         {
             console.log("e "+err);
-            callbackData(new Error("Errors In operation"),undefined);
+            callbackData(err,undefined);
         }
         else
         {
@@ -1104,7 +1104,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                 if(decdCount == resultCount)
                 {
                     console.log("Unavailable. Keys already decremented");
-                    callbackData(new Error("Unavailable keys "),undefined);
+                    callbackData(new Error("Keys Unavailable "),undefined);
                 }
 
                 if(descKeys.length>0)
@@ -1113,7 +1113,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                         console.log("Err arr "+JSON.stringify(errDecr));
                         console.log("Res arr "+JSON.stringify(resDecr));
 
-                        callbackData(new Error("Not available"),undefined);
+                        callbackData(new Error("Keys not available"),undefined);
 
 
 
@@ -1132,7 +1132,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
 
                         if(errAvblDecr.length>0)
                         {
-                            callbackData(new Error("Errors In operation"),undefined);
+                            callbackData(new Error("Errors In Key fixing operation "+avblKeys),undefined);
                         }
                         else
                         {
@@ -1141,7 +1141,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
                             if(!avblSt)
                             {
                                 console.log("Keys not available");
-                                callbackData(new Error('Unavailable keys'),undefined);
+                                callbackData(new Error('Keys Unavailable '+avblKeys),undefined);
 
                             }
                             else
@@ -1159,7 +1159,7 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
             else
             {
                 console.log("Not AND condition");
-                callbackData(new Error("Errors In Condition"),undefined);
+                callbackData(new Error("Errors In Condition : "+condition),undefined);
             }
         }
     });
@@ -1211,7 +1211,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
                             rvtSt:false,
                             Availability:false
                         };
-                        callback(new Error("Key getting error "+errKey+" of "+key),obj);
+                        callback(new Error("Key "+key+" not found. Error :"+errKey),obj);
                     }
                     else
                     {
@@ -1225,7 +1225,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
                                     rvtSt:false,
                                     Availability:false
                                 };
-                                callback(new Error("Decrementing error "+errDecr+" of "+key),obj);
+                                callback(new Error("Error in Decrementing key :  "+key+" .Error : "+errDecr),obj);
                             }
                             else
                             {
@@ -1253,7 +1253,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
                                                 rvtSt:true,
                                                 Availability:false
                                             };
-                                            callback(new Error("Increment error "+errIncr+" of "+key),obj);
+                                            callback(new Error("Reverting updated key "+key+" failed. Error : "+errIncr),obj);
                                         }
                                         else
                                         {
@@ -1285,7 +1285,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
         if(err)
         {
             console.log("e "+err);
-            callbackData(new Error("Errors In operation"),undefined);
+            callbackData(err,undefined);
         }
         else
         {
@@ -1325,7 +1325,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
                 if(incdCount == resultCount)
                 {
                     console.log("Unavailable. Keys already Incremented");
-                    callbackData(new Error("Unavailable keys "),undefined);
+                    callbackData(new Error("Keys unavailable."),undefined);
                 }
 
                 if(incrKeys.length>0)
@@ -1335,7 +1335,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
                         console.log("Res arr "+JSON.stringify(resDecr));
 
                         //callbackData(errDecr,resDecr);
-                        callbackData(new Error("Not available"),undefined);
+                        callbackData(new Error("Keys unavailable."),undefined);
 
 
                     });
@@ -1353,7 +1353,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
                     {
                         if(errAvblIncr.length>0)
                         {
-                            callbackData(new Error("Errors In operation"),undefined);
+                            callbackData(new Error("Keys unavailable "),undefined);
                         }
                         else
                         {
@@ -1361,7 +1361,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
                             if(!avblSt)
                             {
                                 console.log("Keys not available");
-                                callbackData(new Error('Unavailable keys'),undefined);
+                                callbackData(new Error('Keys unavailable '),undefined);
                             }
                             else
                             {
@@ -1379,7 +1379,7 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
             }
             else
             {
-                callbackData(new Error("Errors In Condition"),undefined);
+                callbackData(new Error("Errors In Condition "+condition),undefined);
             }
         }
     });

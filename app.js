@@ -730,7 +730,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Increment',aut
             if(err)
             {
 
-                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                var jsonString = messageFormatter.FormatMessage(err,err.message , false, undefined);
                 logger.debug('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }else
@@ -903,7 +903,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/MultipleKeys/Decrement',aut
             if(err)
             {
 
-                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                var jsonString = messageFormatter.FormatMessage(err, err.message, false, undefined);
                 logger.debug('[DVP-LimitHandler.MultiKeyDecrement] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }else
