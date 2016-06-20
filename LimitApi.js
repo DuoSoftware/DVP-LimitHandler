@@ -711,16 +711,11 @@ function GetLimitInfo(reqId,Company,Tenant,callback)
 
         DbConn.LimitInfo.findAll({where: [{CompanyId:Company},{TenantId:Tenant}]}).then(function(resLimit)
         {
-            if(resLimit.length>0)
-            {
-                logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  - LimitInfo - %s  ',reqId,JSON.stringify(resLimit));
-                callback(undefined,resLimit);
-            }
-            else
-            {
-                logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  - No record found');
-                callback(new Error('No limit Record'), undefined);
-            }
+
+            logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  - LimitInfo - %s  ',reqId,JSON.stringify(resLimit));
+            callback(undefined,resLimit);
+
+
         }).catch(function(errLimit)
         {
             logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  - Error occurred while searching LimitInfo of %s ',reqId,errLimit);
