@@ -9,7 +9,7 @@
     "cors": "^2.7.1",
     "date-utils": "^1.2.17",
     "dvp-common": "^0.1.3",
-    "dvp-dbmodels": "^0.0.37",
+    "dvp-dbmodels": "^0.3.0",
     "fs": "^0.0.2",
     "log4js": "^0.6.26",
     "moment": "^2.10.6",

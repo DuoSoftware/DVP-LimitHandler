@@ -42,7 +42,9 @@ function CreateSchedule(req,Company,Tenant,reqId,callback) {
                                         ObjCategory: "OBJCAT",
                                         CompanyId: Company,
                                         TenantId: Tenant,
-                                        Availability:obj.Availability
+                                        Availability:obj.Availability,
+                                        TimeZone:obj.TimeZone
+
 
 
                                     }
