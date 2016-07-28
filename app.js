@@ -153,13 +153,12 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment',authorizati
         var Tenant=req.user.tenant;
 
         var Days=SetDays(req.body.DaysOfWeek);
-        schedule.CreateAppointment(req.body,Days.toString(),Company,Tenant,reqId,function(err,resz)
+
+        schedule.CreateAppointment(req.body,Days,Company,Tenant,reqId,function(err,resz)
         {
 
             if(err)
             {
-
-
                 var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
                 logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
@@ -468,8 +467,9 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',authori
 
         var Company=req.user.company;
         var Tenant=req.user.tenant;
+        var Days=SetDays(req.body.DaysOfWeek);
 
-        schedule.UpdateAppointment(req.params.id,req.body,Company,Tenant,reqId,function(err,resz)
+        schedule.UpdateAppointment(req.params.id,req.body,Days,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -1988,44 +1988,45 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Appointment/:id',authorization({re
 
 
 
-function SetDays(a)
+function SetDays(days)
 {
-    var IsFirst=0;
-    var WeekDays='';
+
+    var WeekDays;
 
 
-    console.log(a);
+    console.log(days.length);
 
-
-    for(var index in a)
+    if(days.length>0)
     {
-
-        //if(a[index]== true)
-        if(a[index])
+        for (var i=0;i<days.length;i++)
         {
-
-            if(IsFirst==0)
+            if(i==0)
             {
-                WeekDays=index;
-                IsFirst=1;
-
-            }else
+                WeekDays=days[i];
+                console.log(WeekDays,i);
+            }
+            else
             {
-                WeekDays=WeekDays+","+index;
-
+                WeekDays=WeekDays+','+days[i];
+                console.log(WeekDays,i);
             }
 
-
-        }
-        else
-        {
-            // continue;
+            if(i==days.length-1)
+            {
+                console.log(WeekDays,i);
+                return WeekDays;
+            }
         }
 
     }
+    else
+    {
+        return WeekDays;
+    }
 
 
-    return WeekDays;
+
+
 }
 
 

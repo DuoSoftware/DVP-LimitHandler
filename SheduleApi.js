@@ -167,7 +167,9 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback) {
                                     ObjCategory: "OBJCAT",
                                     CompanyId: Company,
                                     TenantId: Tenant,
-                                    RecurrencePattern: obj.RecurrencePattern
+                                    RecurrencePattern: obj.RecurrencePattern,
+                                    ScheduleId: obj.ScheduleId
+
 
 
                                 }
@@ -184,7 +186,8 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback) {
                         AppObject.save().then(function (resSave) {
 
                             logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - New Appointment %s is added successfully',reqId,JSON.stringify(resSave));
-                            resSchedule.addAppointment(AppObject).then(function (resMap) {
+                            callback(undefined,resSave);
+                            /*resSchedule.addAppointment(AppObject).then(function (resMap) {
 
                                 logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped successfully',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject));
                                 callback(undefined,resMap);
@@ -192,7 +195,7 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback) {
                             }).catch(function (errMap) {
                                 logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped unsuccessful',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject),errMap);
                                 callback(errMap,undefined);
-                            });
+                            });*/
 
 
 
@@ -737,7 +740,7 @@ function UpdateSchedule(SID,obj,Company,Tenant,reqId,callback) {
 
 }
 
-function UpdateAppointment(AID,obj,Company,Tenant,reqId,callback) {
+function UpdateAppointment(AID,obj,Days,Company,Tenant,reqId,callback) {
     logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  UpdateAppointmentData starting  - Data %s AppId %s',reqId,JSON.stringify(obj),AID);
 
     if(obj && !isNaN(AID) && AID )
@@ -766,12 +769,12 @@ function UpdateAppointment(AID,obj,Company,Tenant,reqId,callback) {
                                     EndDate: obj.StartDate,
                                     StartTime: obj.StartTime,
                                     EndTime: obj.EndTime,
-                                    DaysOfWeek: obj.DaysOfWeek,
+                                    DaysOfWeek: Days,
                                     ObjClass: "OBJCLZ",
                                     ObjType: "OBJTYP",
                                     ObjCategory: "OBJCAT",
-                                    CompanyId: 1,
-                                    TenantId: 1,
+                                    CompanyId: Company,
+                                    TenantId: Tenant,
                                     RecurrencePattern: obj.RecurrencePattern
 
 
