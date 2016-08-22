@@ -2021,7 +2021,7 @@ function SetDays(days)
     }
     else
     {
-        return WeekDays;
+        return '';
     }
 
 
