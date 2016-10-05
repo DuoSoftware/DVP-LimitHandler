@@ -14,6 +14,7 @@ var async= require('async');
 var underscore =  require('underscore');
 
 var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
+var redisCacheHandler = require('dvp-common/CSConfigRedisCaching/RedisHandler.js');
 
 
 var client = redis.createClient(port,ip);
@@ -387,6 +388,7 @@ function CreateLimit(req,Company,Tenant,reqId,callback)
                     }
                     NewLimobj.save().then(function(resSave)
                     {
+                        redisCacheHandler.addLimitToCache(resSave.LimitId, resSave.CompanyId, resSave.TenantId, resSave);
                         logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Setting redis key of LimitId %s'   ,reqId,rand);
 
                         try
@@ -579,26 +581,13 @@ function UpdateMaxLimit(LID,max,Company,Tenant,reqId,callback)
         var maxLim = parseInt(max);
         try {
 
-            DbConn.LimitInfo
-                .update(
+            DbConn.LimitInfo.find({where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]}).then(function (lim)
+            {
+                if(lim)
                 {
-                    MaxCount: maxLim
-
-
-                },
-                {
-                    where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]
-                }
-            ).then(function (resLimit) {
-
-                    if(resLimit==0)
+                    lim.updateAttributes({MaxCount: maxLim}).then(function (resLimit)
                     {
-                        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,max,LID);
-
-                        callback(new Error("No Limit to Update"), undefined);
-                    }
-                    else
-                    {
+                        redisCacheHandler.addLimitToCache(resLimit.LimitId, Company, Tenant, resLimit);
                         logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,max,LID);
 
                         if(client)
@@ -620,15 +609,24 @@ function UpdateMaxLimit(LID,max,Company,Tenant,reqId,callback)
                             callback(new Error("No redis connection"),undefined) ;
                         }
 
-                    }
+                    }).catch(function(err)
+                    {
+                        logger.error('[DVP-LimitHandler.UpdateMaxLimit] PGSQL Update extension with recording status failed', err);
+                        callback(err, false);
+                    });
 
+                }
+                else
+                {
+                    callback(new Error('Limit record not found'), false);
+                }
 
-                }).catch(function (errLimit) {
+            }).catch(function(err)
+            {
+                logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Get Extension PGSQL query failed', reqId, err);
+                callback(err, false);
+            });
 
-                    logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit of %s is unsuccessful when updating to %s   ',reqId,LID,max,errLimit);
-                    callback(errLimit, undefined);
-
-                });
 
         }
         catch (ex)
@@ -654,39 +652,49 @@ function ActivateLimit(LID,status,Company,Tenant,reqId,callback)
     {
         try {
 
-            DbConn.LimitInfo
-                .update(
+            DbConn.LimitInfo.find({where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]}).then(function (lim)
+            {
+                if(lim)
                 {
-                    Enable: status
+                    lim.updateAttributes({Enable: status}).then(function (resLimit) {
+
+                        redisCacheHandler.addLimitToCache(resLimit.LimitId, Company, Tenant, resLimit);
+
+                        if(!resLimit)
+                        {
+                            logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  No Limit record found to update ');
+
+                            callback(new Error("No Limit record found to update"), undefined);
+                        }
+                        else
+                        {
+                            logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
+
+                            callback(undefined, resLimit);
+                        }
 
 
-                },
-                {
-                    where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]
+                    }).error(function (errLimit) {
+
+                        logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,status,errLimit);
+
+                        callback(errLimit, undefined);
+
+                    });
+
                 }
-            ).then(function (resLimit) {
+                else
+                {
+                    callback(new Error('Limit record not found'), false);
+                }
 
-                    if(resLimit==0)
-                    {
-                        logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  No Limit record found to update ');
-
-                        callback(new Error("No Limit record found to update"), undefined);
-                    }
-                    else
-                    {
-                        logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
-
-                        callback(undefined, resLimit);
-                    }
+            }).catch(function(err)
+            {
+                logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Get Extension PGSQL query failed', reqId, err);
+                callback(err, false);
+            });
 
 
-                }).error(function (errLimit) {
-
-                    logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,status,errLimit);
-
-                    callback(errLimit, undefined);
-
-                });
 
         }
         catch (ex)

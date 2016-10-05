@@ -8,6 +8,7 @@ var DbConn = require('dvp-dbmodels');
 var moment=require('moment');
 var messageFormatter = require('dvp-common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
+var redisCacheHandler = require('dvp-common/CSConfigRedisCaching/RedisHandler.js');
 
 
 
@@ -57,6 +58,7 @@ function CreateSchedule(req,Company,Tenant,reqId,callback) {
 
                             NewScheduleObject.save().then(function(resSave)
                             {
+                                redisCacheHandler.addScheduleToCache(resSave.id, Company, Tenant);
                                 logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - [PGSQL] - New Schedule added successfully',reqId);
                                 callback(undefined, resSave);
                             }).catch(function(errSave)
@@ -184,6 +186,8 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback) {
                         }
 
                         AppObject.save().then(function (resSave) {
+
+                            redisCacheHandler.addScheduleToCache(obj.ScheduleId, Company, Tenant);
 
                             logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - New Appointment %s is added successfully',reqId,JSON.stringify(resSave));
                             callback(undefined,resSave);
@@ -691,6 +695,8 @@ function UpdateSchedule(SID,obj,Company,Tenant,reqId,callback) {
 
                                 }
                             ).then(function (result) {
+
+                                    redisCacheHandler.addScheduleToCache(SID, Company, Tenant);
                                     logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Schedule %s is updated successfully  ',reqId,SID);
                                     callback(undefined,result);
 
@@ -759,39 +765,39 @@ function UpdateAppointment(AID,obj,Days,Company,Tenant,reqId,callback) {
                     } else {
                         logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - Record found for Appointment %s ',reqId,AID);
                         try {
-                            DbConn.Appointment
-                                .update(
+
+                            resApp.updateAttributes({
+
+                                Action: obj.Action,
+                                ExtraData: obj.ExtraData,
+                                StartDate: obj.StartDate,
+                                EndDate: obj.StartDate,
+                                StartTime: obj.StartTime,
+                                EndTime: obj.EndTime,
+                                DaysOfWeek: Days,
+                                ObjClass: "OBJCLZ",
+                                ObjType: "OBJTYP",
+                                ObjCategory: "OBJCAT",
+                                CompanyId: Company,
+                                TenantId: Tenant,
+                                RecurrencePattern: obj.RecurrencePattern
+
+
+                            }).then(function (resUpdate) {
+
+                                if(resUpdate.ScheduleId)
                                 {
-
-                                    Action: obj.Action,
-                                    ExtraData: obj.ExtraData,
-                                    StartDate: obj.StartDate,
-                                    EndDate: obj.StartDate,
-                                    StartTime: obj.StartTime,
-                                    EndTime: obj.EndTime,
-                                    DaysOfWeek: Days,
-                                    ObjClass: "OBJCLZ",
-                                    ObjType: "OBJTYP",
-                                    ObjCategory: "OBJCAT",
-                                    CompanyId: Company,
-                                    TenantId: Tenant,
-                                    RecurrencePattern: obj.RecurrencePattern
-
-
-                                },
-                                {
-                                    where: [{id: AID}]
+                                    redisCacheHandler.addScheduleToCache(resUpdate.ScheduleId, Company, Tenant);
                                 }
-                            ).then(function (resUpdate) {
 
-                                    logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Appointment %s updated successfully',reqId,AID);
-                                    callback(undefined, resUpdate);
+                                logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Appointment %s updated successfully',reqId,AID);
+                                callback(undefined, resUpdate);
 
-                                }).error(function (errUpdate) {
-                                    logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Error occurred while updating Appointment %s ',reqId,AID,err);
-                                    callback(err, undefined);
+                            }).error(function (errUpdate) {
+                                logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Error occurred while updating Appointment %s ',reqId,AID,err);
+                                callback(err, undefined);
 
-                                });
+                            });
                         }
                         catch (ex) {
 
@@ -861,6 +867,7 @@ function AssignAppointment(SID,AID,Company,Tenant,reqId,callback) {
                                 {
                                     resApp.setSchedule(resSchedule).then(function(resMap)
                                     {
+                                        redisCacheHandler.addScheduleToCache(SID, Company, Tenant);
                                         callback(undefined,resMap);
                                     }).catch(function(errMap)
                                     {
@@ -1063,6 +1070,8 @@ function DeleteSchedule(sID,Company,Tenant,reqId,callback) {
             }
         ).then(function(resSchedule){
 
+                redisCacheHandler.removeScheduleFromCache(sID, Company, Tenant);
+
                 logger.debug('[DVP-LimitHandler.DeleteSchedule] - [%s] - [PGSQL] - Record found for Schedules of Company %s',reqId,Company);
 
                 callback(undefined, resSchedule);
@@ -1089,19 +1098,35 @@ function DeleteAppointment(aID,reqId,callback) {
 
 
     try {
-        DbConn.Appointment.destroy({where: {id: aID}}).then(function (resSchedule) {
+
+        DbConn.Appointment
+            .find({where:[{id:aID}]}
+        ).then(function(resApt)
+            {
+
+                DbConn.Appointment.destroy({where: {id: aID}}).then(function (resSchedule) {
+
+                    if(resApt && resApt.ScheduleId)
+                    {
+                        redisCacheHandler.addScheduleToCache(resApt.ScheduleId, resApt.CompanyId, resApt.TenantId);
+                    }
 
 
-            logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [PGSQL] - Appointment deleted %s ',reqId,aID);
-            callback(undefined,resSchedule);
+                    logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [PGSQL] - Appointment deleted %s ',reqId,aID);
+                    callback(undefined,resSchedule);
 
 
-        }).catch(function (errSchedule) {
+                }).catch(function (errSchedule) {
 
-            logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [PGSQL] - Error occurred while deleting appointment - AppointmentID :  %s',reqId,aID,errSchedule);
-            callback(errSchedule,undefined);
+                    logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [PGSQL] - Error occurred while deleting appointment - AppointmentID :  %s',reqId,aID,errSchedule);
+                    callback(errSchedule,undefined);
 
-        });
+                });
+
+            }).catch(function(err)
+            {
+                callback(err,undefined);
+            });
 
 
 
