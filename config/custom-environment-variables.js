@@ -32,7 +32,22 @@ module.exports = {
         "port": "HOST_LIMITHANDLER_PORT",
         "version": "HOST_VERSION",
         "logfilepath": "LOG4JS_CONFIG"
-    }
+    },
+    "ExternalUrls":
+    {
+        "NotificationService":
+        {
+            "domain":"SYS_NOTIFICATIONSERVICE_URL",
+            "version":"SYS_NOTIFICATIONSERVICE_VERSION"
+
+        },
+        "UserService":
+        {
+            "domain":"SYS_USERSERVICE_URL",
+            "version":"SYS_USERSERVICE_VERSION"
+        }
+    },
+    "Token": "HOST_TOKEN"
 };
 
 //NODE_CONFIG_DIR

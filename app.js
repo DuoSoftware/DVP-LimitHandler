@@ -644,7 +644,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',authorizati
             throw new Error("Invalid company or tenant");
         }
 
-        limit.LimitIncrement(req.params.key,reqId,function(err,resz)
+        limit.LimitIncrement(req.params.key,req.user,reqId,function(err,resz)
         {
 
             if(err)

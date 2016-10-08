@@ -12,9 +12,21 @@ var ip = config.Redis.ip;
 var password = config.Redis.password;
 var async= require('async');
 var underscore =  require('underscore');
+var httpReq = require('request');
+var util=require('util');
 
 var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
 var redisCacheHandler = require('dvp-common/CSConfigRedisCaching/RedisHandler.js');
+
+
+var notificationServiceURL=config.ExternalUrls.NotificationService.domain;
+var notificationServicePort=config.ExternalUrls.NotificationService.version;
+
+var userServiceURL=config.ExternalUrls.UserService.domain;
+var userServicePort=config.ExternalUrls.UserService.version;
+
+
+var token=config.Token;
 
 
 var client = redis.createClient(port,ip);
@@ -819,10 +831,11 @@ function RoleBackData(LimID,reqId,callback)
 }
 
 
-function LimitIncrement(req,reqId,callback)
+function LimitIncrement(req,companyData,reqId,callback)
 {
 
     var reqMax=req+"_max";
+    var compInfo = companyData.tenant + ':' + companyData.company;
 
     //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  LimitIncrement starting  - Data %s',reqId,req);
     try {
@@ -874,6 +887,14 @@ function LimitIncrement(req,reqId,callback)
                                                 else {
                                                     //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Max count %s', reqId, req, reqMax);
 
+                                                    if(parseInt(resIncr)==parseInt(resMax) )
+                                                    {
+                                                        sendNotification(compInfo, function (errNotify,resNotify) {
+                                                            callback(errNotify,resIncr);
+                                                        });
+                                                    }
+
+
                                                     if (parseInt(resMax) >= parseInt(resIncr)) {
 
                                                         logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s]  -  Redis record"s Max count %s >  Current count %s   ', reqId, resMax, reply);
@@ -891,15 +912,18 @@ function LimitIncrement(req,reqId,callback)
 
                                                         try {
                                                             client.decr(req, function (errDecr, resDecr) {
+                                                                sendNotification(compInfo, function (errNotify,resNotify) {
 
-                                                                if (errDecr) {
-                                                                    callback(errDecr, undefined);
-                                                                }
-                                                                else {
-                                                                    //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Current Limit %s', reqId, req, resDecr);
+                                                                    if (errDecr) {
+                                                                        callback(errDecr, undefined);
+                                                                    }
+                                                                    else {
+                                                                        //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Current Limit %s', reqId, req, resDecr);
 
-                                                                    callback(undefined, resDecr);
-                                                                }
+                                                                        callback(undefined, resDecr);
+                                                                    }
+                                                                });
+
                                                             });
                                                         } catch (e) {
                                                             callback(e, undefined);
@@ -1416,6 +1440,92 @@ function MultipleIncrementer(keys,reqId,callback)
 
 };
 
+
+function sendNotification(compInfo,callback)
+{
+
+
+    var httpUrl = util.format('http://%s/DVP/API/%s/Organisation', userServiceURL, userServicePort);
+    var options = {
+        url: httpUrl,
+        method: 'GET',
+        headers:{
+            'authorization':"bearer "+token,
+            'companyinfo':compInfo
+        }
+
+    };
+
+    try
+    {
+        httpReq(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                console.log("no errrs in request 200 ok");
+
+
+                var messageData =
+                {
+                    To:JSON.parse(body).Result.ownerId,
+                    Message:"You are reached maximum limit",
+                    From:"Limit Service"
+                }
+
+
+                var httpUrl = util.format('http://%s/DVP/API/%s//NotificationService/Notification/initiate', notificationServiceURL, notificationServicePort);
+                var options = {
+                    url: httpUrl,
+                    method: 'POST',
+                    json: messageData,
+                    headers:{
+                        'authorization':"bearer "+token,
+                        'eventname':"message",
+                        'companyinfo':compInfo
+                    }
+
+
+                };
+
+                try
+                {
+                    httpReq(options, function (error, response, body) {
+                        if (!error && response.statusCode == 200) {
+                            console.log("no errrs in request 200 ok");
+                            callback(undefined,"Success");
+
+                        }
+                        else {
+                            console.log("error in request  " + error);
+                            callback(error,undefined);
+
+                        }
+                    });
+                }
+                catch (ex) {
+                    console.log("exception" + ex);
+                    callback(ex,undefined);
+
+
+                }
+
+
+            }
+            else {
+                console.log("error in request  " + error);
+                callback(error,undefined);
+
+
+            }
+        });
+    }
+    catch (ex) {
+        console.log("exception" + ex);
+        callback(ex,undefined);
+
+
+    }
+
+
+}
 
 
 
