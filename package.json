@@ -20,7 +20,8 @@
     "restify": "^4.0.4",
     "restify-jwt": "^0.4.0",
     "stringify": "^3.1.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "util": "^0.10.3"
   },
   "devDependencies": {},
   "scripts": {

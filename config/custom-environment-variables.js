@@ -45,6 +45,11 @@ module.exports = {
         {
             "domain":"SYS_USERSERVICE_URL",
             "version":"SYS_USERSERVICE_VERSION"
+        },
+        "AppRegistry":
+        {
+            "domain":"SYS_APPREGISTRY_URL",
+            "version":"SYS_APPREGISTRY_VERSION"
         }
     },
     "Token": "HOST_TOKEN"

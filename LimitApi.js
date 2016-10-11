@@ -20,10 +20,10 @@ var redisCacheHandler = require('dvp-common/CSConfigRedisCaching/RedisHandler.js
 
 
 var notificationServiceURL=config.ExternalUrls.NotificationService.domain;
-var notificationServicePort=config.ExternalUrls.NotificationService.version;
+var notificationServiceVersion=config.ExternalUrls.NotificationService.version;
 
 var userServiceURL=config.ExternalUrls.UserService.domain;
-var userServicePort=config.ExternalUrls.UserService.version;
+var userServiceVersion=config.ExternalUrls.UserService.version;
 
 
 var token=config.Token;
@@ -1445,7 +1445,7 @@ function sendNotification(compInfo,callback)
 {
 
 
-    var httpUrl = util.format('http://%s/DVP/API/%s/Organisation', userServiceURL, userServicePort);
+    var httpUrl = util.format('http://%s/DVP/API/%s/Organisation', userServiceURL, userServiceVersion);
     var options = {
         url: httpUrl,
         method: 'GET',
@@ -1471,7 +1471,7 @@ function sendNotification(compInfo,callback)
                 }
 
 
-                var httpUrl = util.format('http://%s/DVP/API/%s//NotificationService/Notification/initiate', notificationServiceURL, notificationServicePort);
+                var httpUrl = util.format('http://%s/DVP/API/%s//NotificationService/Notification/initiate', notificationServiceURL, notificationServiceVersion);
                 var options = {
                     url: httpUrl,
                     method: 'POST',
