@@ -37,18 +37,18 @@ module.exports = {
     {
         "NotificationService":
         {
-            "domain":"SYS_NOTIFICATIONSERVICE_URL",
+            "domain":"SYS_NOTIFICATIONSERVICE_HOST",
             "version":"SYS_NOTIFICATIONSERVICE_VERSION"
 
         },
         "UserService":
         {
-            "domain":"SYS_USERSERVICE_URL",
+            "domain":"SYS_USERSERVICE_HOST",
             "version":"SYS_USERSERVICE_VERSION"
         },
         "AppRegistry":
         {
-            "domain":"SYS_APPREGISTRY_URL",
+            "domain":"SYS_APPREGISTRY_HOST",
             "version":"SYS_APPREGISTRY_VERSION"
         }
     },
