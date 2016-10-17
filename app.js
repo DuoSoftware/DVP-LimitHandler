@@ -444,6 +444,64 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/:sid/AddAppointment/:app
     next();
 });
 
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/Actions',authorization({resource:"appointment", action:"write"}),function(req,res,next) {
+    var reqId='';
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+
+    try {
+        logger.debug('[DVP-LimitHandler.PickAppointmentActions] - [%s] - [HTTP]  - Request received ');
+
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
+
+        var Company=req.user.company;
+        var Tenant=req.user.tenant;
+
+
+        schedule.PickAppointmentActions(Company,Tenant,reqId,function(err,resz)
+        {
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.PickAppointmentActions] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else if(resz)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.PickAppointmentActions] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+        });
+
+
+    }
+    catch(ex)
+    {
+
+        logger.error('[DVP-LimitHandler.PickScheduleActions] - [%s] - [HTTP]  - Exception occurred when service started : UpdateAppointmentData -  Appointment %s Data %s',reqId,req.params.id,JSON.stringify(req.body),ex);
+
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.PickScheduleActions] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
+
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id',authorization({resource:"appointment", action:"write"}),function(req,res,next) {
     var reqId='';
 
@@ -644,7 +702,7 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/Increment/:key',authorizati
             throw new Error("Invalid company or tenant");
         }
 
-        limit.LimitIncrement(req.params.key,reqId,function(err,resz)
+        limit.LimitIncrement(req.params.key,req.user,reqId,function(err,resz)
         {
 
             if(err)

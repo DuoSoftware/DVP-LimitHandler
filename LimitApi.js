@@ -12,8 +12,21 @@ var ip = config.Redis.ip;
 var password = config.Redis.password;
 var async= require('async');
 var underscore =  require('underscore');
+var httpReq = require('request');
+var util=require('util');
 
 var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
+var redisCacheHandler = require('dvp-common/CSConfigRedisCaching/RedisHandler.js');
+
+
+var notificationServiceURL=config.ExternalUrls.NotificationService.domain;
+var notificationServiceVersion=config.ExternalUrls.NotificationService.version;
+
+var userServiceURL=config.ExternalUrls.UserService.domain;
+var userServiceVersion=config.ExternalUrls.UserService.version;
+
+
+var token=config.Token;
 
 
 var client = redis.createClient(port,ip);
@@ -387,6 +400,7 @@ function CreateLimit(req,Company,Tenant,reqId,callback)
                     }
                     NewLimobj.save().then(function(resSave)
                     {
+                        redisCacheHandler.addLimitToCache(resSave.LimitId, resSave.CompanyId, resSave.TenantId, resSave);
                         logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [REDIS] -  Setting redis key of LimitId %s'   ,reqId,rand);
 
                         try
@@ -579,26 +593,13 @@ function UpdateMaxLimit(LID,max,Company,Tenant,reqId,callback)
         var maxLim = parseInt(max);
         try {
 
-            DbConn.LimitInfo
-                .update(
+            DbConn.LimitInfo.find({where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]}).then(function (lim)
+            {
+                if(lim)
                 {
-                    MaxCount: maxLim
-
-
-                },
-                {
-                    where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]
-                }
-            ).then(function (resLimit) {
-
-                    if(resLimit==0)
+                    lim.updateAttributes({MaxCount: maxLim}).then(function (resLimit)
                     {
-                        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,max,LID);
-
-                        callback(new Error("No Limit to Update"), undefined);
-                    }
-                    else
-                    {
+                        redisCacheHandler.addLimitToCache(resLimit.LimitId, Company, Tenant, resLimit);
                         logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,max,LID);
 
                         if(client)
@@ -620,15 +621,24 @@ function UpdateMaxLimit(LID,max,Company,Tenant,reqId,callback)
                             callback(new Error("No redis connection"),undefined) ;
                         }
 
-                    }
+                    }).catch(function(err)
+                    {
+                        logger.error('[DVP-LimitHandler.UpdateMaxLimit] PGSQL Update extension with recording status failed', err);
+                        callback(err, false);
+                    });
 
+                }
+                else
+                {
+                    callback(new Error('Limit record not found'), false);
+                }
 
-                }).catch(function (errLimit) {
+            }).catch(function(err)
+            {
+                logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Get Extension PGSQL query failed', reqId, err);
+                callback(err, false);
+            });
 
-                    logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit of %s is unsuccessful when updating to %s   ',reqId,LID,max,errLimit);
-                    callback(errLimit, undefined);
-
-                });
 
         }
         catch (ex)
@@ -654,39 +664,49 @@ function ActivateLimit(LID,status,Company,Tenant,reqId,callback)
     {
         try {
 
-            DbConn.LimitInfo
-                .update(
+            DbConn.LimitInfo.find({where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]}).then(function (lim)
+            {
+                if(lim)
                 {
-                    Enable: status
+                    lim.updateAttributes({Enable: status}).then(function (resLimit) {
+
+                        redisCacheHandler.addLimitToCache(resLimit.LimitId, Company, Tenant, resLimit);
+
+                        if(!resLimit)
+                        {
+                            logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  No Limit record found to update ');
+
+                            callback(new Error("No Limit record found to update"), undefined);
+                        }
+                        else
+                        {
+                            logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
+
+                            callback(undefined, resLimit);
+                        }
 
 
-                },
-                {
-                    where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]
+                    }).error(function (errLimit) {
+
+                        logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,status,errLimit);
+
+                        callback(errLimit, undefined);
+
+                    });
+
                 }
-            ).then(function (resLimit) {
+                else
+                {
+                    callback(new Error('Limit record not found'), false);
+                }
 
-                    if(resLimit==0)
-                    {
-                        logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  No Limit record found to update ');
-
-                        callback(new Error("No Limit record found to update"), undefined);
-                    }
-                    else
-                    {
-                        logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is succeeded of LimitId %d to %s ',reqId,LID,status);
-
-                        callback(undefined, resLimit);
-                    }
+            }).catch(function(err)
+            {
+                logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Get Extension PGSQL query failed', reqId, err);
+                callback(err, false);
+            });
 
 
-                }).error(function (errLimit) {
-
-                    logger.error('[DVP-LimitHandler.ActivateLimit] - [%s] - [PGSQL] -  Updating of  Enable status is unsuccessful of LimitId %d to %s ',reqId,LID,status,errLimit);
-
-                    callback(errLimit, undefined);
-
-                });
 
         }
         catch (ex)
@@ -811,10 +831,11 @@ function RoleBackData(LimID,reqId,callback)
 }
 
 
-function LimitIncrement(req,reqId,callback)
+function LimitIncrement(req,companyData,reqId,callback)
 {
 
     var reqMax=req+"_max";
+    var compInfo = companyData.tenant + ':' + companyData.company;
 
     //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  LimitIncrement starting  - Data %s',reqId,req);
     try {
@@ -866,6 +887,14 @@ function LimitIncrement(req,reqId,callback)
                                                 else {
                                                     //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Max count %s', reqId, req, reqMax);
 
+                                                    if(parseInt(resIncr)==parseInt(resMax) )
+                                                    {
+                                                        sendNotification(compInfo, function (errNotify,resNotify) {
+                                                            callback(errNotify,resIncr);
+                                                        });
+                                                    }
+
+
                                                     if (parseInt(resMax) >= parseInt(resIncr)) {
 
                                                         logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s]  -  Redis record"s Max count %s >  Current count %s   ', reqId, resMax, reply);
@@ -883,15 +912,18 @@ function LimitIncrement(req,reqId,callback)
 
                                                         try {
                                                             client.decr(req, function (errDecr, resDecr) {
+                                                                sendNotification(compInfo, function (errNotify,resNotify) {
 
-                                                                if (errDecr) {
-                                                                    callback(errDecr, undefined);
-                                                                }
-                                                                else {
-                                                                    //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Current Limit %s', reqId, req, resDecr);
+                                                                    if (errDecr) {
+                                                                        callback(errDecr, undefined);
+                                                                    }
+                                                                    else {
+                                                                        //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Current Limit %s', reqId, req, resDecr);
 
-                                                                    callback(undefined, resDecr);
-                                                                }
+                                                                        callback(undefined, resDecr);
+                                                                    }
+                                                                });
+
                                                             });
                                                         } catch (e) {
                                                             callback(e, undefined);
@@ -1408,6 +1440,92 @@ function MultipleIncrementer(keys,reqId,callback)
 
 };
 
+
+function sendNotification(compInfo,callback)
+{
+
+
+    var httpUrl = util.format('http://%s/DVP/API/%s/Organisation', userServiceURL, userServiceVersion);
+    var options = {
+        url: httpUrl,
+        method: 'GET',
+        headers:{
+            'authorization':"bearer "+token,
+            'companyinfo':compInfo
+        }
+
+    };
+
+    try
+    {
+        httpReq(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                console.log("no errrs in request 200 ok");
+
+
+                var messageData =
+                {
+                    To:JSON.parse(body).Result.ownerId,
+                    Message:"You are reached maximum limit",
+                    From:"Limit Service"
+                }
+
+
+                var httpUrl = util.format('http://%s/DVP/API/%s//NotificationService/Notification/initiate', notificationServiceURL, notificationServiceVersion);
+                var options = {
+                    url: httpUrl,
+                    method: 'POST',
+                    json: messageData,
+                    headers:{
+                        'authorization':"bearer "+token,
+                        'eventname':"message",
+                        'companyinfo':compInfo
+                    }
+
+
+                };
+
+                try
+                {
+                    httpReq(options, function (error, response, body) {
+                        if (!error && response.statusCode == 200) {
+                            console.log("no errrs in request 200 ok");
+                            callback(undefined,"Success");
+
+                        }
+                        else {
+                            console.log("error in request  " + error);
+                            callback(error,undefined);
+
+                        }
+                    });
+                }
+                catch (ex) {
+                    console.log("exception" + ex);
+                    callback(ex,undefined);
+
+
+                }
+
+
+            }
+            else {
+                console.log("error in request  " + error);
+                callback(error,undefined);
+
+
+            }
+        });
+    }
+    catch (ex) {
+        console.log("exception" + ex);
+        callback(ex,undefined);
+
+
+    }
+
+
+}
 
 
 

@@ -13,7 +13,8 @@ module.exports = {
     {
         "ip": "SYS_REDIS_HOST",
         "port": "SYS_REDIS_PORT",
-        "password":"SYS_REDIS_PASSWORD"
+        "password":"SYS_REDIS_PASSWORD",
+        "db": "SYS_REDIS_DB_CONFIG"
 
     },
     "Security":
@@ -31,7 +32,27 @@ module.exports = {
         "port": "HOST_LIMITHANDLER_PORT",
         "version": "HOST_VERSION",
         "logfilepath": "LOG4JS_CONFIG"
-    }
+    },
+    "ExternalUrls":
+    {
+        "NotificationService":
+        {
+            "domain":"SYS_NOTIFICATIONSERVICE_URL",
+            "version":"SYS_NOTIFICATIONSERVICE_VERSION"
+
+        },
+        "UserService":
+        {
+            "domain":"SYS_USERSERVICE_URL",
+            "version":"SYS_USERSERVICE_VERSION"
+        },
+        "AppRegistry":
+        {
+            "domain":"SYS_APPREGISTRY_URL",
+            "version":"SYS_APPREGISTRY_VERSION"
+        }
+    },
+    "Token": "HOST_TOKEN"
 };
 
 //NODE_CONFIG_DIR

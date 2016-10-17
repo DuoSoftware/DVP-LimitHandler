@@ -5,9 +5,17 @@
 
 
 var DbConn = require('dvp-dbmodels');
+var config = require('config');
 var moment=require('moment');
 var messageFormatter = require('dvp-common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
+var redisCacheHandler = require('dvp-common/CSConfigRedisCaching/RedisHandler.js');
+var httpReq = require('request');
+var util = require('util');
+
+var appRegistryURL=config.ExternalUrls.AppRegistry.domain;
+var appRegistryVersion=config.ExternalUrls.AppRegistry.version;
+var token=config.Token;
 
 
 
@@ -57,6 +65,7 @@ function CreateSchedule(req,Company,Tenant,reqId,callback) {
 
                             NewScheduleObject.save().then(function(resSave)
                             {
+                                redisCacheHandler.addScheduleToCache(resSave.id, Company, Tenant);
                                 logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] - [PGSQL] - New Schedule added successfully',reqId);
                                 callback(undefined, resSave);
                             }).catch(function(errSave)
@@ -185,17 +194,19 @@ function CreateAppointment(req,Days,Company,Tenant,reqId,callback) {
 
                         AppObject.save().then(function (resSave) {
 
+                            redisCacheHandler.addScheduleToCache(obj.ScheduleId, Company, Tenant);
+
                             logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - New Appointment %s is added successfully',reqId,JSON.stringify(resSave));
                             callback(undefined,resSave);
                             /*resSchedule.addAppointment(AppObject).then(function (resMap) {
 
-                                logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped successfully',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject));
-                                callback(undefined,resMap);
+                             logger.debug('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped successfully',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject));
+                             callback(undefined,resMap);
 
-                            }).catch(function (errMap) {
-                                logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped unsuccessful',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject),errMap);
-                                callback(errMap,undefined);
-                            });*/
+                             }).catch(function (errMap) {
+                             logger.error('[DVP-LimitHandler.CreateAppointment] - [%s] - [PGSQL] - Schedule %s and appointment %s is mapped unsuccessful',reqId,JSON.stringify(resSchedule),JSON.stringify(AppObject),errMap);
+                             callback(errMap,undefined);
+                             });*/
 
 
 
@@ -691,6 +702,8 @@ function UpdateSchedule(SID,obj,Company,Tenant,reqId,callback) {
 
                                 }
                             ).then(function (result) {
+
+                                    redisCacheHandler.addScheduleToCache(SID, Company, Tenant);
                                     logger.debug('[DVP-LimitHandler.UpdateSchedule] - [%s] -  Schedule %s is updated successfully  ',reqId,SID);
                                     callback(undefined,result);
 
@@ -759,39 +772,39 @@ function UpdateAppointment(AID,obj,Days,Company,Tenant,reqId,callback) {
                     } else {
                         logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] - Record found for Appointment %s ',reqId,AID);
                         try {
-                            DbConn.Appointment
-                                .update(
+
+                            resApp.updateAttributes({
+
+                                Action: obj.Action,
+                                ExtraData: obj.ExtraData,
+                                StartDate: obj.StartDate,
+                                EndDate: obj.StartDate,
+                                StartTime: obj.StartTime,
+                                EndTime: obj.EndTime,
+                                DaysOfWeek: Days,
+                                ObjClass: "OBJCLZ",
+                                ObjType: "OBJTYP",
+                                ObjCategory: "OBJCAT",
+                                CompanyId: Company,
+                                TenantId: Tenant,
+                                RecurrencePattern: obj.RecurrencePattern
+
+
+                            }).then(function (resUpdate) {
+
+                                if(resUpdate.ScheduleId)
                                 {
-
-                                    Action: obj.Action,
-                                    ExtraData: obj.ExtraData,
-                                    StartDate: obj.StartDate,
-                                    EndDate: obj.StartDate,
-                                    StartTime: obj.StartTime,
-                                    EndTime: obj.EndTime,
-                                    DaysOfWeek: Days,
-                                    ObjClass: "OBJCLZ",
-                                    ObjType: "OBJTYP",
-                                    ObjCategory: "OBJCAT",
-                                    CompanyId: Company,
-                                    TenantId: Tenant,
-                                    RecurrencePattern: obj.RecurrencePattern
-
-
-                                },
-                                {
-                                    where: [{id: AID}]
+                                    redisCacheHandler.addScheduleToCache(resUpdate.ScheduleId, Company, Tenant);
                                 }
-                            ).then(function (resUpdate) {
 
-                                    logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Appointment %s updated successfully',reqId,AID);
-                                    callback(undefined, resUpdate);
+                                logger.debug('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Appointment %s updated successfully',reqId,AID);
+                                callback(undefined, resUpdate);
 
-                                }).error(function (errUpdate) {
-                                    logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Error occurred while updating Appointment %s ',reqId,AID,err);
-                                    callback(err, undefined);
+                            }).error(function (errUpdate) {
+                                logger.error('[DVP-LimitHandler.UpdateAppointmentData] - [%s] -  Error occurred while updating Appointment %s ',reqId,AID,err);
+                                callback(err, undefined);
 
-                                });
+                            });
                         }
                         catch (ex) {
 
@@ -861,6 +874,7 @@ function AssignAppointment(SID,AID,Company,Tenant,reqId,callback) {
                                 {
                                     resApp.setSchedule(resSchedule).then(function(resMap)
                                     {
+                                        redisCacheHandler.addScheduleToCache(SID, Company, Tenant);
                                         callback(undefined,resMap);
                                     }).catch(function(errMap)
                                     {
@@ -958,71 +972,71 @@ function CheckAvailables(SID,Dt,Tm,cmp,ten,reqId,callback) {
                 .findAll({where:[{CompanyId:cmp},{TenantId:ten},{ScheduleId:SID}]}
             ).then(function(resApp)
                 {
-                        console.log("Size "+resApp.length);
-                        try {
+                    console.log("Size "+resApp.length);
+                    try {
 
-                            for (var index in resApp) {
+                        for (var index in resApp) {
 
-                                console.log(JSON.stringify(resApp[index]));
+                            console.log(JSON.stringify(resApp[index]));
 
-                                if ((resApp[index].StartDate == null || resApp[index].EndDate == null) && resApp[index].DaysOfWeek == null ) {
-                                    IsFound=true;
+                            if ((resApp[index].StartDate == null || resApp[index].EndDate == null) && resApp[index].DaysOfWeek == null ) {
+                                IsFound=true;
 
-                                    var d=SetDayObjects(resApp[index].DaysOfWeek);
+                                var d=SetDayObjects(resApp[index].DaysOfWeek);
 
-                                    resApp[index].DaysOfWeek=d;
-                                    callback(undefined,resApp[index]);
-                                }
-                                else{
+                                resApp[index].DaysOfWeek=d;
+                                callback(undefined,resApp[index]);
+                            }
+                            else{
 
-                                    if (moment(ReqDate).isBetween(resApp[index].StartDate, resApp[index].EndDate)) {
-
-
-                                        var TmVal=ValidateTime(resApp[index],ReqTime,reqId);
-                                        //if (ReqTime >= result[index].StartTime && ReqTime < result[index].EndTime) {
+                                if (moment(ReqDate).isBetween(resApp[index].StartDate, resApp[index].EndDate)) {
 
 
-                                        if (TmVal) {
-                                            var DbDays = resApp[index].DaysOfWeek.split(',');
+                                    var TmVal=ValidateTime(resApp[index],ReqTime,reqId);
+                                    //if (ReqTime >= result[index].StartTime && ReqTime < result[index].EndTime) {
 
-                                            if(DbDays.indexOf(ReqDay) > -1)
-                                            {
-                                                logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s]- [PGSQL] - Appointment found %s  ', reqId, resApp[index].id);
-                                                IsFound=true;
 
-                                                callback(undefined, resApp[index]);
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                continue;
-                                            }
+                                    if (TmVal) {
+                                        var DbDays = resApp[index].DaysOfWeek.split(',');
 
+                                        if(DbDays.indexOf(ReqDay) > -1)
+                                        {
+                                            logger.debug('[DVP-LimitHandler.CheckAvailables] - [%s]- [PGSQL] - Appointment found %s  ', reqId, resApp[index].id);
+                                            IsFound=true;
+
+                                            callback(undefined, resApp[index]);
+                                            break;
                                         }
-                                        else {
+                                        else
+                                        {
                                             continue;
                                         }
+
                                     }
                                     else {
                                         continue;
                                     }
-
+                                }
+                                else {
+                                    continue;
                                 }
 
-
-                            }
-                            if(IsFound==false)
-                            {
-
-                                logger.error('[DVP-LimitHandler.CheckAvailables] - [%s]- Appointment is not found ',reqId);
-                                callback(new Error("No maching record found"),undefined);
                             }
 
+
                         }
-                        catch (ex) {
-                            logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - Exception occurred when searching records one by one ',reqId,ex);
-                            callback(ex,undefined);
+                        if(IsFound==false)
+                        {
+
+                            logger.error('[DVP-LimitHandler.CheckAvailables] - [%s]- Appointment is not found ',reqId);
+                            callback(new Error("No maching record found"),undefined);
                         }
+
+                    }
+                    catch (ex) {
+                        logger.error('[DVP-LimitHandler.CheckAvailables] - [%s] - Exception occurred when searching records one by one ',reqId,ex);
+                        callback(ex,undefined);
+                    }
 
                 }).catch(function(errApp)
                 {
@@ -1063,6 +1077,8 @@ function DeleteSchedule(sID,Company,Tenant,reqId,callback) {
             }
         ).then(function(resSchedule){
 
+                redisCacheHandler.removeScheduleFromCache(sID, Company, Tenant);
+
                 logger.debug('[DVP-LimitHandler.DeleteSchedule] - [%s] - [PGSQL] - Record found for Schedules of Company %s',reqId,Company);
 
                 callback(undefined, resSchedule);
@@ -1089,19 +1105,35 @@ function DeleteAppointment(aID,reqId,callback) {
 
 
     try {
-        DbConn.Appointment.destroy({where: {id: aID}}).then(function (resSchedule) {
+
+        DbConn.Appointment
+            .find({where:[{id:aID}]}
+        ).then(function(resApt)
+            {
+
+                DbConn.Appointment.destroy({where: {id: aID}}).then(function (resSchedule) {
+
+                    if(resApt && resApt.ScheduleId)
+                    {
+                        redisCacheHandler.addScheduleToCache(resApt.ScheduleId, resApt.CompanyId, resApt.TenantId);
+                    }
 
 
-            logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [PGSQL] - Appointment deleted %s ',reqId,aID);
-            callback(undefined,resSchedule);
+                    logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [PGSQL] - Appointment deleted %s ',reqId,aID);
+                    callback(undefined,resSchedule);
 
 
-        }).catch(function (errSchedule) {
+                }).catch(function (errSchedule) {
 
-            logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [PGSQL] - Error occurred while deleting appointment - AppointmentID :  %s',reqId,aID,errSchedule);
-            callback(errSchedule,undefined);
+                    logger.error('[DVP-LimitHandler.DeleteAppointment] - [%s] - [PGSQL] - Error occurred while deleting appointment - AppointmentID :  %s',reqId,aID,errSchedule);
+                    callback(errSchedule,undefined);
 
-        });
+                });
+
+            }).catch(function(err)
+            {
+                callback(err,undefined);
+            });
 
 
 
@@ -1159,6 +1191,89 @@ function PickAppointment(SID,Company,Tenant,reqId,callback) {
 
 }
 
+function PickAppointmentActions(Company,Tenant,reqId,callback) {
+
+
+    var ActionObj =
+    {
+        PBX_Status :
+            [{id:"DND",value:"Do Not Disturb "},{id:"CALL_DIVERT",value:"Call Divert "},{id:"AVAILABLE",value:"Available"},{id:"FOLLOW_ME",value:"Follow me"},{id:"FORWARD",value:"Forward"}],
+        Application:[]
+    }
+
+
+    try {
+
+        var compInfo = Tenant + ':' + Company;
+
+        var httpUrl = util.format('http://%s/DVP/API/%s/APPRegistry/Applications', appRegistryURL, appRegistryVersion);
+        console.log("URL "+httpUrl);
+        var options = {
+            url : httpUrl,
+            method : 'GET',
+            headers:{
+                'authorization':"bearer "+token,
+                'companyinfo':compInfo
+
+            }
+
+        };
+
+
+        httpReq(options, function (error, response, body)
+        {
+            if (!error && response.statusCode == 200)
+            {
+                console.log("no errrs");
+                //console.log(JSON.stringify(response));
+                //callback(undefined,"Success")
+
+                var AppResults=JSON.parse(response.body).Result;
+
+                if(AppResults)
+                {
+                    for(var i=0;i<AppResults.length;i++)
+                    {
+                        ActionObj["Application"].push(
+                            {
+                                id:AppResults[i].id,
+                                value:AppResults[i].AppName
+                            }
+                        );
+
+                        if(i==AppResults.length-1)
+                        {
+                            callback(undefined,ActionObj);
+                        }
+                    }
+                }
+                else
+                {
+                    callback(undefined,ActionObj);
+                }
+            }
+            else
+            {
+                console.log("errrs  "+error);
+                callback(error,undefined);
+
+
+            }
+        });
+
+    }
+    catch (ex)
+    {
+        logger.error('[DVP-LimitHandler.PickAppointmentActions] - [%s] - Exception occurred when starting method : PickAppointmentById ',reqId,SID);
+        callback(ex,undefined);
+    }
+
+
+
+}
+
+
+
 module.exports.CreateSchedule = CreateSchedule;
 module.exports.CreateAppointment = CreateAppointment;
 module.exports.UpdateSchedule = UpdateSchedule;
@@ -1177,6 +1292,7 @@ module.exports.PickSchedulesByCompany = PickSchedulesByCompany;
 module.exports.DeleteSchedule = DeleteSchedule;
 module.exports.DeleteAppointment = DeleteAppointment;
 module.exports.PickAppointmentsWithSchedules = PickAppointmentsWithSchedules;
+module.exports.PickAppointmentActions = PickAppointmentActions;
 
 
 
