@@ -18,6 +18,9 @@ var appRegistryVersion=config.ExternalUrls.AppRegistry.version;
 var token=config.Token;
 
 
+console.log(localTime);
+
+
 
 function CreateSchedule(req,Company,Tenant,reqId,callback) {
     logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] -  New Schedule adding started  ',reqId);
@@ -778,7 +781,7 @@ function UpdateAppointment(AID,obj,Days,Company,Tenant,reqId,callback) {
                                 Action: obj.Action,
                                 ExtraData: obj.ExtraData,
                                 StartDate: obj.StartDate,
-                                EndDate: obj.StartDate,
+                                EndDate: obj.EndDate,
                                 StartTime: obj.StartTime,
                                 EndTime: obj.EndTime,
                                 DaysOfWeek: Days,
