@@ -585,7 +585,7 @@ function PickSchedulesByCompany(Company,Tenant,reqId,callback) {
 
 }
 
-function PickAppointmentsWithSchedules(AID,Company,Tenant,reqId,callback) {
+function PickAppointmentsBySchedules(AID,Company,Tenant,reqId,callback) {
 
     if(AID && !isNaN(AID))
     {
@@ -619,6 +619,48 @@ function PickAppointmentsWithSchedules(AID,Company,Tenant,reqId,callback) {
     else
     {
         logger.error('[DVP-LimitHandler.PickAppointmentById] - [%s] - ScheduleID is Undefined');
+        callback(new Error("ScheduleID is Undefined or Not in Correct Format"),undefined);
+    }
+
+
+
+}
+
+function PickAppointmentsWithSchedules(SID,Company,Tenant,reqId,callback) {
+
+    if(SID && !isNaN(SID))
+    {
+        try {
+
+            DbConn.Schedule
+                .findAll({
+                    where: [{id: SID},{CompanyId:Company},{TenantId:Tenant}],
+                    include: [{ model: DbConn.Appointment, as: "Appointment" }]
+                }
+            ).then(function(result)
+                {
+
+                    logger.debug('[DVP-LimitHandler.LimitApi.PickAppointmentsWithSchedules] - [%s] - [PGSQL]  - %s Records found appointment for %s   ',reqId,result.length,SID);
+                    callback(undefined, result);
+
+                }
+            ).catch(function(err)
+                {
+                    logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentsWithSchedules] - [%s] - [PGSQL]  - Error occurred while searching for appointment for %s   ',reqId,SID,err);
+                    callback(err, undefined);
+                });
+
+
+        }
+        catch (ex)
+        {
+            logger.error('[DVP-LimitHandler.LimitApi.PickAppointmentsWithSchedules] - [%s] - [PGSQL]  - Exception occurred when starting method :  PickAppointmentById   for %s',reqId,SID,ex);
+            callback(ex,undefined);
+        }
+    }
+    else
+    {
+        logger.error('[DVP-LimitHandler.PickAppointmentsWithSchedules] - [%s] - ScheduleID is Undefined');
         callback(new Error("ScheduleID is Undefined or Not in Correct Format"),undefined);
     }
 
@@ -1294,8 +1336,9 @@ module.exports.PickUnassignedAppointments = PickUnassignedAppointments;
 module.exports.PickSchedulesByCompany = PickSchedulesByCompany;
 module.exports.DeleteSchedule = DeleteSchedule;
 module.exports.DeleteAppointment = DeleteAppointment;
-module.exports.PickAppointmentsWithSchedules = PickAppointmentsWithSchedules;
+module.exports.PickAppointmentsBySchedules = PickAppointmentsBySchedules;
 module.exports.PickAppointmentActions = PickAppointmentActions;
+module.exports.PickAppointmentsWithSchedules = PickAppointmentsWithSchedules;
 
 
 

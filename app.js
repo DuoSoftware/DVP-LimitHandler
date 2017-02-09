@@ -1538,7 +1538,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',authori
         var Company=req.user.company;
         var Tenant=req.user.tenant;
 
-        schedule.PickAppointmentsWithSchedules(req.params.id,Company,Tenant,reqId,function(err,resz)
+        schedule.PickAppointmentsBySchedules(req.params.id,Company,Tenant,reqId,function(err,resz)
         {
             if(err)
             {
@@ -1570,6 +1570,65 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments',authori
     return next();
 
 });
+
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/:id/Appointments/Info',authorization({resource:"schedule", action:"read"}),function(req,res,next) {
+    var reqId='';
+
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+
+    try {
+        logger.debug('[DVP-LimitHandler.PickAppointmentsWithSchedules] - [%s] - [HTTP]  - Request received   -  Data - Id %s',reqId,req.params.id);
+
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
+
+        var Company=req.user.company;
+        var Tenant=req.user.tenant;
+
+        schedule.PickAppointmentsWithSchedules(req.params.id,Company,Tenant,reqId,function(err,resz)
+        {
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.PickAppointmentsWithSchedules] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.PickAppointmentsWithSchedules] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.PickAppointmentsWithSchedules] - [%s] - [HTTP]  - Exception occurred on request : PickAppointmentById   -  Data - Id %s',reqId,req.params.id,ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.PickAppointmentsWithSchedules] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+
+});
+
 
 RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedule/Appointment/:id/Action',authorization({resource:"appointment", action:"read"}),function(req,res,next) {
     var reqId='';
