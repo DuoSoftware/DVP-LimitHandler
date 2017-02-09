@@ -18,8 +18,6 @@ var appRegistryVersion=config.ExternalUrls.AppRegistry.version;
 var token=config.Token;
 
 
-console.log(localTime);
-
 
 
 function CreateSchedule(req,Company,Tenant,reqId,callback) {
