@@ -736,7 +736,9 @@ function UpdateSchedule(SID,obj,Company,Tenant,reqId,callback) {
                                     ObjType: "OBJTYP",
                                     ObjCategory: "OBJCAT",
                                     CompanyId: Company,
-                                    TenantId: Tenant
+                                    TenantId: Tenant,
+                                    StartDate: obj.StartDate,
+                                    EndDate: obj.EndDate
 
 
                                 },
