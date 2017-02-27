@@ -52,7 +52,9 @@ function CreateSchedule(req,Company,Tenant,reqId,callback) {
                                         CompanyId: Company,
                                         TenantId: Tenant,
                                         Availability:obj.Availability,
-                                        TimeZone:obj.TimeZone
+                                        TimeZone:obj.TimeZone,
+                                        StartDate: obj.StartDate,
+                                        EndDate: obj.EndDate
 
 
 
@@ -737,8 +739,6 @@ function UpdateSchedule(SID,obj,Company,Tenant,reqId,callback) {
                                     ObjCategory: "OBJCAT",
                                     CompanyId: Company,
                                     TenantId: Tenant,
-                                    StartDate: obj.StartDate,
-                                    EndDate: obj.EndDate
 
 
                                 },
