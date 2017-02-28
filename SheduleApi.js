@@ -444,8 +444,18 @@ function PickSchedule(SID,Company,Tenant,reqId,callback) {
                 }
             ).then(function(resSchedule){
 
-                    logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - %s Records found for Schedule ',reqId,resSchedule.length,SID);
-                    callback(undefined, resSchedule);
+                    if(resSchedule.length==0)
+                    {
+                        logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - %s No Records found for Schedule ',reqId,resSchedule.length,SID);
+                        callback(new Error("No schedules found"), undefined);
+                    }
+                    else
+                    {
+                        logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - %s Records found for Schedule ',reqId,resSchedule.length,SID);
+                        callback(undefined, resSchedule);
+                    }
+
+
 
                 }).catch(function(errSchedule)
                 {
