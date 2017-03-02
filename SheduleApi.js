@@ -19,6 +19,7 @@ var token=config.Token;
 
 
 
+
 function CreateSchedule(req,Company,Tenant,reqId,callback) {
     logger.debug('[DVP-LimitHandler.CreateSchedule] - [%s] -  New Schedule adding started  ',reqId);
 
@@ -51,7 +52,9 @@ function CreateSchedule(req,Company,Tenant,reqId,callback) {
                                         CompanyId: Company,
                                         TenantId: Tenant,
                                         Availability:obj.Availability,
-                                        TimeZone:obj.TimeZone
+                                        TimeZone:obj.TimeZone,
+                                        StartDate: obj.StartDate,
+                                        EndDate: obj.EndDate
 
 
 
@@ -441,8 +444,18 @@ function PickSchedule(SID,Company,Tenant,reqId,callback) {
                 }
             ).then(function(resSchedule){
 
-                    logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - %s Records found for Schedule ',reqId,resSchedule.length,SID);
-                    callback(undefined, resSchedule);
+                    if(resSchedule.length==0)
+                    {
+                        logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - %s No Records found for Schedule ',reqId,resSchedule.length,SID);
+                        callback(new Error("No schedules found"), undefined);
+                    }
+                    else
+                    {
+                        logger.debug('[DVP-LimitHandler.PickScheduleById] - [%s] - [PGSQL] - %s Records found for Schedule ',reqId,resSchedule.length,SID);
+                        callback(undefined, resSchedule);
+                    }
+
+
 
                 }).catch(function(errSchedule)
                 {
@@ -735,7 +748,7 @@ function UpdateSchedule(SID,obj,Company,Tenant,reqId,callback) {
                                     ObjType: "OBJTYP",
                                     ObjCategory: "OBJCAT",
                                     CompanyId: Company,
-                                    TenantId: Tenant
+                                    TenantId: Tenant,
 
 
                                 },
@@ -820,7 +833,7 @@ function UpdateAppointment(AID,obj,Days,Company,Tenant,reqId,callback) {
                                 Action: obj.Action,
                                 ExtraData: obj.ExtraData,
                                 StartDate: obj.StartDate,
-                                EndDate: obj.StartDate,
+                                EndDate: obj.EndDate,
                                 StartTime: obj.StartTime,
                                 EndTime: obj.EndTime,
                                 DaysOfWeek: Days,
