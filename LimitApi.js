@@ -656,6 +656,78 @@ function UpdateMaxLimit(LID,max,Company,Tenant,reqId,callback)
 
 }
 
+function UpdateMaxLimitWithSwitch(LID,max,Company,Tenant,reqId,callback)
+{
+    logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  UpdateMaxLimit starting  - Data :-  ID : %s Max : $s',reqId,LID,max);
+
+    if(max && LID)
+    {
+        var maxLim = parseInt(max);
+        try {
+
+            DbConn.LimitInfo.find({where: [{LimitId: LID},{TenantId:Tenant}]}).then(function (lim)
+            {
+                if(lim)
+                {
+                    lim.updateAttributes({MaxCount: maxLim, CompanyId: Company}).then(function (resLimit)
+                    {
+                        redisCacheHandler.addLimitToCache(resLimit.LimitId, Company, Tenant, resLimit);
+                        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,max,LID);
+
+                        if(client)
+                        {
+                            client.set(LID,maxLim,function(errSet,resSet)
+                            {
+                                if(errSet)
+                                {
+                                    callback(errSet,undefined);
+                                }
+                                else
+                                {
+                                    callback(undefined,resSet);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            callback(new Error("No redis connection"),undefined) ;
+                        }
+
+                    }).catch(function(err)
+                    {
+                        logger.error('[DVP-LimitHandler.UpdateMaxLimit] PGSQL Update extension with recording status failed', err);
+                        callback(err, false);
+                    });
+
+                }
+                else
+                {
+                    callback(new Error('Limit record not found'), false);
+                }
+
+            }).catch(function(err)
+            {
+                logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Get Extension PGSQL query failed', reqId, err);
+                callback(err, false);
+            });
+
+
+        }
+        catch (ex)
+        {
+            logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Exception occurred when updating Maximum limit of %s to %s  ',reqId,LID,max,ex);
+
+            callback(ex,undefined);
+        }
+    }
+    else
+    {
+        callback(new Error("Empty request Body or Undefined LimitID"),undefined);
+    }
+
+
+}
+
 function ActivateLimit(LID,status,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.ActivateLimit] - [%s] -  ActivateLimit starting   Data - Limit ID %s others %s',reqId,LID,status);
@@ -1542,5 +1614,6 @@ module.exports.ReloadRedis = ReloadRedis;
 module.exports.RoleBackData = RoleBackData;
 module.exports.MultiKeyIncrementer = MultiKeyIncrementer;
 module.exports.MultiKeyDecrementer = MultiKeyDecrementer;
+module.exports.UpdateMaxLimitWithSwitch = UpdateMaxLimitWithSwitch;
 
 
