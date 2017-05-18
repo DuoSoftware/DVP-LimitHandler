@@ -621,6 +621,67 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',authorization({resource:"l
     return next();
 });
 
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/ClientCompany/:clientCompany',authorization({resource:"tenant", action:"write"}),function(req,res,next) {
+    var reqId='';
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+        console.log("reqID error");
+    }
+    try
+    {
+        logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Request received -  Data  ',reqId);
+
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
+
+        var Company=req.params.clientCompany;
+        var Tenant=req.user.tenant;
+
+
+        var obj=req.body;
+
+        limit.CreateLimit(obj,Company,Tenant,reqId,function(errSave,resSave)
+        {
+            if(errSave)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(errSave, "ERROR/EXCEPTION", false, undefined);
+                logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resSave);
+                logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - Request response %s: ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Exception occurred while requesting method : NewLimitRecord  -  Data - %s ',reqId,req.params.key,ex);
+
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
+
 RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',authorization({resource:"limit", action:"write"}),function(req,res,next) {
 
 
@@ -1058,6 +1119,65 @@ RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max',authorization
         }
 
         var Company=req.user.company;
+        var Tenant=req.user.tenant;
+
+        limit.UpdateMaxLimit(req.params.lid,req.params.max,Company,Tenant,reqId,function(err,resz)
+        {
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+
+        logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Exception occurred while requesting method : UpdateMaxLimit  -  Data - LimitId %s others  ',reqId,req.params.lid,req.params.max,ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
+
+RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max/ClientCompany/:clientCompany',authorization({resource:"tenant", action:"write"}),function(req,res,next) {
+    var reqId='';
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+
+
+    try {
+        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - [HTTP]  - Request received -  Data - LimitId %s others %s ',reqId,req.params.lid,req.params.max);
+
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
+
+        var Company=req.params.ClientCompany;
         var Tenant=req.user.tenant;
 
         limit.UpdateMaxLimit(req.params.lid,req.params.max,Company,Tenant,reqId,function(err,resz)
@@ -1918,7 +2038,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',authorization({resourc
 
 });
 
-RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info/Type/:objType/Category/:objCategory',authorization({resource:"limit", action:"read"}),function(req,res,next) {
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info/Type/:objType/Category/:objCategory/ClientCompany/:clientCompany',authorization({resource:"tenant", action:"read"}),function(req,res,next) {
 
     var reqId='';
     try
@@ -1939,7 +2059,7 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info/Type/:objType/Category/
             throw new Error("Invalid company or tenant");
         }
 
-        var Company=req.user.company;
+        var Company=req.params.clientCompany;
         var Tenant=req.user.tenant;
 
 
