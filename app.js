@@ -1918,6 +1918,66 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',authorization({resourc
 
 });
 
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info/Type/:objType/Category/:objCategory',authorization({resource:"limit", action:"read"}),function(req,res,next) {
+
+    var reqId='';
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+
+    try {
+        logger.debug('[DVP-LimitHandler.LimitInfoByCategory] - [%s] - [HTTP]  - Request received   ',reqId);
+
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
+
+        var Company=req.user.company;
+        var Tenant=req.user.tenant;
+
+
+        limit.GetLimitsByCategory(reqId,Company,Tenant, req.params.objType, req.params.objCategory, function(err,resz)
+        {
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.LimitInfoByCategory] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.LimitInfoByCategory] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [HTTP]  - Exception occurred on request : ',reqId,ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+
+    return next();
+
+});
+
 //.......................................................................................................................
 
 RestServer.get('/DVP/API/'+version+'/LimitAPI/Schedules/byCompany',authorization({resource:"schedule", action:"read"}),function(req,res,next) {
