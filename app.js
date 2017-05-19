@@ -621,6 +621,54 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',authorization({resource:"l
     return next();
 });
 
+RestServer.del('/DVP/API/'+version+'/LimitAPI/Limit/:id/ClientCompany/:clientCompany',authorization({resource:"tenant", action:"delete"}),function(req,res,next) {
+
+    try
+    {
+        var reqId = uuid.v1();
+        logger.debug('[DVP-LimitHandler.DeleteLimit] - [%s] - [HTTP]  - Request received -  Data  ',reqId);
+
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
+
+        var Company=req.params.clientCompany;
+        var Tenant=req.user.tenant;
+
+        limit.DeleteLimit(req.params.id, Company, Tenant, reqId, function(errSave, resSave)
+        {
+            if(errSave)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(errSave, "ERROR/EXCEPTION", false, undefined);
+                logger.error('[DVP-LimitHandler.DeleteLimit] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resSave);
+                logger.debug('[DVP-LimitHandler.DeleteLimit] - [%s] - Request response %s: ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.DeleteLimit] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
+
 RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/ClientCompany/:clientCompany',authorization({resource:"tenant", action:"write"}),function(req,res,next) {
     var reqId='';
 
@@ -1177,7 +1225,7 @@ RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max/ClientCompany/
             throw new Error("Invalid company or tenant");
         }
 
-        var Company=req.params.ClientCompany;
+        var Company=req.params.clientCompany;
         var Tenant=req.user.tenant;
 
         limit.UpdateMaxLimit(req.params.lid,req.params.max,Company,Tenant,reqId,function(err,resz)
