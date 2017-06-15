@@ -621,6 +621,115 @@ RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit',authorization({resource:"l
     return next();
 });
 
+RestServer.del('/DVP/API/'+version+'/LimitAPI/Limit/:id/ClientCompany/:clientCompany',authorization({resource:"tenant", action:"delete"}),function(req,res,next) {
+
+    try
+    {
+        var reqId = uuid.v1();
+        logger.debug('[DVP-LimitHandler.DeleteLimit] - [%s] - [HTTP]  - Request received -  Data  ',reqId);
+
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
+
+        var Company=req.params.clientCompany;
+        var Tenant=req.user.tenant;
+
+        limit.DeleteLimit(req.params.id, Company, Tenant, reqId, function(errSave, resSave)
+        {
+            if(errSave)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(errSave, "ERROR/EXCEPTION", false, undefined);
+                logger.error('[DVP-LimitHandler.DeleteLimit] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resSave);
+                logger.debug('[DVP-LimitHandler.DeleteLimit] - [%s] - Request response %s: ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.DeleteLimit] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
+
+RestServer.post('/DVP/API/'+version+'/LimitAPI/Limit/ClientCompany/:clientCompany',authorization({resource:"tenant", action:"write"}),function(req,res,next) {
+    var reqId='';
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+        console.log("reqID error");
+    }
+    try
+    {
+        logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Request received -  Data  ',reqId);
+
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
+
+        var Company=req.params.clientCompany;
+        var Tenant=req.user.tenant;
+
+
+        var obj=req.body;
+
+        limit.CreateLimit(obj,Company,Tenant,reqId,function(errSave,resSave)
+        {
+            if(errSave)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(errSave, "ERROR/EXCEPTION", false, undefined);
+                logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resSave);
+                logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - Request response %s: ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.CreateLimit] - [%s] - [HTTP]  - Exception occurred while requesting method : NewLimitRecord  -  Data - %s ',reqId,req.params.key,ex);
+
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
+
 RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Activate/:status',authorization({resource:"limit", action:"write"}),function(req,res,next) {
 
 
@@ -1058,6 +1167,65 @@ RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max',authorization
         }
 
         var Company=req.user.company;
+        var Tenant=req.user.tenant;
+
+        limit.UpdateMaxLimit(req.params.lid,req.params.max,Company,Tenant,reqId,function(err,resz)
+        {
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+
+        logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [HTTP]  - Exception occurred while requesting method : UpdateMaxLimit  -  Data - LimitId %s others  ',reqId,req.params.lid,req.params.max,ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+    return next();
+});
+
+RestServer.put('/DVP/API/'+version+'/LimitAPI/Limit/:lid/Max/:max/ClientCompany/:clientCompany',authorization({resource:"tenant", action:"write"}),function(req,res,next) {
+    var reqId='';
+
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+
+
+    try {
+        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - [HTTP]  - Request received -  Data - LimitId %s others %s ',reqId,req.params.lid,req.params.max);
+
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
+
+        var Company=req.params.clientCompany;
         var Tenant=req.user.tenant;
 
         limit.UpdateMaxLimit(req.params.lid,req.params.max,Company,Tenant,reqId,function(err,resz)
@@ -1897,6 +2065,66 @@ RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info',authorization({resourc
 
                 var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
                 logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+
+
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [HTTP]  - Exception occurred on request : ',reqId,ex);
+        var jsonString = messageFormatter.FormatMessage(ex, "EXCEPTION", false, undefined);
+        logger.debug('[DVP-LimitHandler.LimitInfo] - [%s] - Request response : %s ',reqId,jsonString);
+        res.end(jsonString);
+    }
+
+    return next();
+
+});
+
+RestServer.get('/DVP/API/'+version+'/LimitAPI/Limit/Info/Type/:objType/Category/:objCategory/ClientCompany/:clientCompany',authorization({resource:"tenant", action:"read"}),function(req,res,next) {
+
+    var reqId='';
+    try
+    {
+        reqId = uuid.v1();
+    }
+    catch(ex)
+    {
+
+    }
+
+
+    try {
+        logger.debug('[DVP-LimitHandler.LimitInfoByCategory] - [%s] - [HTTP]  - Request received   ',reqId);
+
+        if(!req.user.company || !req.user.tenant)
+        {
+            throw new Error("Invalid company or tenant");
+        }
+
+        var Company=req.params.clientCompany;
+        var Tenant=req.user.tenant;
+
+
+        limit.GetLimitsByCategory(reqId,Company,Tenant, req.params.objType, req.params.objCategory, function(err,resz)
+        {
+            if(err)
+            {
+
+                var jsonString = messageFormatter.FormatMessage(err, "ERROR/EXCEPTION", false, undefined);
+                logger.debug('[DVP-LimitHandler.LimitInfoByCategory] - [%s] - Request response : %s ',reqId,jsonString);
+                res.end(jsonString);
+            }
+            else
+            {
+
+                var jsonString = messageFormatter.FormatMessage(undefined, "SUCCESS", true, resz);
+                logger.debug('[DVP-LimitHandler.LimitInfoByCategory] - [%s] - Request response : %s ',reqId,jsonString);
                 res.end(jsonString);
             }
 
