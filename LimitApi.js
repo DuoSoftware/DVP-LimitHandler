@@ -376,14 +376,15 @@ function CreateLimit(req,Company,Tenant,reqId,callback)
                 {
                     logger.debug('[DVP-LimitHandler.CreateLimit] - [%s] - [PGSQL] -  No record found for LimitId %s'   ,reqId,rand);
                     try {
+
                         var NewLimobj = DbConn.LimitInfo
                             .build(
                             {
                                 LimitId: rand,
                                 LimitDescription: req.LimitDescription,
-                                ObjClass: "OBJCLZ",
-                                ObjType: "OBJTYP",
-                                ObjCategory: "OBJCAT",
+                                ObjClass: req.ObjClass,
+                                ObjType: req.ObjType,
+                                ObjCategory: req.ObjCategory,
                                 CompanyId: Company,
                                 TenantId: Tenant,
                                 MaxCount: req.MaxCount,
@@ -464,6 +465,62 @@ function CreateLimit(req,Company,Tenant,reqId,callback)
     }
 
 
+
+
+}
+
+function DeleteLimit(limitId, Company, Tenant, reqId, callback)
+{
+    logger.debug('[DVP-LimitHandler.DeleteLimit] - [%s]', reqId);
+
+    try
+    {
+
+        var rand = limitId;
+        var randMax=rand+"_max";
+
+        DbConn.LimitInfo.find({where: [{LimitId: rand},{CompanyId:Company},{TenantId:Tenant}]}).then(function(LimitObject)
+        {
+
+            if(LimitObject)
+            {
+                LimitObject.destroy().then(function (result)
+                {
+                    redisCacheHandler.removeLimitFromCache(rand, Company, Tenant);
+
+                    client.del(rand, function(err, redisResp)
+                    {
+
+                    });
+
+                    client.del(randMax, function(err, redisResp)
+                    {
+
+                    });
+                    callback(null, true);
+
+                }).catch(function(err)
+                {
+                    callback(err, false);
+                });
+
+
+            }
+            else
+            {
+                callback(null, true);
+            }
+        }).catch(function(err)
+        {
+            callback(err, null);
+        });
+
+
+    }
+    catch(ex)
+    {
+        callback(ex, null);
+    }
 
 
 }
@@ -821,6 +878,32 @@ function GetLimitInfo(reqId,Company,Tenant,callback)
     {
         logger.error('[DVP-LimitHandler.LimitInfo] - [%s] - [PGSQL]  -Exception occurred when starting : GetLimitInfo ',reqId,ex);
         callback(ex, undefined);
+    }
+
+}
+
+function GetLimitsByCategory(reqId, Company, Tenant, objType, objCategory, callback)
+{
+
+    try{
+
+
+        DbConn.LimitInfo.findAll({where: [{CompanyId:Company},{TenantId:Tenant}, {ObjType: objType}, {ObjCategory: objCategory}]}).then(function(resLimit)
+        {
+            callback(null, resLimit);
+
+
+        }).catch(function(errLimit)
+        {
+            callback(errLimit, null);
+        });
+
+
+
+    }
+    catch(ex)
+    {
+        callback(ex, null);
     }
 
 }
@@ -1615,5 +1698,7 @@ module.exports.RoleBackData = RoleBackData;
 module.exports.MultiKeyIncrementer = MultiKeyIncrementer;
 module.exports.MultiKeyDecrementer = MultiKeyDecrementer;
 module.exports.UpdateMaxLimitWithSwitch = UpdateMaxLimitWithSwitch;
+module.exports.GetLimitsByCategory = GetLimitsByCategory;
+module.exports.DeleteLimit = DeleteLimit;
 
 
