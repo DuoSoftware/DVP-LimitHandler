@@ -17,6 +17,7 @@
     "node-uuid": "^1.4.3",
     "redis": "^0.12.1",
     "redis-lock": "^0.1.0",
+    "redlock": "^3.0.0",
     "request": "^2.75.0",
     "restify": "^4.0.4",
     "restify-jwt": "^0.4.0",

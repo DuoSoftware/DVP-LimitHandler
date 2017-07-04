@@ -11,6 +11,7 @@ var async= require('async');
 var underscore =  require('underscore');
 var httpReq = require('request');
 var util=require('util');
+var Redlock = require('redlock');
 
 var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
 var redisCacheHandler = require('dvp-common/CSConfigRedisCaching/RedisHandler.js');
@@ -105,6 +106,24 @@ if(redismode != "cluster") {
 
 
 }
+
+var redlock = new Redlock(
+    [client],
+    {
+        driftFactor: 0.01,
+
+        retryCount:  2,
+
+        retryDelay:  200
+
+    }
+);
+
+redlock.on('clientError', function(err)
+{
+    logger.error('[DVP-Common.AcquireLock] - [%s] - REDIS LOCK FAILED', err);
+
+});
 
 client.on("error", function (err) {
     console.log("Error " + err);
@@ -451,20 +470,20 @@ function CreateLimit(req,Company,Tenant,reqId,callback)
 
                         var NewLimobj = DbConn.LimitInfo
                             .build(
-                            {
-                                LimitId: rand,
-                                LimitDescription: req.LimitDescription,
-                                ObjClass: req.ObjClass,
-                                ObjType: req.ObjType,
-                                ObjCategory: req.ObjCategory,
-                                CompanyId: Company,
-                                TenantId: Tenant,
-                                MaxCount: req.MaxCount,
-                                Enable: req.Enable
+                                {
+                                    LimitId: rand,
+                                    LimitDescription: req.LimitDescription,
+                                    ObjClass: req.ObjClass,
+                                    ObjType: req.ObjType,
+                                    ObjCategory: req.ObjCategory,
+                                    CompanyId: Company,
+                                    TenantId: Tenant,
+                                    MaxCount: req.MaxCount,
+                                    Enable: req.Enable
 
 
-                            }
-                        )
+                                }
+                            )
                     }
                     catch(ex)
                     {
@@ -639,15 +658,29 @@ function GetMaxLimit(key,reqId,callback)
         var reqMax=key+"_max";
         try{
 
-            lock(key, 1000, function (done) {
+            //lock(key, 1000, function (done) {
 
-                if(client)
-                {
-                    client.get(reqMax, function (errMax, resMax) {
+            if(client)
+            {
+                client.get(reqMax, function (errMax, resMax) {
 
-                        if (errMax) {
-                            logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - Error in getting value of key %s ',reqId,key,errMax);
-                            callback(errMax, undefined);
+                    if (errMax) {
+                        logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - Error in getting value of key %s ',reqId,key,errMax);
+                        callback(errMax, undefined);
+
+                        done(function () {
+
+                            logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] -  Lock is released  ',reqId);
+
+                        });
+                    }
+                    else {
+
+                        if(!resMax)
+                        {
+                            logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - No limit info found for key %s ',reqId,key);
+
+                            callback(new Error("No limit info found for "+key),undefined);
 
                             done(function () {
 
@@ -655,48 +688,34 @@ function GetMaxLimit(key,reqId,callback)
 
                             });
                         }
-                        else {
+                        else
+                        {
+                            logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - Limit Info received for key %s ',reqId,key);
 
-                            if(!resMax)
-                            {
-                                logger.error('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - No limit info found for key %s ',reqId,key);
+                            callback(undefined, resMax);
 
-                                callback(new Error("No limit info found for "+key),undefined);
+                            done(function () {
 
-                                done(function () {
+                                logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] -  Lock is released  ',reqId);
 
-                                    logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] -  Lock is released  ',reqId);
-
-                                });
-                            }
-                            else
-                            {
-                                logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] - [PGSQL]  - Limit Info received for key %s ',reqId,key);
-
-                                callback(undefined, resMax);
-
-                                done(function () {
-
-                                    logger.debug('[DVP-LimitHandler.MaxLimit] - [%s] -  Lock is released  ',reqId);
-
-                                });
-                            }
-
-
-
+                            });
                         }
 
 
-                    });
-                }
-                else
-                {
-                    callback(new Error("no Redis connection"),undefined);
-                }
+
+                    }
+
+
+                });
+            }
+            else
+            {
+                callback(new Error("no Redis connection"),undefined);
+            }
 
 
 
-            });
+            //});
 
         }
         catch(ex)
@@ -717,55 +736,92 @@ function UpdateMaxLimit(LID,max,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  UpdateMaxLimit starting  - Data :-  ID : %s Max : $s',reqId,LID,max);
 
+
     if(max && LID)
     {
+        var ttl = 2000;
+        var maxKey=LID+"_max";
+
+
         var maxLim = parseInt(max);
         try {
 
-            DbConn.LimitInfo.find({where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]}).then(function (lim)
-            {
-                if(lim)
-                {
-                    lim.updateAttributes({MaxCount: maxLim}).then(function (resLimit)
-                    {
-                        redisCacheHandler.addLimitToCache(resLimit.LimitId, Company, Tenant, resLimit);
-                        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,max,LID);
+            redlock.lock(maxKey, ttl,function (errLock,lock) {
 
-                        if(client)
+                if(errLock)
+                {
+                    callback(errLock, false);
+                    logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -Failed to lock the key', reqId, errLock);
+                }
+                else
+                {
+                    DbConn.LimitInfo.find({where: [{LimitId: LID},{CompanyId:Company},{TenantId:Tenant}]}).then(function (lim)
+                    {
+                        if(lim)
                         {
-                            client.set(LID,maxLim,function(errSet,resSet)
+                            lim.updateAttributes({MaxCount: maxLim}).then(function (resLimit)
                             {
-                                if(errSet)
+                                redisCacheHandler.addLimitToCache(resLimit.LimitId, Company, Tenant, resLimit);
+                                logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,max,LID);
+
+                                if(client)
                                 {
-                                    callback(errSet,undefined);
+                                    client.set(maxKey,maxLim,function(errSet,resSet)
+                                    {
+                                        if(errSet)
+                                        {
+                                            callback(errSet,undefined);
+                                        }
+                                        else
+                                        {
+                                            callback(undefined,resSet);
+                                        }
+                                        lock.unlock().catch(function(err) {
+
+                                            console.error(err);
+                                        });
+                                    });
                                 }
                                 else
                                 {
-                                    callback(undefined,resSet);
+                                    lock.unlock().catch(function(err) {
+
+                                        console.error(err);
+                                    });
+                                    callback(new Error("No redis connection"),undefined) ;
+
                                 }
+
+                            }).catch(function(err)
+                            {
+                                logger.error('[DVP-LimitHandler.UpdateMaxLimit] PGSQL Update extension with recording status failed', err);
+                                lock.unlock().catch(function(err) {
+
+                                    console.error(err);
+                                });
+                                callback(err, false);
                             });
+
                         }
                         else
                         {
-                            callback(new Error("No redis connection"),undefined) ;
+                            lock.unlock().catch(function(err) {
+
+                                console.error(err);
+                            });
+                            callback(new Error('Limit record not found'), false);
                         }
 
                     }).catch(function(err)
                     {
-                        logger.error('[DVP-LimitHandler.UpdateMaxLimit] PGSQL Update extension with recording status failed', err);
+                        lock.unlock().catch(function(err) {
+
+                            console.error(err);
+                        });
+                        logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Get Extension PGSQL query failed', reqId, err);
                         callback(err, false);
                     });
-
                 }
-                else
-                {
-                    callback(new Error('Limit record not found'), false);
-                }
-
-            }).catch(function(err)
-            {
-                logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Get Extension PGSQL query failed', reqId, err);
-                callback(err, false);
             });
 
 
@@ -788,56 +844,71 @@ function UpdateMaxLimit(LID,max,Company,Tenant,reqId,callback)
 function UpdateMaxLimitWithSwitch(LID,max,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  UpdateMaxLimit starting  - Data :-  ID : %s Max : $s',reqId,LID,max);
+    var ttl=2000;
 
     if(max && LID)
     {
         var maxLim = parseInt(max);
         try {
 
-            DbConn.LimitInfo.find({where: [{LimitId: LID},{TenantId:Tenant}]}).then(function (lim)
-            {
-                if(lim)
-                {
-                    lim.updateAttributes({MaxCount: maxLim, CompanyId: Company}).then(function (resLimit)
-                    {
-                        redisCacheHandler.addLimitToCache(resLimit.LimitId, Company, Tenant, resLimit);
-                        logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s',reqId,max,LID);
+            redlock.lock(LID, ttl).then(function(lock) {
 
-                        if(client)
-                        {
-                            client.set(LID,maxLim,function(errSet,resSet)
-                            {
-                                if(errSet)
-                                {
-                                    callback(errSet,undefined);
-                                }
-                                else
-                                {
-                                    callback(undefined,resSet);
-                                }
+                DbConn.LimitInfo.find({where: [{LimitId: LID}, {TenantId: Tenant}]}).then(function (lim) {
+                    if (lim) {
+                        lim.updateAttributes({MaxCount: maxLim, CompanyId: Company}).then(function (resLimit) {
+                            redisCacheHandler.addLimitToCache(resLimit.LimitId, Company, Tenant, resLimit);
+                            logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s', reqId, max, LID);
+
+                            if (client) {
+                                client.set(LID, maxLim, function (errSet, resSet) {
+                                    if (errSet) {
+                                        callback(errSet, undefined);
+                                    }
+                                    else {
+                                        callback(undefined, resSet);
+                                    }
+
+                                    lock.unlock()
+                                        .catch(function(err) {
+                                            logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                                        });
+                                });
+                            }
+                            else {
+                                lock.unlock()
+                                    .catch(function(err) {
+                                        logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                                    });
+                                callback(new Error("No redis connection"), undefined);
+                            }
+
+                        }).catch(function (err) {
+                            logger.error('[DVP-LimitHandler.UpdateMaxLimit] PGSQL Update extension with recording status failed', err);
+                            lock.unlock()
+                                .catch(function(err) {
+                                    logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                                });
+                            callback(err, false);
+                        });
+
+                    }
+                    else {
+                        lock.unlock()
+                            .catch(function(err) {
+                                logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
                             });
-                        }
-                        else
-                        {
-                            callback(new Error("No redis connection"),undefined) ;
-                        }
+                        callback(new Error('Limit record not found'), false);
+                    }
 
-                    }).catch(function(err)
-                    {
-                        logger.error('[DVP-LimitHandler.UpdateMaxLimit] PGSQL Update extension with recording status failed', err);
-                        callback(err, false);
-                    });
+                }).catch(function (err) {
+                    lock.unlock()
+                        .catch(function(err) {
 
-                }
-                else
-                {
-                    callback(new Error('Limit record not found'), false);
-                }
-
-            }).catch(function(err)
-            {
-                logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Get Extension PGSQL query failed', reqId, err);
-                callback(err, false);
+                            logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                        });
+                    logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Get Extension PGSQL query failed', reqId, err);
+                    callback(err, false);
+                });
             });
 
 
@@ -1691,11 +1762,11 @@ function sendNotification(compInfo,callback)
 
 
                 var messageData =
-                {
-                    To:JSON.parse(body).Result.ownerId,
-                    Message:"You are reached maximum limit",
-                    From:"Limit Service"
-                }
+                    {
+                        To:JSON.parse(body).Result.ownerId,
+                        Message:"You are reached maximum limit",
+                        From:"Limit Service"
+                    }
 
 
                 var httpUrl = util.format('http://%s/DVP/API/%s//NotificationService/Notification/initiate', notificationServiceURL, notificationServiceVersion);
