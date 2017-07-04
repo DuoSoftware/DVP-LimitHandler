@@ -9,7 +9,7 @@ module.exports = {
   },
   "Redis":
   {
-    "mode":"sentinel",//instance, cluster, sentinel
+    "mode":"instance",//instance, cluster, sentinel
     "ip": "45.55.142.207",
     "port": 6389,
     "user": "duo",

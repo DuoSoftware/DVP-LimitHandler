@@ -349,83 +349,124 @@ function LimitDecrement(req,reqId,callback)
     logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  LimitDecrement starting  ',reqId);
 
     //logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - [PGSQL] -  Lock started ',reqId,req);
+    var ttl=2000;
+
 
     try {
-        client.get(req, function (err, reply) {
-            if (err) {
 
+        var key = util.format("lock:%s", req);
 
-                logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in searching Limit  ', reqId, req, err);
-                callback(err, undefined);
+        redlock.lock(key, ttl,function (errLock,lock) {
 
-
+            if (errLock) {
+                callback(errLock, false);
+                logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] -Failed to lock the key', reqId, errLock);
             }
-            else {
-                if (!reply) {
-                    logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  No record for Key %s  ', reqId, req);
-                    callback(new Error("No record for Key" + req), undefined);
-                }
-                else {
-                    //logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Decrement is starting  ', reqId);
-                    if (parseInt(reply) > 0) {
-
-                        try {
-
-                            logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  current value of %s > 0  ', reqId, req);
+            else
+            {
+                client.get(req, function (err, reply) {
+                    if (err) {
 
 
-                            try {
-                                client.decr(req, function (err, result) {
-                                    if (err) {
-
-                                        logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Errors occurred while decrementing count of   ', reqId, req, err);
-                                        callback(err, undefined);
+                        logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Error in searching Limit  ', reqId, req, err);
+                        callback(err, undefined);
 
 
+                    }
+                    else {
+                        if (!reply) {
+                            logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  No record for Key %s  ', reqId, req);
+                            lock.unlock().catch(function(err) {
 
+                                console.error(err);
+                            });
+                            callback(new Error("No record for Key" + req), undefined);
+                        }
+                        else {
+                            //logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Decrement is starting  ', reqId);
+                            if (parseInt(reply) > 0) {
+
+                                try {
+
+                                    logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  current value of %s > 0  ', reqId, req);
+
+
+                                    try {
+                                        client.decr(req, function (err, result) {
+                                            if (err) {
+
+                                                logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Errors occurred while decrementing count of   ', reqId, req, err);
+                                                lock.unlock().catch(function(err) {
+
+                                                    console.error(err);
+                                                });
+                                                callback(err, undefined);
+
+
+
+                                            }
+                                            else {
+
+
+                                                logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Decrement succeeded of   ', reqId, req);
+                                                lock.unlock().catch(function(err) {
+
+                                                    console.error(err);
+                                                });
+                                                callback(undefined, result);
+
+
+
+
+                                            }
+
+                                        });
+                                    } catch (e)
+                                    {
+                                        lock.unlock().catch(function(err) {
+
+                                            console.error(err);
+                                        });
+                                        callback(e,undefined);
                                     }
-                                    else {
-
-
-                                        logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] -  Decrement succeeded of   ', reqId, req);
-                                        callback(undefined, result);
 
 
 
 
-                                    }
+                                }
+                                catch (ex) {
 
-                                });
-                            } catch (e)
-                            {
-                                callback(e,undefined);
+                                    logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Exception occurred when decrement is starting of %s', reqId, req, ex);
+                                    lock.unlock().catch(function(err) {
+
+                                        console.error(err);
+                                    });
+                                    callback(ex, undefined);
+
+
+
+                                }
                             }
+                            else {
+                                //logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Decrement denied of  current value is 0', reqId, req);
+                                lock.unlock().catch(function(err) {
+
+                                    console.error(err);
+                                });
+                                callback(new Error("Limit = 0 "), undefined);
 
 
-
-
+                            }
                         }
-                        catch (ex) {
-
-                            logger.error('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Exception occurred when decrement is starting of %s', reqId, req, ex);
-                            callback(ex, undefined);
-
-
-
-                        }
-                    }
-                    else {
-                        //logger.debug('[DVP-LimitHandler.LimitDecrement] - [%s] - [REDIS] -  Decrement denied of  current value is 0', reqId, req);
-                        callback(new Error("Limit = 0 "), undefined);
 
 
                     }
-                }
 
-
+                });
             }
-
         });
+
+
     } catch (e)
     {
         callback(e,undefined);
@@ -746,7 +787,10 @@ function UpdateMaxLimit(LID,max,Company,Tenant,reqId,callback)
         var maxLim = parseInt(max);
         try {
 
-            redlock.lock(maxKey, ttl,function (errLock,lock) {
+            console.log(maxKey);
+            var key = util.format("lock:%s", maxKey);
+
+            redlock.lock(key, ttl,function (errLock,lock) {
 
                 if(errLock)
                 {
@@ -845,70 +889,83 @@ function UpdateMaxLimitWithSwitch(LID,max,Company,Tenant,reqId,callback)
 {
     logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  UpdateMaxLimit starting  - Data :-  ID : %s Max : $s',reqId,LID,max);
     var ttl=2000;
+    var maxKey=LID+"_max";
 
     if(max && LID)
     {
         var maxLim = parseInt(max);
         try {
 
-            redlock.lock(LID, ttl).then(function(lock) {
+            var key = util.format("lock:%s", maxKey);
+            console.log(maxKey);
 
-                DbConn.LimitInfo.find({where: [{LimitId: LID}, {TenantId: Tenant}]}).then(function (lim) {
-                    if (lim) {
-                        lim.updateAttributes({MaxCount: maxLim, CompanyId: Company}).then(function (resLimit) {
-                            redisCacheHandler.addLimitToCache(resLimit.LimitId, Company, Tenant, resLimit);
-                            logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s', reqId, max, LID);
+            redlock.lock(key, ttl,function (errLock,lock) {
 
-                            if (client) {
-                                client.set(LID, maxLim, function (errSet, resSet) {
-                                    if (errSet) {
-                                        callback(errSet, undefined);
-                                    }
-                                    else {
-                                        callback(undefined, resSet);
-                                    }
+                if(errLock)
+                {
+                    callback(errLock, false);
+                    logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -Failed to lock the key', reqId, errLock);
+                }
+                else
+                {
+                    DbConn.LimitInfo.find({where: [{LimitId: LID}, {TenantId: Tenant}]}).then(function (lim) {
+                        if (lim) {
+                            lim.updateAttributes({MaxCount: maxLim, CompanyId: Company}).then(function (resLimit) {
+                                redisCacheHandler.addLimitToCache(resLimit.LimitId, Company, Tenant, resLimit);
+                                logger.debug('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -  Maximum limit is successfully updated to %s of %s  - Data %s', reqId, max, LID);
 
+                                if (client) {
+                                    client.set(LID, maxLim, function (errSet, resSet) {
+                                        if (errSet) {
+                                            callback(errSet, undefined);
+                                        }
+                                        else {
+                                            callback(undefined, resSet);
+                                        }
+
+                                        lock.unlock()
+                                            .catch(function(err) {
+                                                logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
+                                            });
+                                    });
+                                }
+                                else {
                                     lock.unlock()
                                         .catch(function(err) {
                                             logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
                                         });
-                                });
-                            }
-                            else {
+                                    callback(new Error("No redis connection"), undefined);
+                                }
+
+                            }).catch(function (err) {
+                                logger.error('[DVP-LimitHandler.UpdateMaxLimit] PGSQL Update extension with recording status failed', err);
                                 lock.unlock()
                                     .catch(function(err) {
                                         logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
                                     });
-                                callback(new Error("No redis connection"), undefined);
-                            }
+                                callback(err, false);
+                            });
 
-                        }).catch(function (err) {
-                            logger.error('[DVP-LimitHandler.UpdateMaxLimit] PGSQL Update extension with recording status failed', err);
+                        }
+                        else {
                             lock.unlock()
                                 .catch(function(err) {
                                     logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
                                 });
-                            callback(err, false);
-                        });
+                            callback(new Error('Limit record not found'), false);
+                        }
 
-                    }
-                    else {
+                    }).catch(function (err) {
                         lock.unlock()
                             .catch(function(err) {
+
                                 logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
                             });
-                        callback(new Error('Limit record not found'), false);
-                    }
+                        logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Get Extension PGSQL query failed', reqId, err);
+                        callback(err, false);
+                    });
+                }
 
-                }).catch(function (err) {
-                    lock.unlock()
-                        .catch(function(err) {
-
-                            logger.error('[DVP-Common.addClusterToCache] - [%s] - REDIS LOCK RELEASE FAILED', err);
-                        });
-                    logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] - Get Extension PGSQL query failed', reqId, err);
-                    callback(err, false);
-                });
             });
 
 
@@ -1135,19 +1192,27 @@ function LimitIncrement(req,companyData,reqId,callback)
     var reqMax=req+"_max";
     var compInfo = companyData.tenant + ':' + companyData.company;
 
-    //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] -  LimitIncrement starting  - Data %s',reqId,req);
-    try {
+    console.log(reqMax);
+    var ttl=2000;
+    var key = util.format("lock:%s", reqMax);
 
+    redlock.lock(key, ttl,function (errLock,lock) {
 
-        try {
-
-            //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [PGSQL] -  Record found for LimitID %s  ',reqId,req);
-
+        if (errLock) {
+            callback(errLock, false);
+            logger.error('[DVP-LimitHandler.UpdateMaxLimit] - [%s] -Failed to lock the key', reqId, errLock);
+        }
+        else
+        {
             try {
                 client.get(req, function (err, reply) {
                     if (err) {
 
                         logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in searching LimitID %s  ', reqId, req, err);
+                        lock.unlock().catch(function(err) {
+
+                            console.error(err);
+                        });
                         callback(err, undefined);
 
                     }
@@ -1156,39 +1221,55 @@ function LimitIncrement(req,companyData,reqId,callback)
 
                         if (!reply) {
                             logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis has no records for  LimitID %s  - Data %s', reqId, req);
+                            lock.unlock().catch(function(err) {
+
+                                console.error(err);
+                            });
                             callback(new Error("No records for  LimitID" + req), undefined);
                         }
                         else {
-                            //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Data %s', reqId, req, JSON.stringify(reply));
 
 
                             try {
                                 client.incr(req, function (errIncr, resIncr) {
 
                                     if (errIncr) {
-                                        //logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error increment Limit %s  ', reqId, req, errIncr);
+                                        lock.unlock().catch(function(err) {
+
+                                            console.error(err);
+                                        });
                                         callback(errIncr, undefined);
                                     }
                                     else {
                                         client.get(reqMax, function (errMax, resMax) {
                                             if (errMax) {
                                                 logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Error in searching Limit_max %s  ', reqId, reqMax, errMax);
+                                                lock.unlock().catch(function(err) {
+
+                                                    console.error(err);
+                                                });
                                                 callback(errMax, undefined);
 
                                             }
                                             else {
 
                                                 if (!resMax) {
-                                                    //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis has no records for  LimitID %s  - Max count %s', reqId, req);
+                                                    lock.unlock().catch(function(err) {
+
+                                                        console.error(err);
+                                                    });
                                                     callback(new Error("No MaxLimit found for Limit " + req), undefined);
                                                 }
                                                 else {
-                                                    //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Redis returned records for  LimitID %s  - Max count %s', reqId, req, reqMax);
 
-                                                    if(parseInt(resIncr)==parseInt(resMax) )
-                                                    {
-                                                        sendNotification(compInfo, function (errNotify,resNotify) {
-                                                            callback(errNotify,resIncr);
+
+                                                    if (parseInt(resIncr) == parseInt(resMax)) {
+                                                        sendNotification(compInfo, function (errNotify, resNotify) {
+                                                            lock.unlock().catch(function(err) {
+
+                                                                console.error(err);
+                                                            });
+                                                            callback(errNotify, resIncr);
                                                         });
                                                     }
 
@@ -1199,18 +1280,21 @@ function LimitIncrement(req,companyData,reqId,callback)
                                                         console.log('true in checking');
                                                         console.log('max ' + resMax);
                                                         console.log('now current ' + resIncr);
+                                                        lock.unlock().catch(function(err) {
+
+                                                            console.error(err);
+                                                        });
                                                         callback(undefined, resIncr);
 
                                                     }
-                                                    else
-                                                    {
+                                                    else {
 
                                                         //logger.debug('[DVP-LimitHandler.LimitIncrement] - [%s]  -  Redis record"s Max count %s <  Current count %s  - Maximum limit reached ', reqId, resMax, reply);
 
 
                                                         try {
                                                             client.decr(req, function (errDecr, resDecr) {
-                                                                sendNotification(compInfo, function (errNotify,resNotify) {
+                                                                sendNotification(compInfo, function (errNotify, resNotify) {
 
                                                                     if (errDecr) {
                                                                         callback(errDecr, undefined);
@@ -1220,10 +1304,20 @@ function LimitIncrement(req,companyData,reqId,callback)
 
                                                                         callback(undefined, resDecr);
                                                                     }
+
+                                                                    lock.unlock().catch(function(err) {
+
+                                                                        console.error(err);
+                                                                    });
+
                                                                 });
 
                                                             });
                                                         } catch (e) {
+                                                            lock.unlock().catch(function(err) {
+
+                                                                console.error(err);
+                                                            });
                                                             callback(e, undefined);
                                                         }
 
@@ -1241,7 +1335,11 @@ function LimitIncrement(req,companyData,reqId,callback)
 
                                 });
                             } catch (e) {
-                                callback(e,undefined);
+                                lock.unlock().catch(function(err) {
+
+                                    console.error(err);
+                                });
+                                callback(e, undefined);
                             }
 
 
@@ -1250,35 +1348,19 @@ function LimitIncrement(req,companyData,reqId,callback)
 
                     }
                 })
-            } catch (e)
-            {
-                callback(e,undefined);
+            } catch (e) {
+                lock.unlock().catch(function(err) {
+
+                    console.error(err);
+                });
+                callback(e, undefined);
             }
-
-
-
-        }
-
-        catch (ex) {
-
-            logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Exception occurred when getting current limit  ',reqId,ex);
-            callback(ex, undefined);
-
         }
 
 
+    });
 
 
-
-
-
-    }
-    catch(ex)
-    {
-
-        logger.error('[DVP-LimitHandler.LimitIncrement] - [%s] - [REDIS] -  Exception occurred when starting method :LimitIncrement',reqId,ex);
-        callback(ex,undefined);
-    }
 }
 
 function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
@@ -1286,95 +1368,129 @@ function MultiKeyIncrementer(keyString,condition,reqId,callbackData)
     console.log(keyString);
     var keyIds = keyString;
     var checkArray=[];
+    var ttl = 2000;
+
 
     keyIds.forEach(function (key) {
         if (key) {
             checkArray.push(function createContact(callback) {
 
                 var max_key=key+"_max";
+                var lockKey = util.format("lock:%s", max_key);
 
-                client.get(max_key,function (errKey,resKey) {
-                    if(errKey || !resKey)
-                    {
-                        console.log("max getting error of "+max_key);
-                        var obj = {
-                            key:key,
-                            rvtSt:false,
-                            Availability:false
-                        };
-                        callback(new Error("Error in Getting Max limit of key : "+key),obj);
+                redlock.lock(lockKey, ttl,function (errLock,lock) {
+
+                    if (errLock) {
+                        callback(errLock, false);
+                        logger.error('[DVP-LimitHandler.MultiKeyIncrementer] - [%s] -Failed to lock the key', reqId, errLock);
                     }
                     else
                     {
-                        client.incr(key, function (errIncr,resIncr) {
-                            if(errIncr ||!resIncr)
+                        client.get(max_key,function (errKey,resKey) {
+                            if(errKey || !resKey)
                             {
-                                console.log("Incrementing error of "+key);
+                                console.log("max getting error of "+max_key);
                                 var obj = {
                                     key:key,
                                     rvtSt:false,
                                     Availability:false
                                 };
-                                callback(new Error("Error in value incrementing of key : "+key),obj);
+                                lock.unlock().catch(function(err) {
+
+                                    console.error(err);
+                                });
+                                callback(new Error("Error in Getting Max limit of key : "+key),obj);
                             }
                             else
                             {
-                                if(resKey>=resIncr)
-                                {
-                                    console.log("Increment suites "+key);
-                                    var obj = {
-                                        key:key,
-                                        rvtSt:false,
-                                        Availability:true
-                                    };
-                                    callback(null,obj);
-                                }
-                                else
-                                {
-                                    console.log("Increment not suites "+key);
-                                    client.decr(key, function (errDecr,resDecr) {
+                                client.incr(key, function (errIncr,resIncr) {
+                                    if(errIncr ||!resIncr)
+                                    {
+                                        console.log("Incrementing error of "+key);
+                                        var obj = {
+                                            key:key,
+                                            rvtSt:false,
+                                            Availability:false
+                                        };
+                                        lock.unlock().catch(function(err) {
 
-                                        if(errDecr )
+                                            console.error(err);
+                                        });
+                                        callback(new Error("Error in value incrementing of key : "+key),obj);
+                                    }
+                                    else
+                                    {
+                                        if(resKey>=resIncr)
                                         {
-                                            console.log("Decrement error "+key);
-                                            var obj = {
-                                                key:key,
-                                                rvtSt:true,
-                                                Availability:false
-                                            };
-                                            callback(new Error("Error in reverting key record : "+key),obj);
-                                        }
-                                        else if(resDecr==0)
-                                        {
-                                            console.log("Decrement done Value =0  "+key);
+                                            console.log("Increment suites "+key);
                                             var obj = {
                                                 key:key,
                                                 rvtSt:false,
-                                                Availability:false
+                                                Availability:true
                                             };
-                                            callback(undefined,obj);
+                                            lock.unlock().catch(function(err) {
+
+                                                console.error(err);
+                                            });
+                                            callback(null,obj);
                                         }
                                         else
                                         {
-                                            console.log("Decrement Done "+key);
-                                            var obj = {
-                                                key:key,
-                                                rvtSt:false,
-                                                Availability:false
-                                            };
-                                            callback(undefined,obj);
-                                        }
+                                            console.log("Increment not suites "+key);
+                                            client.decr(key, function (errDecr,resDecr) {
 
-                                    });
-                                }
+                                                if(errDecr )
+                                                {
+                                                    console.log("Decrement error "+key);
+                                                    var obj = {
+                                                        key:key,
+                                                        rvtSt:true,
+                                                        Availability:false
+                                                    };
+                                                    callback(new Error("Error in reverting key record : "+key),obj);
+                                                }
+                                                else if(resDecr==0)
+                                                {
+                                                    console.log("Decrement done Value =0  "+key);
+                                                    var obj = {
+                                                        key:key,
+                                                        rvtSt:false,
+                                                        Availability:false
+                                                    };
+                                                    callback(undefined,obj);
+                                                }
+                                                else
+                                                {
+                                                    console.log("Decrement Done "+key);
+                                                    var obj = {
+                                                        key:key,
+                                                        rvtSt:false,
+                                                        Availability:false
+                                                    };
+                                                    callback(undefined,obj);
+                                                }
+                                                lock.unlock().catch(function(err) {
+
+                                                    console.error(err);
+                                                });
+
+                                            });
+                                        }
+                                    }
+
+                                });
                             }
                         });
                     }
                 });
 
 
+
+
+
             });
         }
+
     });
 
 
@@ -1522,192 +1638,235 @@ function MultiKeyDecrementer(keys,condition,reqId,callbackData)
 {
     var keyIds = keys;
     var checkArray=[];
+    var ttl = 2000;
 
-    keyIds.forEach(function (key) {
-        if (key) {
-            checkArray.push(function createContact(callback) {
 
-                client.get(key,function (errKey,resKey) {
-                    if(errKey || !resKey)
-                    {
-                        console.log("Key getting error "+errKey+" of "+key);
-                        var obj = {
-                            key:key,
-                            rvtSt:false,
-                            Availability:false
-                        };
-                        callback(new Error("Key "+key+" not found. Error :"+errKey),obj);
+    if(keyIds.length>0)
+    {
+        keyIds.forEach(function (key) {
+            if (key) {
+
+                var lockKey = util.format("lock:%s", key);
+
+                redlock.lock(lockKey, ttl,function (errLock,lock) {
+
+                    if (errLock) {
+                        //callback(errLock, false);
+                        logger.error('[DVP-LimitHandler.MultiKeyDecrementer] - [%s] -Failed to lock the key', reqId, errLock);
                     }
                     else
                     {
-                        client.decr(key, function (errDecr,resDecr) {
-                            if(errDecr )
-                            {
-                                console.log("resp decr "+resDecr+" "+key);
-                                console.log("Decrementing error "+errDecr+" of "+key);
-                                var obj = {
-                                    key:key,
-                                    rvtSt:false,
-                                    Availability:false
-                                };
-                                callback(new Error("Error in Decrementing key :  "+key+" .Error : "+errDecr),obj);
-                            }
-                            else
-                            {
-                                if(resDecr>=0)
+                        checkArray.push(function createContact(callback) {
+
+                            client.get(key,function (errKey,resKey) {
+                                if(errKey || !resKey)
                                 {
-                                    console.log("Decrement suites "+key);
+                                    console.log("Key getting error "+errKey+" of "+key);
                                     var obj = {
                                         key:key,
                                         rvtSt:false,
-                                        Availability:true
+                                        Availability:false
                                     };
-                                    callback(null,obj);
+                                    lock.unlock().catch(function(err) {
+
+                                        console.error(err);
+                                    });
+                                    callback(new Error("Key "+key+" not found. Error :"+errKey),obj);
                                 }
                                 else
                                 {
-                                    console.log("Decrement not suites "+key);
-                                    client.incr(key, function (errIncr,resIncr) {
-
-                                        if(errIncr)
+                                    client.decr(key, function (errDecr,resDecr) {
+                                        if(errDecr )
                                         {
-                                            console.log("resp incr "+resIncr+" "+key);
-                                            console.log("Increment error "+errIncr+" of "+key);
-                                            var obj = {
-                                                key:key,
-                                                rvtSt:true,
-                                                Availability:false
-                                            };
-                                            callback(new Error("Reverting updated key "+key+" failed. Error : "+errIncr),obj);
-                                        }
-                                        else
-                                        {
-                                            console.log("Increment Done "+key);
+                                            console.log("resp decr "+resDecr+" "+key);
+                                            console.log("Decrementing error "+errDecr+" of "+key);
                                             var obj = {
                                                 key:key,
                                                 rvtSt:false,
                                                 Availability:false
                                             };
-                                            callback(null,obj);
+                                            lock.unlock().catch(function(err) {
+
+                                                console.error(err);
+                                            });
+                                            callback(new Error("Error in Decrementing key :  "+key+" .Error : "+errDecr),obj);
+                                        }
+                                        else
+                                        {
+                                            if(resDecr>=0)
+                                            {
+                                                console.log("Decrement suites "+key);
+                                                var obj = {
+                                                    key:key,
+                                                    rvtSt:false,
+                                                    Availability:true
+                                                };
+                                                lock.unlock().catch(function(err) {
+
+                                                    console.error(err);
+                                                });
+                                                callback(null,obj);
+                                            }
+                                            else
+                                            {
+                                                console.log("Decrement not suites "+key);
+                                                client.incr(key, function (errIncr,resIncr) {
+
+                                                    if(errIncr)
+                                                    {
+                                                        console.log("resp incr "+resIncr+" "+key);
+                                                        console.log("Increment error "+errIncr+" of "+key);
+                                                        var obj = {
+                                                            key:key,
+                                                            rvtSt:true,
+                                                            Availability:false
+                                                        };
+
+                                                        callback(new Error("Reverting updated key "+key+" failed. Error : "+errIncr),obj);
+                                                    }
+                                                    else
+                                                    {
+                                                        console.log("Increment Done "+key);
+                                                        var obj = {
+                                                            key:key,
+                                                            rvtSt:false,
+                                                            Availability:false
+                                                        };
+                                                        callback(null,obj);
+                                                    }
+                                                    lock.unlock().catch(function(err) {
+
+                                                        console.error(err);
+                                                    });
+
+                                                });
+                                            }
                                         }
 
                                     });
                                 }
-                            }
+                            });
+
+
                         });
                     }
                 });
 
 
-            });
-        }
-    });
+            }
+        });
 
-    async.parallel(checkArray, function (err,res) {
-        // console.log("e "+err);
-        var resultCount=res.length;
+        async.parallel(checkArray, function (err,res) {
+            // console.log("e "+err);
+            var resultCount=res.length;
 
-        if(err)
-        {
-            console.log("e "+err);
-            callbackData(err,undefined);
-        }
-        else
-        {
-            console.log("r "+JSON.stringify(res));
-            var incrKeys=[];
-            var avblSt=true;
-            var avblKeys=[];
-            var incdCount=0;
-            if(condition=="AND")
+            if(err)
             {
-
-                res.forEach(function (item) {
-
-                    if(item.rvtSt)
-                    {
-                        console.log("Going to decr "+item.key);
-                        incrKeys.push(item.key);
-                        avblSt=false;
-
-                    }
-                    else
-                    {
-                        if(item.Availability)
-                        {
-                            avblKeys.push(item.key);
-                        }
-                        else
-                        {
-                            avblSt=false;
-                            incdCount++;
-                        }
-                    }
-
-                });
-
-
-                if(incdCount == resultCount)
-                {
-                    console.log("Unavailable. Keys already Incremented");
-                    callbackData(new Error("Keys unavailable."),undefined);
-                }
-
-                if(incrKeys.length>0)
-                {
-                    MultipleIncrementer(incrKeys,reqId, function (errDecr,resDecr) {
-                        console.log("Err arr "+JSON.stringify(errDecr));
-                        console.log("Res arr "+JSON.stringify(resDecr));
-
-                        //callbackData(errDecr,resDecr);
-                        callbackData(new Error("Keys unavailable."),undefined);
-
-
-                    });
-                }
-
-                if(avblKeys.length==resultCount)
-                {
-                    callbackData(undefined,"Success");
-                }
-
-                else
-
-                {
-                    MultipleIncrementer(avblKeys,reqId, function (errAvblIncr,resAvblIncr)
-                    {
-                        if(errAvblIncr.length>0)
-                        {
-                            callbackData(new Error("Keys unavailable "),undefined);
-                        }
-                        else
-                        {
-                            console.log(avblSt);
-                            if(!avblSt)
-                            {
-                                console.log("Keys not available");
-                                callbackData(new Error('Keys unavailable '),undefined);
-                            }
-                            else
-                            {
-                                console.log("Available Keys,Success");
-                                callbackData(undefined,"Success");
-
-                            }
-                        }
-                    });
-
-
-                }
-
-
+                console.log("e "+err);
+                callbackData(err,undefined);
             }
             else
             {
-                callbackData(new Error("Errors In Condition "+condition),undefined);
+                console.log("r "+JSON.stringify(res));
+                var incrKeys=[];
+                var avblSt=true;
+                var avblKeys=[];
+                var incdCount=0;
+                if(condition=="AND")
+                {
+
+                    res.forEach(function (item) {
+
+                        if(item.rvtSt)
+                        {
+                            console.log("Going to decr "+item.key);
+                            incrKeys.push(item.key);
+                            avblSt=false;
+
+                        }
+                        else
+                        {
+                            if(item.Availability)
+                            {
+                                avblKeys.push(item.key);
+                            }
+                            else
+                            {
+                                avblSt=false;
+                                incdCount++;
+                            }
+                        }
+
+                    });
+
+
+                    if(incdCount == resultCount)
+                    {
+                        console.log("Unavailable. Keys already Incremented");
+                        callbackData(new Error("Keys unavailable."),undefined);
+                    }
+
+                    if(incrKeys.length>0)
+                    {
+                        MultipleIncrementer(incrKeys,reqId, function (errDecr,resDecr) {
+                            console.log("Err arr "+JSON.stringify(errDecr));
+                            console.log("Res arr "+JSON.stringify(resDecr));
+
+                            //callbackData(errDecr,resDecr);
+                            callbackData(new Error("Keys unavailable."),undefined);
+
+
+                        });
+                    }
+
+                    if(avblKeys.length==resultCount)
+                    {
+                        callbackData(undefined,"Success");
+                    }
+
+                    else
+
+                    {
+                        MultipleIncrementer(avblKeys,reqId, function (errAvblIncr,resAvblIncr)
+                        {
+                            if(errAvblIncr.length>0)
+                            {
+                                callbackData(new Error("Keys unavailable "),undefined);
+                            }
+                            else
+                            {
+                                console.log(avblSt);
+                                if(!avblSt)
+                                {
+                                    console.log("Keys not available");
+                                    callbackData(new Error('Keys unavailable '),undefined);
+                                }
+                                else
+                                {
+                                    console.log("Available Keys,Success");
+                                    callbackData(undefined,"Success");
+
+                                }
+                            }
+                        });
+
+
+                    }
+
+
+                }
+                else
+                {
+                    callbackData(new Error("Errors In Condition "+condition),undefined);
+                }
             }
-        }
-    });
+        });
+    }
+    else
+    {
+        callbackData(new Error("No keys given"),undefined);
+    }
+
 
 }
 
