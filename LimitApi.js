@@ -131,7 +131,6 @@ client.on("error", function (err) {
 
 });
 
-var lock = require("redis-lock")(client);
 
 
 
