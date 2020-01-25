@@ -18,7 +18,7 @@
 
 
 FROM node:10-alpine
-WORKDIR /usr/src/limithandler
+WORKDIR /usr/local/src/limithandler
 COPY package*.json ./
 RUN npm install
 COPY . .
