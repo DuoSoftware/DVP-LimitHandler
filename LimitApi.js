@@ -2001,5 +2001,5 @@ module.exports.MultiKeyDecrementer = MultiKeyDecrementer;
 module.exports.UpdateMaxLimitWithSwitch = UpdateMaxLimitWithSwitch;
 module.exports.GetLimitsByCategory = GetLimitsByCategory;
 module.exports.DeleteLimit = DeleteLimit;
-
+module.exports.RedisClient = client;
 

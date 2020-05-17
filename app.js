@@ -14,6 +14,9 @@ var hpath=config.Host.hostpath;
 var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
 var uuid = require('node-uuid');
 
+var dbModel = require('dvp-dbmodels');
+var healthcheck = require('dvp-healthcheck/DBHealthChecker');
+
 //var jwt = require('restify-jwt');
 //var secret = require('dvp-common/Authentication/Secret.js');
 var jwt = require('restify-jwt');
@@ -36,7 +39,7 @@ restify.CORS.ALLOW_HEADERS.push('authorization');
 
 RestServer.use(restify.CORS());
 RestServer.use(restify.fullResponse());
-RestServer.use(jwt({secret: secret.Secret}));
+RestServer.use(jwt({secret: secret.Secret}).unless({path: ['/healthcheck']}));
 
 
 // Security...............................................................................................................................................
@@ -53,7 +56,8 @@ RestServer.use(restify.bodyParser());
 RestServer.use(restify.acceptParser(RestServer.acceptable));
 RestServer.use(restify.queryParser());
 
-
+var hc = new healthcheck(RestServer, {redis: limit.RedisClient, pg: dbModel.SequelizeConn });
+hc.Initiate();
 
 
 
