@@ -10,6 +10,7 @@
     "cors": "^2.7.1",
     "date-utils": "^1.2.17",
     "dvp-common": "1.1.0",
+    "dvp-common-lite": "^1.1.0",
     "dvp-dbmodels": "2.1.0",
     "dvp-healthcheck": "^1.0.6",
     "fs": "^0.0.2",

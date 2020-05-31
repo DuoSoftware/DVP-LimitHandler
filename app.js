@@ -5,13 +5,13 @@
 var restify = require('restify');
 var schedule=require('./SheduleApi.js');
 var limit = require('./LimitApi.js');
-var messageFormatter = require('dvp-common/CommonMessageGenerator/ClientMessageJsonFormatter.js');
+var messageFormatter = require('dvp-common-lite/CommonMessageGenerator/ClientMessageJsonFormatter.js');
 var config = require('config');
 
 var port = config.Host.port || 3000;
 var version=config.Host.version;
 var hpath=config.Host.hostpath;
-var logger = require('dvp-common/LogHandler/CommonLogHandler.js').logger;
+var logger = require('dvp-common-lite/LogHandler/CommonLogHandler.js').logger;
 var uuid = require('node-uuid');
 
 var dbModel = require('dvp-dbmodels');
@@ -20,8 +20,8 @@ var healthcheck = require('dvp-healthcheck/DBHealthChecker');
 //var jwt = require('restify-jwt');
 //var secret = require('dvp-common/Authentication/Secret.js');
 var jwt = require('restify-jwt');
-var secret = require('dvp-common/Authentication/Secret.js');
-var authorization = require('dvp-common/Authentication/Authorization.js');
+var secret = require('dvp-common-lite/Authentication/Secret.js');
+var authorization = require('dvp-common-lite/Authentication/Authorization.js');
 
 
 
